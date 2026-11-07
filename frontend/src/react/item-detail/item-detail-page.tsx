@@ -11,7 +11,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { fmtDur, fmtSize, icon, requestErrorMessage } from '@peach/legacy/core';
 import {
-  coverUrl, mixLabel, performerLabel, queueAvatarHtml, queueThumbHtml,
+  coverUrl, mixLabel, performerLabel, queueAvatarHtml, queueThumbHtml, comicCoverUrl,
 } from '@peach/card-art';
 import { confirmModal, spinnerHtml } from '@peach/legacy/ui';
 
@@ -34,6 +34,7 @@ import { MediaCarousel } from '../components/media-carousel';
 import { CatalogPicture } from './catalog-picture';
 import { fetchJavDetail, javDetailKey } from '../jav-detail/jav-detail';
 import { busyProps } from '../settings/use-action';
+import { openPhotoLightbox } from '../photo-lightbox/photo-lightbox-dialog';
 import { ExternalPlayback } from './external-playback';
 import { isPlayerGuidePreview } from '../../player/guide-preview';
 import { CoverCrop } from '../cover-crop/cover-crop-page';
@@ -113,6 +114,11 @@ function Detail(props: ItemDetailProps & { item: DetailItem; queue: DetailQueue 
   const continuePart = () => {
     if (next && queue) actions.openQueueItem({ kind: queue.kind, seedId: queue.seedId, autoplay: true }, next.id);
   };
+  /* 漫画一本：媒体格里是首图当封面，侧栏只有标题、页数与「开始阅读」。播放器、外部播放
+     与补预览那些视频控件都不出；页级反馈是第 3 轮的事。 */
+  if (String(item.medium) === 'comic') {
+    return <ComicDetail item={item} actions={actions} helpers={helpers} />;
+  }
   return (
     <>
       <div data-stage-grid="" data-with-queue={queue ? '' : undefined} data-item-detail="">
@@ -126,6 +132,73 @@ function Detail(props: ItemDetailProps & { item: DetailItem; queue: DetailQueue 
           ? <Related {...props} item={queue ? { ...item, id: queue.seedId ?? item.id } : item} /> : null}
       </DetailContinuation>
     </>
+  );
+}
+
+/* ── 漫画 ── */
+
+/** `/api/comic-pages` 的回包；`error` 与 `message` 是服务端口径（`web_comics.py`）。 */
+interface ComicPages {
+  id: number;
+  name?: string;
+  error?: string;
+  message?: string;
+  pages?: { id: number; ordinal: number; url: string }[];
+}
+
+/** 漫画详情：媒体格里是首图当封面，侧栏只有标题、页数与「开始阅读」。
+ *  播放器、外部播放与补预览那些视频控件都不出；页级反馈是第 3 轮的事。 */
+function ComicDetail({ item, actions, helpers }: {
+  item: DetailItem; actions: ItemDetailActions; helpers: ItemDetailHelpers;
+}) {
+  const [busy, setBusy] = useState(false);
+  const pages = Number(item.comic_pages ?? 0);
+  const read = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const data = await apiGet<ComicPages>(`/api/comic-pages?id=${item.id}`);
+      if (data.error) {
+        actions.toast(data.message || '页清单还没有建立，先在来源目录上扫一遍');
+        return;
+      }
+      if (!data.pages?.length) {
+        actions.toast('这本书还没有可读的页，先在来源目录上扫一遍');
+        return;
+      }
+      /* 阅读器就是图片灯箱：单页适宽、左右键与滚轮翻页、页码与缩放都是现成的。
+         相邻页按需加载，直接跳最后一页也只取需要的图。关掉回到这一页。 */
+      await openPhotoLightbox(0, data.pages.map((page, index) => ({
+        src: page.url, thumb: page.url, name: `第 ${index + 1} 页`,
+      })));
+    } catch (error) {
+      actions.failure('打开阅读器', error);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div data-stage-grid="" data-item-detail="">
+      <div data-stage-media="" data-item-media="none" data-comic-cover="">
+        <CloseStage onClose={actions.close} />
+        <img src={comicCoverUrl(item)} alt="" loading="eager" decoding="async" />
+      </div>
+      <div data-stage-side="" data-item-side="">
+        <div data-stage-side-content="">
+          <DetailTitle item={item} queue={null} helpers={helpers} actions={actions} onStatus={() => {}} />
+          <div className="mono" data-stage-meta="" data-reveal-line="">
+            <span data-spec-item=""><Glyph name="image" />
+              <span>{pages > 0 ? `共 ${pages} 页` : '尚未建立页清单'}</span></span>
+            <span data-spec-item=""><Glyph name="hard-drive" /><span>{sizeText(item.size)}</span></span>
+          </div>
+          <div data-stage-actions="" data-comic-read="">
+            <button type="button" data-comic-read-btn="" disabled={busy || pages === 0} onClick={() => void read()}>
+              {busy ? spinnerHtml('正在打开') : <><Glyph name="chevron-right" /><span>开始阅读</span></>}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

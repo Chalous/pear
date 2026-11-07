@@ -63,6 +63,9 @@ export const cardCoverUrl = (item: { code?: string | null; cover_key?: string; c
 export const remoteCoverUrl = (item: { code?: string | null }): string =>
   `/cover-image?code=${encodeURIComponent(item.code || '')}`;
 
+/** 漫画封面：服务端直接发第一页。地址只带作品 ID，磁盘路径不进浏览器。 */
+export const comicCoverUrl = (item: { id?: number }): string => `/comic-cover?asset=${item.id ?? 0}`;
+
 /** 厂牌标识地址，`variant` 跟着位置走：大位要字标、小位要方形图标。 */
 export const logoUrl = (studio: string, variant: string, version?: string | null): string =>
   withVersion(`/logo?studio=${encodeURIComponent(studio)}&variant=${variant}`, version);
@@ -280,10 +283,12 @@ export function javArtwork(item: CoverItem, layout: 'big' | 'small', eager: bool
   };
 }
 
-/** 一张作品卡的封面。番号作品走上面那条；关注来源的条目用来源自己的缩略图；其余取本地
- *  预览格。`size` 是这一屏的大图／小图，只施加给番号作品。 */
+/** 一张作品卡的封面。漫画一本用第一页当封面（先于番号判：书名可能长得像番号）；番号作品走上面
+ *  那条；关注来源的条目用来源自己的缩略图；其余取本地预览格。`size` 是这一屏的大图／小图，
+ *  只施加给番号作品。 */
 export function cardArtwork(item: CoverItem & { follow_thumb_url?: string | null }, size: 'big' | 'small',
   eager: boolean, javImage: unknown): Artwork {
+  if (String(item.medium) === 'comic') return comicArtwork(item, eager);
   if (item.is_jav) return javArtwork(item, size, eager, javImage);
   if (item.follow_thumb_url) {
     return {
@@ -294,9 +299,18 @@ export function cardArtwork(item: CoverItem & { follow_thumb_url?: string | null
   return mixFace(item, size, eager, javImage);
 }
 
+/** 漫画卡与队列行共用的那一格：第一页直接当封面，取不到时由兜底链摘图。 */
+export function comicArtwork(item: CoverItem, eager: boolean): Artwork {
+  return {
+    kind: 'thumb',
+    html: `<img class="poster" src="${comicCoverUrl(item)}" width="640" height="360" alt="" loading="${eager ? 'eager' : 'lazy'}" decoding="async" data-drop="self">`,
+  };
+}
+
 /** Mix 的一张画面，播放队列每一行的小图也是它：番号作品走封套链，其余取本地预览格，同一条
  *  在两处长得一样。`size` 只施加给番号作品。 */
 export function mixFace(item: CoverItem, size: 'big' | 'small', eager: boolean, javImage: unknown): Artwork {
+  if (String(item.medium) === 'comic') return comicArtwork(item, eager);
   if (item.is_jav) return javArtwork(item, size, eager, javImage);
   if (item.has_cover && item.cover_key) return { kind: 'cover', html: coverImage(item, size, eager) };
   return frameArtwork(item, eager);

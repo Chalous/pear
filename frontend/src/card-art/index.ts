@@ -8,7 +8,7 @@ export { faceSourceScale, nativeImageFit } from './native-image';
 export { rememberRepresentatives, representativeOf } from './representatives';
 export type { RepresentativeRow } from './representatives';
 export {
-  avatarInner, cardArtwork, cardIdentity, coverImage, coverUrl, detailPosterUrl, entityAvatar, entityFaceImg,
+  avatarInner, cardArtwork, cardIdentity, comicCoverUrl, coverImage, coverUrl, detailPosterUrl, entityAvatar, entityFaceImg,
   faceBoxAttrs, faceOrigin, facePos, frameArtwork, javArtwork, logoUrl, mixFace, mixLabel, performerLabel,
   queueAvatarHtml, queueThumbHtml, remoteCoverUrl, withVersion,
 } from './markup';
