@@ -32,7 +32,7 @@ ASSET_RECORD_PREDICATE = ("(rating IS NOT NULL OR COALESCE(o_count,0)>0 "
 ASSET_REFERENCE_TABLES = (
     "asset_tag", "media_binding", "activity_event", "asset_entity",
     "watch_queue", "asset_preference", "asset_tag_preference", "asset_quality_goal",
-    "playlist_item", "asset_subtitle", "comic_page",
+    "playlist_item", "asset_subtitle", "comic_page", "comic_progress",
 )
 
 #: 文件已不在盘上、带着个人记录的那一档。

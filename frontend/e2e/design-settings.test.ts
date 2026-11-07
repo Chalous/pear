@@ -905,11 +905,14 @@ describe('设计决定：设置、口味、统计与筛选玻璃', () => {
           strip: rect('[data-photo-strip]'), back: rect('[data-photo-nav="back"]'), viewport: innerHeight };
       });
       const { img } = read;
-      assert.ok(img.top >= 24 - .5 && img.bottom <= read.viewport - 148 + .5, `大图越出了上下安全区：${img.top}–${img.bottom}`);
+      /* 缩略条是贴底的 86px 实底带，主画布在带上缘让位：画面安全区 = 带高 86 + 底部
+         内边距 64，上边距仍是 24。带子自己与视口底齐平，不再留悬浮的 14px。 */
+      assert.ok(img.top >= 24 - .5 && img.bottom <= read.viewport - 150 + .5, `大图越出了上下安全区：${img.top}–${img.bottom}`);
       assert.ok(Math.abs(img.width / img.height - 1200 / 4000) < .01, `竖图被拉变形：${img.width}×${img.height}`);
       assert.ok(Math.abs(img.left + img.width / 2 - DESKTOP.width / 2) <= 1, '大图没有水平居中');
       assert.ok(read.bar.bottom <= read.strip.top, '工具条压到了缩略图条上');
-      assert.equal(Math.round(read.viewport - read.strip.bottom), 14);
+      assert.equal(Math.round(read.viewport - read.strip.bottom), 0);
+      assert.equal(Math.round(read.strip.top), Math.round(read.viewport - 86));
       assert.ok(read.back.right <= 72, '翻页键伸进了图片那一栏');
       assert.deepEqual(opened.problems, []);
     } finally {

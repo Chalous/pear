@@ -24,13 +24,25 @@ let generation = 0;
 /** 缩略条上保留真实 thumb 的窗口半径；只影响长清单，照片墙的清单都在窗内。 */
 const STRIP_WINDOW = 30;
 
-/** 上一次的翻页档：同一会话里换一本接着用，默认单页。 */
-let lastSpread = false;
+/** 双页档记在本机：每次打开都读一遍，下次打开还是这一档；localStorage 读不了就
+ *  只记这一会话。档位是阅读手感不是馆藏数据，不进账本。 */
+const SPREAD_KEY = 'peach.lightbox-spread.v1';
+let sessionSpread = false;
+
+const storedSpread = (): boolean => {
+  try { return localStorage.getItem(SPREAD_KEY) === '1' } catch { return sessionSpread }
+};
+
+/** 双页时开局下标对齐到跨页的左页。开关和漫画阅读器的「已看过」判据都用这一条规则，
+ *  两处各算一遍就会在奇数页上错开一位。 */
+export const spreadStart = (index: number): number =>
+  storedSpread() ? index - (index % 2) : index;
 
 /** 当前灯箱的规格。Swiper 的每屏张数建时定死，切双页/单页要按这份整棵重挂。 */
 let current: {
   slides: LightboxSlide[]; index: number; Swiper: SwiperConstructor; host: LightboxHost | null;
   spreadAllowed: boolean; spread: boolean;
+  onPageChange?: (index: number) => void; onClose?: () => void;
 } | null = null;
 
 function renderLightbox(): void {
@@ -40,13 +52,14 @@ function renderLightbox(): void {
   flushSync(() => at.render(
     <PhotoLightbox key={`lightbox-${++generation}`} slides={spec.slides} index={spec.index}
       Swiper={spec.Swiper} host={spec.host} spreadAllowed={spec.spreadAllowed} spread={spec.spread}
-      onSpread={toggleSpread} />));
+      onSpread={toggleSpread} onPage={spec.onPageChange} />));
 }
 
 function toggleSpread(next: boolean, page: number): void {
   if (!current) return;
   current.spread = next;
-  lastSpread = next;
+  sessionSpread = next;
+  try { localStorage.setItem(SPREAD_KEY, next ? '1' : '0') } catch { /* 存不了就只记这一会话。 */ }
   // 双页从跨页的左页起步；回单页落在当前跨页的左页上。
   current.index = next ? page - (page % 2) : page;
   renderLightbox();
@@ -65,9 +78,12 @@ function lightboxRoot(): Root {
 }
 
 /** 从第 `index` 张开始看 `slides`。Swiper 取不到时退到新标签页里打开那一张大图。
- *  `spreadAllowed` 给出「双页」开关（漫画阅读用）：一屏两页，翻一次走两页。 */
+ *  `spreadAllowed` 给出「双页」开关（漫画阅读用）：一屏两页，翻一次走两页。
+ *  `onPageChange` 在真的翻到哪一张时回报下标（漫画阅读进度用）；`onClose` 只在
+ *  真正关掉时回一次——切双页/单页整棵重挂不算关。 */
 export async function openPhotoLightbox(index: number, slides: LightboxSlide[], actions?: LightboxHost,
-    options?: { spreadAllowed?: boolean }): Promise<void> {
+    options?: { spreadAllowed?: boolean; onPageChange?: (index: number) => void;
+                onClose?: () => void }): Promise<void> {
   if (!slides.length || index < 0 || index >= slides.length) return;
   let Swiper: SwiperConstructor;
   try {
@@ -78,12 +94,14 @@ export async function openPhotoLightbox(index: number, slides: LightboxSlide[], 
   }
   current = {
     slides, index, Swiper, host: actions ?? null,
-    spreadAllowed: options?.spreadAllowed === true, spread: lastSpread,
+    spreadAllowed: options?.spreadAllowed === true, spread: storedSpread(),
+    onPageChange: options?.onPageChange, onClose: options?.onClose,
   };
   renderLightbox();
 }
 
 export function closePhotoLightbox(): void {
+  current?.onClose?.();
   if (root) flushSync(() => root!.render(null));
 }
 
@@ -94,10 +112,11 @@ interface Detail {
   isOpen(): boolean;
 }
 
-function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, spread, onSpread }: {
+function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, spread, onSpread, onPage }: {
   slides: LightboxSlide[]; index: number; Swiper: SwiperConstructor; host: LightboxHost | null;
   spreadAllowed: boolean; spread: boolean;
   onSpread(next: boolean, page: number): void;
+  onPage?: (index: number) => void;
 }) {
   const many = slides.length > 1;
   const detailId = useId();
@@ -112,7 +131,11 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
   const range = useRef<HTMLInputElement>(null);
   const zoom = useRef<PhotoZoom | null>(null);
   const detail = useRef<Detail | null>(null);
-  const [active, setActive] = useState(index);
+  const mainSwiper = useRef<SwiperInstance | null>(null);
+  // 双页从跨页的左页起：开局下标、页码与缩略条居中都用这个对齐后的起点，
+  // 不然从奇数页恢复双页时，画布在偶数页、页码却还在奇数页。
+  const start = spread ? index - (index % 2) : index;
+  const [active, setActive] = useState(start);
   const [percent, setPercent] = useState(100);
   /* 大图的自然尺寸，到了才知道：面板上的分辨率读它。取不到原图的那几张换成缩略图。 */
   const [natural, setNatural] = useState<Record<number, [number, number]>>({});
@@ -120,7 +143,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
   /** 原图和缩略图都取不到的那几张：放一块占位，不露浏览器的破图标。 */
   const [lost, setLost] = useState<ReadonlySet<number>>(() => new Set());
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState<{ at: number; text: string }>({ at: index, text: '' });
+  const [status, setStatus] = useState<{ at: number; text: string }>({ at: start, text: '' });
 
   useLayoutEffect(() => {
     const dialog = box.current!;
@@ -133,7 +156,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
     const centerThumb = (at: number, speed = 200) => strip.slideTo(at, speed);
     const main = new Swiper(mainEl.current!, {
       // 双页一屏两张、翻一次走两张；重挂由开关触发（每屏张数建时定死）。
-      initialSlide: spread ? index - (index % 2) : index,
+      initialSlide: start,
       slidesPerView: spread ? 2 : 1,
       slidesPerGroup: spread ? 2 : 1,
       zoom: { minRatio: .01, maxRatio: 100 }, keyboard: { enabled: true }, lazyPreloadPrevNext: 1,
@@ -152,10 +175,12 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         slideChange(this: SwiperInstance) {
           setActive(this.activeIndex);
           centerThumb(this.activeIndex);
+          onPage?.(this.activeIndex);
         },
       },
     });
-    centerThumb(index, 0);
+    mainSwiper.current = main;
+    centerThumb(start, 0);
     zoom.current = photoZoom(dialog, main, setPercent);
     const context = wireContextCard(dialog, toggle.current!, panel.current!);
     const dismiss = (returnFocus = false) => {
@@ -193,6 +218,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
       resize.disconnect();
       main.destroy(true, true);
       strip.destroy(true, true);
+      mainSwiper.current = null;
       zoom.current = null;
       detail.current = null;
       dialog.close();
@@ -204,6 +230,10 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
   useLayoutEffect(() => { if (range.current) syncBoardRange(range.current) }, [percent]);
 
   const slide = slides[active];
+  /* 当前页与相邻页不走懒加载：`<dialog>` 里的 lazy 图在 showModal 前后那一次可见性判定
+     有竞态，首图可能永远不发起请求（currentSrc 一直为空）。窗口与按需加载一致：active ± 1，
+     双页的右页（active + 1）也在内；其余页仍交给 `loading="lazy"` 按需取。 */
+  const eagerSlides = new Set([active - 1, active, active + 1]);
   const asset = slide.asset ?? null;
   const reveal = async (button: HTMLButtonElement) => {
     if (!asset || !actions || button.getAttribute('aria-busy') === 'true') return;
@@ -257,7 +287,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
               <div className="swiper-zoom-container">
                 {lost.has(at)
                   ? <span data-photo-missing="">图片取不到</span>
-                  : <img src={broken.has(at) ? item.thumb : item.src} alt={item.name ?? ''} loading="lazy"
+                  : <img src={broken.has(at) ? item.thumb : item.src} alt={item.name ?? ''} loading={eagerSlides.has(at) ? 'eager' : 'lazy'}
                     referrerPolicy="no-referrer" onLoad={(event) => loaded(at, event.currentTarget)}
                     onError={() => failed(at)} />}
               </div>
@@ -270,7 +300,9 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         <button ref={fwd} type="button" data-photo-nav="fwd" aria-label="下一张"
           dangerouslySetInnerHTML={{ __html: icon('chevron-left') }} />
       </div>
-      <div data-photo-bar="">
+      {/* 漫画档多一枚「双页」：给工具条打上 `data-spread-allowed`，样式把缩放药丸排到
+          第二行整行居中；AV 灯箱没有这一枚，缩放仍贴右（photo-lightbox.css）。 */}
+      <div data-photo-bar="" data-spread-allowed={spreadAllowed ? '' : undefined}>
         <button ref={toggle} type="button" data-photo-detail-toggle="" aria-expanded="false" aria-controls={detailId}
           aria-haspopup="dialog" aria-label="图片详情" title="图片详情" dangerouslySetInnerHTML={{ __html: icon('info') }} />
         <div>
@@ -315,9 +347,11 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         <div className="swiper-wrapper">
           {/* thumb 就是原图：整条清单都给 src 会在长清单上偷跑——没加载的图宽度为 0，
               全挤在起点附近，浏览器把每张都当「邻近」。只给当前张 ±30 的真实地址，
-              其余留空占位，盒宽由加载后的图自己长出来；照片墙的清单短，罩得住全部。 */}
+              其余留空占位，盒宽由加载后的图自己长出来；照片墙的清单短，罩得住全部。
+              点格跳页不交给 Swiper 的 thumbs 接线（长清单上实测有到不了的时候），
+              这里自己把下标交回主轮播，两条 Swiper 仍各管各的位移。 */}
           {slides.map((item, at) => (
-            <div key={at} className="swiper-slide">
+            <div key={at} className="swiper-slide" onClick={() => mainSwiper.current?.slideTo(at)}>
               {Math.abs(at - active) <= STRIP_WINDOW
                 ? <img src={item.thumb} alt="" loading="lazy" referrerPolicy="no-referrer" />
                 : <span data-photo-thumb-empty="" aria-hidden="true" />}

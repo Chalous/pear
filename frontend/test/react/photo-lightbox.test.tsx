@@ -67,12 +67,13 @@ afterEach(async () => {
 const frame = () => act(() => new Promise<void>((done) => requestAnimationFrame(() => done())));
 /** 加载器还没取过样式表时，插进来的 link 不进文档（进了 happy-dom 会真去取 `/vendor/`），
  *  当场放行 load；取过就直接打开。 */
-async function open(index: number, slides: LightboxSlide[], host?: LightboxHost) {
+async function open(index: number, slides: LightboxSlide[], host?: LightboxHost,
+    options?: Parameters<typeof openPhotoLightbox>[3]) {
   const append = vi.spyOn(document.head, 'append').mockImplementation((...nodes) => {
     for (const node of nodes) if (node instanceof HTMLLinkElement) queueMicrotask(() => node.dispatchEvent(new Event('load')));
   });
   try {
-    await act(async () => { await openPhotoLightbox(index, slides, host) });
+    await act(async () => { await openPhotoLightbox(index, slides, host, options) });
   } finally {
     append.mockRestore();
   }
@@ -145,8 +146,11 @@ describe('打开', () => {
     expect(strip().slideTo).toHaveBeenCalledWith(2, 0);
     const images = [...q(box, '[data-photo-main]').querySelectorAll('img')];
     expect(images.map((img) => img.getAttribute('src'))).toEqual(WALL.map((slide) => slide.src));
-    expect(images.every((img) => img.getAttribute('loading') === 'lazy'
-      && img.getAttribute('referrerpolicy') === 'no-referrer')).toBe(true);
+    /* 当前页与相邻页走 eager：dialog 里的 lazy 图在打开时机上有竞态，首图可能不发起请求。
+       这一档从第 2 张（下标 2）打开，窗口是 1–3；其余页仍交给懒加载按需取。 */
+    expect(images.map((img) => img.getAttribute('loading')))
+      .toEqual(WALL.map((_, at) => (at >= 1 && at <= 3 ? 'eager' : 'lazy')));
+    expect(images.every((img) => img.getAttribute('referrerpolicy') === 'no-referrer')).toBe(true);
     expect([...q(box, '[data-photo-strip]').querySelectorAll('img')].map((img) => img.getAttribute('src')))
       .toEqual(WALL.map((slide) => slide.thumb));
   });
@@ -222,6 +226,52 @@ describe('翻页', () => {
     expect(main().update).toHaveBeenCalled();
     expect(strip().update).toHaveBeenCalled();
     expect(main().zoom.out).toHaveBeenCalled();
+  });
+});
+
+describe('阅读进度回报', () => {
+  it('真的翻到哪一张就回报哪一张的下标；没接回报的壳照常翻页', async () => {
+    const onPageChange = vi.fn();
+    await open(2, WALL, undefined, { onPageChange });
+    await main().go(3);
+    expect(onPageChange).toHaveBeenLastCalledWith(3);
+    await open(0, WALL);
+    await main().go(1);
+    expect(onPageChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('onClose 只在真的关掉时回一次：切双页整棵重挂不算关', async () => {
+    const onClose = vi.fn();
+    let box = await open(0, [local(1), local(2)], undefined, { spreadAllowed: true, onClose });
+    await click(labelled(box, '切到双页'));
+    box = document.querySelector('dialog[data-photo-lightbox]')!;
+    expect(box.isConnected).toBe(true);
+    expect(onClose).not.toHaveBeenCalled();
+    await click(labelled(box, '关闭'));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('双页档', () => {
+  const SPREAD_KEY = 'peach.lightbox-spread.v1';
+
+  beforeEach(() => { localStorage.removeItem(SPREAD_KEY) });
+  afterEach(() => { localStorage.removeItem(SPREAD_KEY) });
+
+  it('切到双页记在本机：下次打开直接按双页起、起步对齐到跨页的左页；切回单页也记住', async () => {
+    const slides = [local(1), local(2), local(3), local(4)];
+    let box = await open(0, slides, undefined, { spreadAllowed: true });
+    expect(box.hasAttribute('data-spread')).toBe(false);
+    await click(labelled(box, '切到双页'));
+    box = document.querySelector('dialog[data-photo-lightbox]')!;
+    expect(localStorage.getItem(SPREAD_KEY)).toBe('1');
+    await click(labelled(box, '关闭'));
+    box = await open(1, slides, undefined, { spreadAllowed: true });
+    expect(box.hasAttribute('data-spread')).toBe(true);
+    expect(main().options.initialSlide).toBe(0);
+    expect(q(box, '[data-photo-count]').textContent).toBe('1–2 / 4');
+    await click(labelled(box, '切回单页'));
+    expect(localStorage.getItem(SPREAD_KEY)).toBe('0');
   });
 });
 

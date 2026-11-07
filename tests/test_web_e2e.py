@@ -71,6 +71,26 @@ def load_demo_script():
     return module
 
 
+def write_comic_book(media: Path, name: str, numbers: tuple[int, ...]) -> None:
+    """演示库里放一本合成漫画：竖版纯色页写页号，文件名 1/2/10 练自然序。
+
+    阅读器几何用例要竖页才吃高度约束，页号写在画面里，翻页时看得出取的是哪一张。
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    book = media / name
+    book.mkdir(parents=True)
+    for number in numbers:
+        page = Image.new("RGB", (1000, 1414), (58, 74, 90))
+        draw = ImageDraw.Draw(page)
+        try:
+            font = ImageFont.load_default(size=160)
+        except TypeError:  # 旧 Pillow 的默认字体不接受尺寸
+            font = ImageFont.load_default()
+        draw.text((80, 80), f"p{number}", fill=(240, 240, 240), font=font)
+        page.save(book / f"{number}.jpg", format="JPEG", quality=90)
+
+
 def free_port() -> int:
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as probe:
         probe.bind(("127.0.0.1", 0))
@@ -219,6 +239,7 @@ class WebE2ESmokeTests(unittest.TestCase):
         media = cls.root / "media"
         load_demo_script().generate(media, count=12, seed=7, video="ffmpeg", duration=2,
                                     ffmpeg=cls.ffmpeg)
+        write_comic_book(media, "合成漫画样本", (1, 2, 10))
         data = cls.root / "peach-data"
         (data / "database").mkdir(parents=True)
         cls.db = fresh_ledger(data / "database")

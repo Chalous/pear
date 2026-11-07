@@ -62,8 +62,9 @@ def sync_pages(connection, asset_id: int, pages: dict[str, tuple[int, str]]) -> 
 
     `pages` 按文件名给（大小, mtime 日期）；次序由 `natural_key` 现算。已有页按
     casefold 对上：相对路径只在大小写变化时改写，页 ID 不变。盘上不再有的页删掉——
-    调用方保证目录刚被成功列举过，离线目录不会走到这里。第 2 轮起仍被阅读记录引用的
-    失踪页要走保留判据，在那之前直接删是安全的（本轮没有引用页的东西）。
+    调用方保证目录刚被成功列举过，离线目录不会走到这里。仍被阅读进度引用的页例外：
+    行留着，文件回来了按 casefold 接回同一个 ID，进度无损；清单里那页取不到图就
+    显示「图片取不到」，翻走后进度自然挪到新页。
     """
     existing = {row[0].casefold(): (int(row[1]), row[0]) for row in connection.execute(
         "SELECT relative_path,id FROM comic_page WHERE asset_id=?", (asset_id,))}
@@ -77,10 +78,38 @@ def sync_pages(connection, asset_id: int, pages: dict[str, tuple[int, str]]) -> 
                 "INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(?,?,?)",
                 (asset_id, name, ordinal))
     present = {name.casefold() for name in pages}
+    anchored = {int(row[0]) for row in connection.execute(
+        "SELECT page_id FROM comic_progress WHERE asset_id=?", (asset_id,))}
     for key, (page_id, _spelling) in existing.items():
-        if key not in present:
+        if key not in present and page_id not in anchored:
             connection.execute("DELETE FROM comic_page WHERE id=?", (page_id,))
     connection.commit()
+
+
+def progress_page(connection, asset_id: int) -> int | None:
+    """最后读到的页 ID；这本书还没读过返回 None。"""
+    row = connection.execute(
+        "SELECT page_id FROM comic_progress WHERE asset_id=?", (asset_id,)).fetchone()
+    return int(row[0]) if row is not None else None
+
+
+def save_progress(connection, asset_id: int, page_id: int, viewed_at: int) -> bool:
+    """把「最后读的页」记成 `page_id`，然后提交。页不属于这本书就不记。
+
+    `viewed_at` 是客户端记下这一页的时刻（毫秒）。快速翻页时早先的保存可能后到，
+    只认更大的时刻：两个窗口看同一本书时，也是后合上的那窗说了算。
+    """
+    if connection.execute(
+            "SELECT 1 FROM comic_page WHERE id=? AND asset_id=?", (page_id, asset_id),
+    ).fetchone() is None:
+        return False
+    connection.execute(
+        "INSERT INTO comic_progress(asset_id,page_id,viewed_at) VALUES(?,?,?) "
+        "ON CONFLICT(asset_id) DO UPDATE SET page_id=excluded.page_id,viewed_at=excluded.viewed_at "
+        "WHERE excluded.viewed_at > comic_progress.viewed_at",
+        (asset_id, page_id, viewed_at))
+    connection.commit()
+    return True
 
 
 def comic_asset(connection, asset_id: int):
