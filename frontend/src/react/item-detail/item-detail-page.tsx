@@ -34,7 +34,7 @@ import { MediaCarousel } from '../components/media-carousel';
 import { CatalogPicture } from './catalog-picture';
 import { fetchJavDetail, javDetailKey } from '../jav-detail/jav-detail';
 import { busyProps } from '../settings/use-action';
-import { openPhotoLightbox } from '../photo-lightbox/photo-lightbox-dialog';
+import { openComicReader } from '../comics/comic-reader';
 import { ExternalPlayback } from './external-playback';
 import { isPlayerGuidePreview } from '../../player/guide-preview';
 import { CoverCrop } from '../cover-crop/cover-crop-page';
@@ -137,15 +137,6 @@ function Detail(props: ItemDetailProps & { item: DetailItem; queue: DetailQueue 
 
 /* ── 漫画 ── */
 
-/** `/api/comic-pages` 的回包；`error` 与 `message` 是服务端口径（`web_comics.py`）。 */
-interface ComicPages {
-  id: number;
-  name?: string;
-  error?: string;
-  message?: string;
-  pages?: { id: number; ordinal: number; url: string }[];
-}
-
 /** 漫画详情：媒体格里是首图当封面，侧栏只有标题、页数与「开始阅读」。
  *  播放器、外部播放与补预览那些视频控件都不出；页级反馈是第 3 轮的事。 */
 function ComicDetail({ item, actions, helpers }: {
@@ -157,22 +148,8 @@ function ComicDetail({ item, actions, helpers }: {
     if (busy) return;
     setBusy(true);
     try {
-      const data = await apiGet<ComicPages>(`/api/comic-pages?id=${item.id}`);
-      if (data.error) {
-        actions.toast(data.message || '页清单还没有建立，先在来源目录上扫一遍');
-        return;
-      }
-      if (!data.pages?.length) {
-        actions.toast('这本书还没有可读的页，先在来源目录上扫一遍');
-        return;
-      }
-      /* 阅读器就是图片灯箱：单页适宽、左右键与滚轮翻页、页码与缩放都是现成的。
-         相邻页按需加载，直接跳最后一页也只取需要的图。关掉回到这一页。 */
-      await openPhotoLightbox(0, data.pages.map((page, index) => ({
-        src: page.url, thumb: page.url, name: `第 ${index + 1} 页`,
-      })));
-    } catch (error) {
-      actions.failure('打开阅读器', error);
+      /* 与卡片直开同一条口径：取不到页清单给一句回执，不打断当前页。 */
+      await openComicReader(item.id, { toast: actions.toast, failure: actions.failure });
     } finally {
       setBusy(false);
     }

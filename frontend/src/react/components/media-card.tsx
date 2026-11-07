@@ -246,6 +246,9 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
       actions.toggleSelection(item.id, event.shiftKey);
       return;
     }
+    /* 悬停的「打开详情」始终进详情浮层；漫画的点卡默认直接进阅读器。 */
+    if (target.closest('[data-open-detail]')) { onOpen(item, el); return }
+    if (String(item.medium) === 'comic' && actions.openComic) { actions.openComic(item); return }
     if (target.closest('[data-open]')) { onOpen(item, el); return }
     const entity = target.closest<HTMLElement>('[data-entity-kind]');
     if (entity && el.contains(entity)) {
@@ -307,7 +310,7 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
           title={`后退 ${seekSeconds} 秒`} aria-label={`后退 ${seekSeconds} 秒`}><Icon name="rotate-ccw" /></button>
         <button type="button" onClick={(event) => { event.stopPropagation(); seekPreview(card.current, seekSeconds) }}
           title={`前进 ${seekSeconds} 秒`} aria-label={`前进 ${seekSeconds} 秒`}><Icon name="rotate-cw" /></button>
-        <button type="button" data-open="" title="打开详情" aria-label="打开详情"><Icon name="expand" /></button>
+        <button type="button" data-open-detail="" title="打开详情" aria-label="打开详情"><Icon name="expand" /></button>
       </div> : null}
     </div>
   );
