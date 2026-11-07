@@ -90,13 +90,22 @@
 .peach-react [data-photo-lightbox][data-has-strip] [data-photo-main] .swiper-zoom-container {
   padding-bottom: 148px;
 }
-/* 双页档：一屏两页各占一半；页图仍按各自的半格取景，页与页之间留一道缝。 */
+/* 双页档：一屏两页各占一半；两页像摊开的书一样向中缝靠拢（左页贴右、右页贴左），
+   中间只隔各 3px 的固定细缝。页图的网格轨道按内容成型，挪轨道要动 justify-content，
+   justify-items 在内容宽的轨道里没有移动余地。 */
 .peach-react [data-photo-lightbox][data-spread] [data-photo-main] > .swiper-wrapper > .swiper-slide {
   flex: 0 0 50%;
 }
 .peach-react [data-photo-lightbox][data-spread] [data-photo-main] .swiper-zoom-container {
-  padding-left: 4px;
-  padding-right: 4px;
+  padding: 0 3px;
+}
+.peach-react [data-photo-lightbox][data-spread] [data-photo-main] > .swiper-wrapper > .swiper-slide:nth-child(odd) .swiper-zoom-container {
+  align-items: center;
+  justify-content: end;
+}
+.peach-react [data-photo-lightbox][data-spread] [data-photo-main] > .swiper-wrapper > .swiper-slide:nth-child(even) .swiper-zoom-container {
+  align-items: center;
+  justify-content: start;
 }
 .peach-react [data-photo-main] img {
   display: block;

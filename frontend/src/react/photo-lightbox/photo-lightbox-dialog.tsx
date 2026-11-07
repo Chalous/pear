@@ -274,9 +274,9 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         <button ref={toggle} type="button" data-photo-detail-toggle="" aria-expanded="false" aria-controls={detailId}
           aria-haspopup="dialog" aria-label="图片详情" title="图片详情" dangerouslySetInnerHTML={{ __html: icon('info') }} />
         <div>
-          {/* 双页时页码给当前跨页的区间；最后一页落单就只写它自己。 */}
-          <div data-photo-count="" aria-live="polite">{spread
-            ? `${active + 1}–${Math.min(active + 2, slides.length)} / ${slides.length}`
+          {/* 双页时页码给当前跨页的区间；奇数页的书末页落单就只写它自己。 */}
+          <div data-photo-count="" aria-live="polite">{spread && active + 1 < slides.length
+            ? `${active + 1}–${active + 2} / ${slides.length}`
             : `${active + 1} / ${slides.length}`}</div>
           {many ? <div ref={pagination} data-photo-pagination="" aria-label="选择图片" /> : null}
         </div>
