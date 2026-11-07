@@ -18,6 +18,9 @@ import { tagLabel } from '../../src/core/tags';
 import { queryClient } from '../../src/react/query';
 import { click, mount, pending, settle, type } from './render';
 
+const openReader = vi.hoisted(() => vi.fn(async () => {}));
+vi.mock('../../src/react/comics/comic-reader', () => ({ openComicReader: openReader }));
+
 afterEach(() => { queryClient.clear(); localStorage.removeItem('peach.recentTags') });
 notifyManager.setScheduler((notify) => notify());
 
@@ -621,5 +624,37 @@ describe('侧栏怎么读', () => {
     await act(async () => { await new Promise((done) => setTimeout(done, 0)) });
     await act(async () => { document.body.dispatchEvent(new MouseEvent('click', { bubbles: true })) });
     await vi.waitFor(() => expect(picker.hidden).toBe(true));
+  });
+});
+
+describe('漫画详情', () => {
+  const comic = () => item(7, { name: '合成漫画样本', medium: 'comic', comic_pages: 10 } as Partial<DetailItem>);
+
+  it('标记历史一条一行，点一条带着页 ID 回阅读器', async () => {
+    serve(() => ({ ok: true }), {
+      '/api/comic-events?id=7': { id: 7, events: [
+        { id: 'e-o', kind: 'o', reason: null, occurred_at: 1700000000000, undone_at: null,
+          first: { id: 71, ordinal: 3 }, last: { id: 71, ordinal: 3 } },
+        { id: 'e-like', kind: 'like', reason: '画风', occurred_at: 1699990000000, undone_at: 1699999000000,
+          first: { id: 70, ordinal: 1 }, last: { id: 70, ordinal: 1 } },
+      ] },
+    });
+    const { host } = await show(comic());
+    const rows = [...host.querySelectorAll('[data-comic-mark]')];
+    expect(rows.map((row) => row.querySelector('[data-mark-kind]')?.textContent)).toEqual(['高潮', '喜欢']);
+    expect(rows.map((row) => row.querySelector('[data-mark-range]')?.textContent)).toEqual(['第 3 页', '第 1 页']);
+    expect(rows.map((row) => row.querySelector('[data-mark-reason]')?.textContent)).toEqual([undefined, '画风']);
+    expect(rows[1].hasAttribute('data-undone')).toBe(true);
+    expect(rows[1].querySelector('[data-mark-undone]')?.textContent).toBe('已撤销');
+    await click(rows[0]);
+    expect(openReader).toHaveBeenLastCalledWith(7, expect.anything(), { pageId: 71 });
+  });
+
+  it('没有标记的漫画不出历史块；开始阅读不带页 ID', async () => {
+    serve(() => ({ ok: true }), { '/api/comic-events?id=7': { id: 7, events: [] } });
+    const { host } = await show(comic());
+    expect(host.querySelector('[data-comic-marks]')).toBeNull();
+    await click(host.querySelector('[data-comic-read-btn]'));
+    expect(openReader).toHaveBeenLastCalledWith(7, expect.anything(), undefined);
   });
 });

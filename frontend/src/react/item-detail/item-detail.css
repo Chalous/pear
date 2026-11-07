@@ -522,3 +522,40 @@
 }
 .peach-react [data-item-detail] [data-comic-read-btn]:hover:not(:disabled) { border-color: var(--ink); }
 .peach-react [data-item-detail] [data-comic-read-btn]:disabled { opacity: .55; cursor: default; }
+
+/* 标记历史：阅读器里当场标的喜欢与高潮，点一条回到那一页。已撤销的整条淡出，
+   尾随一枚「已撤销」；行面与详情其余控件同一副。 */
+.peach-react [data-item-detail] [data-comic-marks] { margin-top: 20px; display: grid; gap: 6px; }
+.peach-react [data-item-detail] [data-comic-marks-head] {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+.peach-react [data-item-detail] [data-comic-marks-list] { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.peach-react [data-item-detail] [data-comic-mark] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--meter);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  text-align: left;
+}
+.peach-react [data-item-detail] [data-comic-mark]:hover { border-color: var(--ink); }
+.peach-react [data-item-detail] [data-comic-mark] [data-mark-kind] { flex: none; font-weight: 600; }
+.peach-react [data-item-detail] [data-comic-mark] [data-mark-range] { flex: none; font-family: "Cascadia Mono", Consolas, ui-monospace, monospace; font-size: var(--fs-xs); }
+.peach-react [data-item-detail] [data-comic-mark] [data-mark-reason] {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.peach-react [data-item-detail] [data-comic-mark] [data-mark-time] { margin-left: auto; flex: none; color: var(--muted); font-size: var(--fs-xs); }
+.peach-react [data-item-detail] [data-comic-mark][data-undone] { opacity: .55; }
+.peach-react [data-item-detail] [data-comic-mark] [data-mark-undone] { flex: none; color: var(--muted); font-size: var(--fs-xs); }
