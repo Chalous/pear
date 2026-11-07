@@ -748,6 +748,27 @@ class ComicScanTests(_ScanCase):
         self._scan_comic_root()
         self.assertEqual([row[0] for row in self._pages()], ["1.jpg"])
 
+    def test_rescan_keeps_the_page_that_reading_progress_still_references(self):
+        """阅读进度按页 ID 记账，页行跟着保住：文件回来了按 casefold 接回同一个 ID，
+        进度无损；没人引用的页照删。"""
+        book = self.media / "某书"
+        book.mkdir()
+        for name in ("1.jpg", "2.jpg"):
+            (book / name).write_bytes(b"x")
+        self._scan_comic_root()
+        pages = {row[0]: row[1] for row in self._pages()}
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute(
+                "INSERT INTO comic_progress(asset_id,page_id,viewed_at) VALUES(?,?,1000)",
+                (self._book_id(), pages["2.jpg"]))
+        (book / "2.jpg").unlink()
+        self._scan_comic_root()
+        # 还在盘上的页照常在；失踪的那页行被进度保住，不删。
+        self.assertEqual([row[0] for row in self._pages()], ["1.jpg", "2.jpg"])
+        (book / "2.jpg").write_bytes(b"x")
+        self._scan_comic_root()
+        self.assertEqual({row[0]: row[1] for row in self._pages()}["2.jpg"], pages["2.jpg"])
+
     def test_the_scan_root_itself_can_be_a_book(self):
         for name in ("1.jpg", "2.png", "3.webp"):
             (self.media / name).write_bytes(b"x")

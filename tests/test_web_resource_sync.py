@@ -586,6 +586,23 @@ class PurgeMissingTests(unittest.TestCase):
             left = connection.execute("SELECT COUNT(*) FROM comic_page WHERE asset_id=5").fetchone()[0]
         self.assertEqual(left, 0)
 
+    def test_purging_a_comic_also_cleans_its_reading_progress(self):
+        """阅读进度挂在 `comic_progress` 上，同样进 ASSET_REFERENCE_TABLES，清账一起走。"""
+        self._add_comic(directory=self.OTHER_DIR)
+        with contextlib.closing(sqlite3.connect(self.db_path)) as connection, connection:
+            page_id = connection.execute("SELECT id FROM comic_page WHERE asset_id=5").fetchone()[0]
+            connection.execute(
+                "INSERT INTO comic_progress(asset_id,page_id,viewed_at) VALUES(5,?,1000)", (page_id,))
+        with self._synced():
+            with contextlib.closing(sqlite3.connect(self.db_path)) as connection, connection:
+                connection.row_factory = sqlite3.Row
+                row = connection.execute("SELECT * FROM asset WHERE id=5").fetchone()
+                web_batch.purge_assets(connection, [dict(row)], missing_only=True)
+        self.assertNotIn(5, self.ids())
+        with contextlib.closing(sqlite3.connect(self.db_path)) as connection:
+            left = connection.execute("SELECT COUNT(*) FROM comic_progress WHERE asset_id=5").fetchone()[0]
+        self.assertEqual(left, 0)
+
 
 class ResourceSyncCleanupTests(unittest.TestCase):
     """一次检查、一次执行：失效记录、空文件夹与孤儿缓存一起清。失效记录带个人记录的标已消失，

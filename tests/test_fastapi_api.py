@@ -112,6 +112,8 @@ CREATE TABLE asset_entity(
 CREATE TABLE comic_page(
   id INTEGER PRIMARY KEY,asset_id INTEGER NOT NULL,relative_path TEXT NOT NULL,
   ordinal INTEGER NOT NULL,UNIQUE(asset_id,relative_path));
+CREATE TABLE comic_progress(
+  asset_id INTEGER PRIMARY KEY,page_id INTEGER NOT NULL,viewed_at INTEGER NOT NULL);
 CREATE TABLE entity_membership(
   member_id INTEGER PRIMARY KEY,agency_id INTEGER,source TEXT,
   confidence REAL DEFAULT 1.0,checked_at TEXT);
@@ -4488,6 +4490,35 @@ class ComicWebTests(unittest.TestCase):
         self.assertEqual(item['medium'], 'comic')
         self.assertEqual(item['comic_pages'], 2)
         self.assertTrue(any(row['id'] == 1 for row in items))
+
+    def test_progress_saves_and_page_list_resumes_there(self):
+        """进度按页 ID 记账：清单把上次读到的页折成下标，开局直接落在那里；
+        迟到的旧位置（viewed_at 更小）不覆盖较新的位置。"""
+        with route_client(self.app) as client:
+            saved = client.post('/api/comic-progress',
+                                json={'asset': 1, 'page': 2, 'viewed_at': 1000}).json()
+            payload = client.get('/api/comic-pages?id=1').json()
+            client.post('/api/comic-progress', json={'asset': 1, 'page': 1, 'viewed_at': 900})
+            after_stale = client.get('/api/comic-pages?id=1').json()
+            client.post('/api/comic-progress', json={'asset': 1, 'page': 1, 'viewed_at': 2000})
+            moved = client.get('/api/comic-pages?id=1').json()
+        self.assertEqual(saved, {'ok': True})
+        # 下标从 0 起：第二页在清单里的下标是 1。
+        self.assertEqual(payload['resume'], {'index': 1})
+        self.assertEqual(after_stale['resume'], {'index': 1})
+        self.assertEqual(moved['resume'], {'index': 0})
+
+    def test_progress_ignores_foreign_pages_and_unknown_books(self):
+        """页不属于这本书就记不住；书不在库（回收站、已消失都算）报 not found。"""
+        with route_client(self.app) as client:
+            foreign = client.post('/api/comic-progress',
+                                  json={'asset': 1, 'page': 99, 'viewed_at': 1000}).json()
+            unknown = client.post('/api/comic-progress',
+                                  json={'asset': 99, 'page': 1, 'viewed_at': 1000}).json()
+            payload = client.get('/api/comic-pages?id=1').json()
+        self.assertEqual(foreign, {'ok': False})
+        self.assertEqual(unknown, {'error': 'not found'})
+        self.assertNotIn('resume', payload)
 
 
 if __name__ == "__main__":
