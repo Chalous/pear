@@ -28,7 +28,7 @@ export async function openComicReader(assetId: number, notify: {
     }
     await openPhotoLightbox(0, data.pages.map((page, index) => ({
       src: page.url, thumb: page.url, name: `第 ${index + 1} 页`,
-    })));
+    })), undefined, { spreadAllowed: true });
   } catch (error) {
     notify.failure('打开阅读器', error);
   }

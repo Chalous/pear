@@ -17,7 +17,6 @@ import { javDisplayName, javTitleHtml } from '../core/jav-title';
 import { tagLabel } from '../core/tags';
 import { entityDisplayName } from '../core/entity-names';
 import { loadStage, stageApi } from '../react/application-residents';
-import { openComicReader } from '../react/comics/comic-reader';
 import { currentBarsContext, entityState, openEntity, pushEntityPage, routeEntityPage, sortKeys } from './entity.js';
 import { applicationEffects } from './effects';
 import { managedEntry, managedTaken, openManagedRoute, releaseManagedRoute, updateManagedRoute } from './../history/managed';
@@ -578,11 +577,15 @@ catalogState.gridActions = {
   },
   wallDetails:openCardDetails,
   open:(it,anchor)=>openGridCard(it,anchor),
-  /* 点开一本漫画直接进阅读器；页清单取不到时给一句回执，详情走卡片上的「打开详情」。 */
-  openComic:it=>openComicReader(it.id,{
-    toast:message=>receiptsState.toast({text:message}),
-    failure:(action,error)=>receiptsState.actionFailure(action,error),
-  }),
+  /* 点开一本漫画直接进阅读器；页清单取不到时给一句回执，详情走卡片上的「打开详情」。
+     阅读器模块按需引入：静态引入会把灯箱拽进遗留主包的初始化环里，壳的开卡路径整个变哑。 */
+  openComic:async it=>{
+    const { openComicReader } = await import('../react/comics/comic-reader');
+    openComicReader(it.id,{
+      toast:message=>receiptsState.toast({text:message}),
+      failure:(action,error)=>receiptsState.actionFailure(action,error),
+    });
+  },
   openResource:(it,anchor)=>stageApi()?.miniplayerTakesCard(it)?stageApi().miniplayerPlay(it.id):openResourceCard(it,anchor),
   openShort:it=>stageApi()?.miniplayerTakesCard(it)?stageApi().miniplayerPlay(it.id):openTok(it.id),
   openShorts:()=>openTok(),
