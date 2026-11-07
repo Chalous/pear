@@ -769,6 +769,34 @@ class ComicScanTests(_ScanCase):
         self._scan_comic_root()
         self.assertEqual({row[0]: row[1] for row in self._pages()}["2.jpg"], pages["2.jpg"])
 
+    def test_rescan_keeps_the_pages_that_feedback_events_still_reference(self):
+        """反馈事件（含已撤销的）引用的页行也保住：历史详情的回跳不随重扫失效。"""
+        book = self.media / "某书"
+        book.mkdir()
+        for name in ("1.jpg", "2.jpg", "3.jpg"):
+            (book / name).write_bytes(b"x")
+        self._scan_comic_root()
+        pages = {row[0]: row[1] for row in self._pages()}
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute(
+                "INSERT INTO comic_event(id,asset_id,kind,first_page_id,last_page_id,occurred_at) "
+                "VALUES('e-like',?, 'like',?,?,1000)",
+                (self._book_id(), pages["2.jpg"], pages["2.jpg"]))
+            connection.execute(
+                "INSERT INTO comic_event(id,asset_id,kind,first_page_id,last_page_id,occurred_at,undone_at) "
+                "VALUES('e-o-undone',?, 'o',?,?,2000,3000)",
+                (self._book_id(), pages["3.jpg"], pages["3.jpg"]))
+        (book / "2.jpg").unlink()
+        (book / "3.jpg").unlink()
+        self._scan_comic_root()
+        # 事件引用的两页行都保住；没人引用的页照删（这里没有别的页失踪）。
+        self.assertEqual([row[0] for row in self._pages()], ["1.jpg", "2.jpg", "3.jpg"])
+        (book / "2.jpg").write_bytes(b"x")
+        (book / "3.jpg").write_bytes(b"x")
+        self._scan_comic_root()
+        kept = {row[0]: row[1] for row in self._pages()}
+        self.assertEqual((kept["2.jpg"], kept["3.jpg"]), (pages["2.jpg"], pages["3.jpg"]))
+
     def test_the_scan_root_itself_can_be_a_book(self):
         for name in ("1.jpg", "2.png", "3.webp"):
             (self.media / name).write_bytes(b"x")
