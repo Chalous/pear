@@ -51,9 +51,10 @@
   outline-offset: 2px;
 }
 
-/* 主画布始终占满视口，安全内边距为底部工具、左右翻页和缩略图条留位；单图没有缩略图条，
- * 底部空间还给图片。Swiper 的 CSS 和脚本虽会一起等待，仍保留最小结构样式，避免缓存与首载的
- * 竞态把所有 slide 当普通块元素同时画出来。只限定主画布的直接子级，不影响缩略图条。 */
+/* 主画布占满视口；带缩略图条时底部让出一条实底带（86px），画面与缩略图从此不重叠——
+   双页与放大后的画面都在画布边缘裁掉，盖不住那条带，花页面上缩略图也看得清。
+   单图没有缩略图条，底部空间还给图片。Swiper 的 CSS 和脚本虽会一起等待，仍保留最小结构样式，
+   避免缓存与首载的竞态把所有 slide 当普通块元素同时画出来。只限定主画布的直接子级，不影响缩略图条。 */
 .peach-react [data-photo-main] {
   position: absolute;
   inset: 0;
@@ -62,6 +63,10 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+.peach-react [data-photo-lightbox][data-has-strip] [data-photo-main] {
+  bottom: 86px;
+  height: auto;
 }
 .peach-react [data-photo-main] > .swiper-wrapper {
   display: flex;
@@ -87,17 +92,22 @@
   min-height: 0;
   padding: 24px 72px 76px;
 }
+/* 底部工具条要浮在画面下缘上方：画面底边收到工具条上缘再留一口气。
+   缩略图条在自己的实底带里（主画布已让位），这里不再为它垫内边距。 */
 .peach-react [data-photo-lightbox][data-has-strip] [data-photo-main] .swiper-zoom-container {
-  padding-bottom: 148px;
+  padding-bottom: 64px;
 }
 /* 双页档：一屏两页各占一半；两页像摊开的书一样向中缝靠拢（左页贴右、右页贴左），
-   中间只隔各 3px 的固定细缝。页图的网格轨道按内容成型，挪轨道要动 justify-content，
-   justify-items 在内容宽的轨道里没有移动余地。 */
+   中间只隔各 3px 的固定细缝。上下内边距沿用单页那一套，底部继续由 `[data-has-strip]`
+   统一给：两页的显示框跟单页同高，同一页在两档里一样大。页图的网格轨道按内容成型，
+   挪轨道要动 justify-content，justify-items 在内容宽的轨道里没有移动余地。 */
 .peach-react [data-photo-lightbox][data-spread] [data-photo-main] > .swiper-wrapper > .swiper-slide {
   flex: 0 0 50%;
 }
 .peach-react [data-photo-lightbox][data-spread] [data-photo-main] .swiper-zoom-container {
-  padding: 0 3px;
+  padding-top: 24px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 .peach-react [data-photo-lightbox][data-spread] [data-photo-main] > .swiper-wrapper > .swiper-slide:nth-child(odd) .swiper-zoom-container {
   align-items: center;
@@ -224,6 +234,14 @@
 }
 .peach-react [data-photo-lightbox][data-has-strip] [data-photo-bar] {
   bottom: 98px;
+}
+/* 漫画档工具条多一枚「双页」，三列排不下四个孩子，缩放药丸原本自动换行落到左列、
+   悬在中缝偏左：显式排到第二行整行居中，页码在上、缩放在下，都以中缝对齐。
+   AV 灯箱没有「双页」这一枚（无 `data-spread-allowed`），缩放仍贴右。 */
+.peach-react [data-photo-bar][data-spread-allowed] [data-photo-zoom] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: center;
 }
 .peach-react [data-photo-bar] > * {
   pointer-events: auto;
@@ -503,16 +521,18 @@
   stroke-width: 2;
 }
 
-/* ── 缩略图条 ── */
+/* ── 缩略图条 ──
+ * 贴底的一条实底带：主画布在带上缘让位（`[data-has-strip]`），画面再花也衬在带子后面，
+ * 缩略图靠带子自己的底色衬出来，不再透出页面。带面比纯黑画布略亮一档，上缘一条细线分界。 */
 .peach-react [data-photo-strip] {
   position: absolute;
-  right: 72px;
-  bottom: 14px;
-  left: 72px;
+  inset: auto 0 0 0;
   z-index: 3;
   width: auto;
-  height: 72px;
-  padding: 0;
+  height: 86px;
+  padding: 7px 0;
+  background: rgba(255, 255, 255, .045);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
 .peach-react [data-photo-lightbox]:not([data-has-strip]) [data-photo-strip] {
   display: none;
@@ -555,8 +575,16 @@
   .peach-react [data-photo-main] .swiper-zoom-container {
     padding: 12px 12px 70px;
   }
+  /* 窄屏单页的上边距收到 12px：双页跟着收，底部照旧由 `[data-has-strip]` 统一给，
+     两档的同高关系不因断点改变。 */
+  .peach-react [data-photo-lightbox][data-spread] [data-photo-main] .swiper-zoom-container {
+    padding-top: 12px;
+  }
   .peach-react [data-photo-lightbox][data-has-strip] [data-photo-main] .swiper-zoom-container {
-    padding-bottom: 136px;
+    padding-bottom: 64px;
+  }
+  .peach-react [data-photo-lightbox][data-has-strip] [data-photo-main] {
+    bottom: 68px;
   }
   .peach-react [data-photo-bar] {
     right: 12px;
@@ -571,11 +599,9 @@
     min-height: 44px;
   }
   .peach-react [data-photo-strip] {
-    right: 56px;
-    bottom: 12px;
-    left: 56px;
+    height: 68px;
+    padding: 6px 0;
   }
-  .peach-react [data-photo-strip],
   .peach-react [data-photo-strip] .swiper-slide {
     height: 56px;
   }

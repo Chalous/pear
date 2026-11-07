@@ -1,4 +1,4 @@
-/* 图片灯箱在真浏览器里走一遍：真 Swiper、真键鼠，从资料页照片墙和关注详情两处打开。
+/* 图片灯箱在真浏览器里走一遍：真 Swiper、真键鼠，从资料页照片墙、关注详情和馆藏漫画卡三处打开。
  *
  * 取图口全部由这里回桩图，`/photo` 原图走计费来源，用例绝不碰真的。大图是 4000×3000 的 SVG：
  * 缩放条的百分比相对原图像素，图得真有尺寸，「适应窗口」和 1:1 才分得开。关灯箱走关闭键或
@@ -80,6 +80,23 @@ async function openFollowItem(browser: Browser): Promise<Visit> {
 
 const lightbox = (page: Page) => page.locator('dialog[data-photo-lightbox][open]');
 const labelled = (box: Locator, label: string) => box.locator(`[aria-label="${label}"]`).first();
+
+/** 馆藏首页那本合成漫画：点卡片直开阅读器，页图由 `/comic-image` 发夹具里的真文件。 */
+async function openComicBook(browser: Browser, viewport = DESKTOP): Promise<Visit> {
+  const opened = await visit(browser, '/', viewport);
+  const { page } = opened;
+  const card = page.locator('[data-media-card]', { hasText: '合成漫画样本' }).first();
+  await card.waitFor({ timeout: 15_000 });
+  await card.click();
+  const box = lightbox(page);
+  await box.waitFor();
+  await page.waitForFunction(() => {
+    const img = document.querySelector('[data-photo-main] .swiper-slide-active img');
+    return !!img && (img as HTMLImageElement).naturalWidth > 0;
+  }, undefined, { timeout: 10_000 });
+  await settle(page);
+  return opened;
+}
 
 /** 缩略图条里当前那一格的序号，以及它的中线离条的中线多远。 */
 const stripFocus = (page: Page) => page.evaluate(() => {
@@ -263,6 +280,42 @@ describe('图片灯箱', () => {
       assert.ok(bar.count < bar.line * 2 + 16, `页码折行了：${JSON.stringify(bar)}`);
       assert.ok(bar.right <= bar.view, `底栏越出视口：${JSON.stringify(bar)}`);
       assert.equal(await count.isVisible(), true);
+    } finally {
+      await opened.close();
+    }
+  });
+
+  it('漫画双页档：两页显示框跟单页同高，缩放药丸整行居中排在页码下一行', { timeout: 90_000 }, async () => {
+    const opened = await openComicBook(browser);
+    const { page } = opened;
+    try {
+      const box = lightbox(page);
+      const pageHeight = (scope: string) => box
+        .locator(`[data-photo-main] ${scope} img`).first()
+        .evaluate((img: HTMLImageElement) => Math.round(img.getBoundingClientRect().height));
+      const single = await pageHeight('.swiper-slide-active');
+
+      await labelled(box, '切到双页').click();
+      await page.waitForFunction(() => document.querySelector('[data-photo-count]')?.textContent === '1–2 / 3');
+      await page.waitForFunction(() => {
+        const imgs = [...document.querySelectorAll('[data-photo-main] .swiper-wrapper img')];
+        return imgs.length >= 2 && imgs.slice(0, 2).every((img) => (img as HTMLImageElement).naturalWidth > 0);
+      }, undefined, { timeout: 10_000 });
+      const left = await pageHeight('.swiper-slide-active');
+      const right = await pageHeight('.swiper-slide-next');
+      assert.ok(Math.abs(left - single) <= 1, `双页左页 ${left}px 应与单页 ${single}px 同高`);
+      assert.ok(Math.abs(right - single) <= 1, `双页右页 ${right}px 应与单页 ${single}px 同高`);
+
+      const rects = await box.evaluate((node) => {
+        const rect = (selector: string) => node.querySelector(selector)!.getBoundingClientRect();
+        return { zoom: rect('[data-photo-zoom]'), bar: rect('[data-photo-bar]'), count: rect('[data-photo-count]') };
+      });
+      assert.ok(Math.abs(rects.zoom.left + rects.zoom.width / 2
+        - (rects.bar.left + rects.bar.width / 2)) <= 1, '缩放药丸没有水平居中');
+      assert.ok(rects.zoom.top >= rects.count.bottom - 1, '缩放药丸应排在页码下一行');
+      await labelled(box, '关闭').click();
+      await box.waitFor({ state: 'detached' });
+      assert.deepEqual(opened.problems, []);
     } finally {
       await opened.close();
     }

@@ -296,7 +296,9 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         <button ref={fwd} type="button" data-photo-nav="fwd" aria-label="下一张"
           dangerouslySetInnerHTML={{ __html: icon('chevron-left') }} />
       </div>
-      <div data-photo-bar="">
+      {/* 漫画档多一枚「双页」：给工具条打上 `data-spread-allowed`，样式把缩放药丸排到
+          第二行整行居中；AV 灯箱没有这一枚，缩放仍贴右（photo-lightbox.css）。 */}
+      <div data-photo-bar="" data-spread-allowed={spreadAllowed ? '' : undefined}>
         <button ref={toggle} type="button" data-photo-detail-toggle="" aria-expanded="false" aria-controls={detailId}
           aria-haspopup="dialog" aria-label="图片详情" title="图片详情" dangerouslySetInnerHTML={{ __html: icon('info') }} />
         <div>
