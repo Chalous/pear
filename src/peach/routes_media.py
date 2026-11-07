@@ -33,7 +33,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.requests import ClientDisconnect
 
 from . import (
-    avatar_face, avatar_online, avatar_picker, avatar_provider, error_reporting,
+    avatar_face, avatar_online, avatar_picker, avatar_provider, comics, error_reporting,
     follow_assets, follow_providers, images,
     jav_poster_crop, link_marks, link_status, scraping_access, site_icons, social_links, subtitles,
     taste_history, timeline_sheets, web_follow, web_timeline_thumbnails,
@@ -727,6 +727,35 @@ def poster(request: Request, id: int, c: int = 4, args: dict[str, str] = Depends
     except PreviewUnavailable:
         return JSONResponse({"error": "unavailable"}, status_code=404)
     return _image_response(request, path, media_type="image/jpeg")
+
+
+def _comic_page_response(request: Request, page_id: int):
+    """漫画一页原图的响应；页 ID 由清单下发，路径归属在服务端解析并验证。"""
+    if page_id <= 0:
+        return JSONResponse({"error": "unavailable"}, status_code=404)
+    state = request.app.state
+    with state.web_contract.read_connection() as connection:
+        path = comics.page_file(connection, state.media_engine.filesystem.allowed_roots, page_id)
+    # MediaOffline（503）与 MediaUnavailable（404）由 api.py 的异常处理器统一收口。
+    return _image_response(request, path, media_type=comics.page_content_type(path.name))
+
+
+@router.api_route("/comic-image", methods=["GET", "HEAD"])
+def comic_image(request: Request, page: int = 0, args: dict[str, str] = Depends(require_auth)):
+    """阅读器的一页。来源盘整体不可达回 503，页不在回 404。"""
+    return _comic_page_response(request, page)
+
+
+@router.api_route("/comic-cover", methods=["GET", "HEAD"])
+def comic_cover(request: Request, asset: int = 0, args: dict[str, str] = Depends(require_auth)):
+    """漫画封面：直接用第一页。还没有页清单的漫画 404。"""
+    if asset <= 0:
+        return JSONResponse({"error": "unavailable"}, status_code=404)
+    contract = request.app.state.web_contract
+    with contract.read_connection() as connection:
+        row = connection.execute(
+            "SELECT id FROM comic_page WHERE asset_id=? ORDER BY ordinal, id LIMIT 1", (asset,)).fetchone()
+    return _comic_page_response(request, int(row[0]) if row else 0)
 
 
 @router.api_route("/timeline", methods=["GET", "HEAD"])
