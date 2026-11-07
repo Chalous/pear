@@ -230,6 +230,10 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
   useLayoutEffect(() => { if (range.current) syncBoardRange(range.current) }, [percent]);
 
   const slide = slides[active];
+  /* 当前页与相邻页不走懒加载：`<dialog>` 里的 lazy 图在 showModal 前后那一次可见性判定
+     有竞态，首图可能永远不发起请求（currentSrc 一直为空）。窗口与按需加载一致：active ± 1，
+     双页的右页（active + 1）也在内；其余页仍交给 `loading="lazy"` 按需取。 */
+  const eagerSlides = new Set([active - 1, active, active + 1]);
   const asset = slide.asset ?? null;
   const reveal = async (button: HTMLButtonElement) => {
     if (!asset || !actions || button.getAttribute('aria-busy') === 'true') return;
@@ -283,7 +287,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
               <div className="swiper-zoom-container">
                 {lost.has(at)
                   ? <span data-photo-missing="">图片取不到</span>
-                  : <img src={broken.has(at) ? item.thumb : item.src} alt={item.name ?? ''} loading="lazy"
+                  : <img src={broken.has(at) ? item.thumb : item.src} alt={item.name ?? ''} loading={eagerSlides.has(at) ? 'eager' : 'lazy'}
                     referrerPolicy="no-referrer" onLoad={(event) => loaded(at, event.currentTarget)}
                     onError={() => failed(at)} />}
               </div>

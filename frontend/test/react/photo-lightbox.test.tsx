@@ -146,8 +146,11 @@ describe('打开', () => {
     expect(strip().slideTo).toHaveBeenCalledWith(2, 0);
     const images = [...q(box, '[data-photo-main]').querySelectorAll('img')];
     expect(images.map((img) => img.getAttribute('src'))).toEqual(WALL.map((slide) => slide.src));
-    expect(images.every((img) => img.getAttribute('loading') === 'lazy'
-      && img.getAttribute('referrerpolicy') === 'no-referrer')).toBe(true);
+    /* 当前页与相邻页走 eager：dialog 里的 lazy 图在打开时机上有竞态，首图可能不发起请求。
+       这一档从第 2 张（下标 2）打开，窗口是 1–3；其余页仍交给懒加载按需取。 */
+    expect(images.map((img) => img.getAttribute('loading')))
+      .toEqual(WALL.map((_, at) => (at >= 1 && at <= 3 ? 'eager' : 'lazy')));
+    expect(images.every((img) => img.getAttribute('referrerpolicy') === 'no-referrer')).toBe(true);
     expect([...q(box, '[data-photo-strip]').querySelectorAll('img')].map((img) => img.getAttribute('src')))
       .toEqual(WALL.map((slide) => slide.thumb));
   });
