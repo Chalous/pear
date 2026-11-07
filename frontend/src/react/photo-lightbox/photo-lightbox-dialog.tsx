@@ -21,6 +21,9 @@ let host: HTMLElement | null = null;
 let root: Root | null = null;
 let generation = 0;
 
+/** 缩略条上保留真实 thumb 的窗口半径；只影响长清单，照片墙的清单都在窗内。 */
+const STRIP_WINDOW = 30;
+
 function lightboxRoot(): Root {
   if (!root || !host?.isConnected) {
     root?.unmount();
@@ -264,9 +267,14 @@ function PhotoLightbox({ slides, index, Swiper, host: actions }: {
       </section>
       <div ref={stripEl} className="swiper" data-photo-strip="">
         <div className="swiper-wrapper">
+          {/* thumb 就是原图：整条清单都给 src 会在长清单上偷跑——没加载的图宽度为 0，
+              全挤在起点附近，浏览器把每张都当「邻近」。只给当前张 ±30 的真实地址，
+              其余留空占位，盒宽由加载后的图自己长出来；照片墙的清单短，罩得住全部。 */}
           {slides.map((item, at) => (
             <div key={at} className="swiper-slide">
-              <img src={item.thumb} alt="" loading="lazy" referrerPolicy="no-referrer" />
+              {Math.abs(at - active) <= STRIP_WINDOW
+                ? <img src={item.thumb} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                : <span data-photo-thumb-empty="" aria-hidden="true" />}
             </div>
           ))}
         </div>

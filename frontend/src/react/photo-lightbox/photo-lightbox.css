@@ -502,6 +502,13 @@
   height: 100%;
   object-fit: cover;
 }
+/* 窗口外的缩略占位：一块固定宽的暗面，让滑块有盒子可占，thumb 到了再自己长宽。 */
+.peach-react [data-photo-strip] [data-photo-thumb-empty] {
+  display: block;
+  width: 28px;
+  height: 100%;
+  background: rgba(255, 255, 255, .08);
+}
 .peach-react [data-photo-strip] .swiper-slide-thumb-active {
   opacity: 1;
   box-shadow: 0 0 0 2px #fff inset;
