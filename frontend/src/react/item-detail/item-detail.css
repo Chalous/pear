@@ -498,3 +498,27 @@
 }
 .peach-react [data-item-related] [data-related-row]::-webkit-scrollbar { display: none; }
 .peach-react [data-item-related] [data-related-state] { min-width: 0; height: calc(var(--detail-card-height) + 20px); }
+
+/* ── 漫画 ──
+   一本漫画的详情：媒体格里是首图当封面，按格等比缩不出格；侧栏只有标题、页数与
+   「开始阅读」这一枚动作键，视频那一排反馈控件都不出。 */
+.peach-react [data-item-detail] [data-comic-cover] { display: grid; place-items: center; overflow: hidden; }
+.peach-react [data-item-detail] [data-comic-cover] > img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.peach-react [data-item-detail] [data-comic-cover] > [data-stage-close] { position: absolute; z-index: 8; top: 11px; right: 11px; }
+.peach-react [data-item-detail] [data-comic-read] { display: flex; }
+.peach-react [data-item-detail] [data-comic-read-btn] {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--meter);
+  background: var(--sunk);
+  color: var(--ink);
+  font-size: var(--fs-md);
+  cursor: pointer;
+}
+.peach-react [data-item-detail] [data-comic-read-btn]:hover:not(:disabled) { border-color: var(--ink); }
+.peach-react [data-item-detail] [data-comic-read-btn]:disabled { opacity: .55; cursor: default; }

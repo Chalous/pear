@@ -53,24 +53,24 @@ export function AccessSetup({ data, navigate = go }: { data: PageData; navigate?
       if (answer?.errors && Object.keys(answer.errors).length) setErrors(answer.errors);
       else setFailure(answer?.error || '没能保存访问设置，请重试');
     } catch {
-      setFailure('连接不到 Peach，请确认它仍在运行后重试');
+      setFailure('连接不到 Pear，请确认它仍在运行后重试');
     }
     setBusy(false);
   };
 
   return (
-    <AuthCard title="访问设置" lede="这台 Peach 还没有访问设置，先决定打开时要不要登录。">
+    <AuthCard title="访问设置" lede="这台 Pear 还没有访问设置，先决定打开时要不要登录。">
       <form aria-labelledby="auth-card-title" className="flex flex-col gap-6" onSubmit={onSubmit} noValidate>
         <CardGroup first>
           <div className="flex items-start justify-between gap-4">
             <div className="flex min-w-0 flex-col gap-0.5">
               <Label id="access-setup-title" elementType="span">访问密码</Label>
-              <p id="access-setup-description" className="text-body-2-regular text-text-secondary">开启后，访问 Peach 需要先登录。</p>
+              <p id="access-setup-description" className="text-body-2-regular text-text-secondary">开启后，访问 Pear 需要先登录。</p>
             </div>
             <Switch aria-labelledby="access-setup-title" aria-describedby="access-setup-description"
               isSelected={passwordOn} onChange={(on) => { setPasswordOn(on); setErrors({}); }} />
           </div>
-          <Help>局域网访问推荐设置密码。未设置时，同一网络中能连接 Peach 的设备可直接进入。</Help>
+          <Help>局域网访问推荐设置密码。未设置时，同一网络中能连接 Pear 的设备可直接进入。</Help>
           {passwordOn
             ? <PasswordPair label="访问密码" password={password} confirmation={confirmation}
                 onPassword={(value) => { setPassword(value); setErrors({}); }}

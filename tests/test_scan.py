@@ -63,11 +63,13 @@ class WindowsShapeTests(_ScanCase):
         self.assertIn("✓ local: 3 文件", output)
         rows = self._paths()
         self.assertEqual(rows[str(self.media / "创作者" / "sub" / "a.mp4")], "video")
-        self.assertEqual(rows[str(self.media / "cover.jpg")], "image")
+        # 根上的 cover.jpg 是页不是作品：扫描根本身聚合成一本漫画，页清单里才有它。
+        self.assertEqual(rows[str(self.media)], "comic")
+        self.assertNotIn(str(self.media / "cover.jpg"), rows)
         self.assertEqual(rows[str(self.media / "notes.txt")], "other")
-        # 读取侧：Windows 上账本路径就是本机路径，每一行都指向真实存在的文件。
+        # 读取侧：Windows 上账本路径就是本机路径，每一行都指向真实存在的文件或目录。
         for path in rows:
-            self.assertTrue(Path(path).is_file(), path)
+            self.assertTrue(Path(path).exists(), path)
 
     def test_scan_isolates_shortcuts_without_removing_files_or_media_sidecars(self):
         ad = self.media / '点击进入.url'
@@ -91,8 +93,9 @@ class WindowsShapeTests(_ScanCase):
         from peach.config import PeachSettings
         self._scan(str(self.media), declared_roots={"local": (str(self.media),)}, windows=True)
         with route_client(create_app(PeachSettings(db_path=self.db, configured=True, token=""))) as client:
-            self.assertEqual(client.get('/api/items').json()['total'], 1)
-            self.assertEqual(client.get('/api/items?thumb=0').json()['total'], 1)
+            # 根上那张 cover.jpg 聚合成一本漫画，与视频同列在馆藏里。
+            self.assertEqual(client.get('/api/items').json()['total'], 2)
+            self.assertEqual(client.get('/api/items?thumb=0').json()['total'], 2)
             self.assertEqual(client.get('/api/items?thumb=1').json()['total'], 0)
 
     def test_a_subdirectory_of_the_declared_root_is_accepted(self):
@@ -108,10 +111,10 @@ class WindowsShapeTests(_ScanCase):
         result, _ = self._scan(str(self.media), declared_roots=declared, windows=True)
         self.assertEqual(result.files, 2)
         self.assertEqual(len(self._paths()), 3, "没扫到的行留着，由资源同步对账处理")
-        connection = sqlite3.connect(self.db)
-        size = connection.execute("SELECT size FROM asset WHERE path=?",
-                                  (str(self.media / "cover.jpg"),)).fetchone()[0]
-        connection.close()
+        with closing(sqlite3.connect(self.db)) as connection:
+            # cover.jpg 是根这本漫画的一页：页的字节数汇进那条目录记录。
+            size = connection.execute("SELECT size FROM asset WHERE path=? AND medium='comic'",
+                                      (str(self.media),)).fetchone()[0]
         self.assertEqual(size, 8)
 
 
@@ -322,6 +325,7 @@ class PosixShapeTests(_ScanCase):
         options = dict(declared_roots={'local': ('R:\\media',)}, mounts={'local': (self.media,)}, windows=False)
         with patch.object(scan, 'BATCH_SIZE', 1), self.assertRaises(InterruptedError):
             self._scan('R:\\media', save_checkpoint=save, **options)
+        # 根上的 cover.jpg 是页，不占批次也不进进度：页在目录收尾一次计齐，中断的目录没走到。
         self.assertEqual(saved['files'], 1)
         (self.media / saved['cursor']).write_bytes(b'changed after checkpoint')
         progress = []
@@ -348,12 +352,13 @@ class PosixShapeTests(_ScanCase):
                                windows=False)
         self.assertEqual(result.files, 3)
         rows = self._paths()
-        self.assertEqual(set(rows), {r"R:\media\创作者\sub\a.mp4", r"R:\media\cover.jpg",
+        # 根上的 cover.jpg 是页：扫描根本身聚合成一本漫画，行记在目录上。
+        self.assertEqual(set(rows), {r"R:\media\创作者\sub\a.mp4", r"R:\media",
                                      r"R:\media\notes.txt"})
         # 与 `platform.translate_ledger_path` 一致：路径前缀后的层级拼到本机媒体目录。
         for path in rows:
             tail = PureWindowsPath(path).relative_to(PureWindowsPath(r"R:\media")).parts
-            self.assertTrue(self.media.joinpath(*tail).is_file(), path)
+            self.assertTrue(self.media.joinpath(*tail).exists(), path)
 
     def test_a_local_directory_is_converted_to_the_ledger_shape(self):
         mounts = {"local": (str(self.media),)}
@@ -415,17 +420,18 @@ class SidecarTests(_ScanCase):
                                     mounts={"local": (self.media,)}, windows=False)
         self.assertEqual(result.sidecars, 8)
         self.assertIn("附属文件未登记 8 个", output)
+        # 基类夹具在根上放了一张 cover.jpg：根聚合成一本漫画，FC2-1 的附属图仍是附属。
         self.assertEqual(set(self._paths()), {
             r"R:\media\FC2-1\FC2-1-CD1.mp4", r"R:\media\创作者\sub\a.mp4",
-            r"R:\media\cover.jpg", r"R:\media\notes.txt"})
+            r"R:\media", r"R:\media\notes.txt"})
 
-    def test_artwork_names_without_a_video_beside_them_are_photos(self):
+    def test_artwork_names_without_a_video_become_pages_of_their_directory(self):
         self._layout(["写真/cover.jpg", "写真/extrafanart/1.jpg", "写真/poster-1.jpg"])
         self._scan(r"R:\media\写真", declared_roots=self.DECLARED,
                    mounts={"local": (self.media,)}, windows=False)
+        # 目录没有视频时，Kodi 附属名不成立：写真是一本，extrafanart 子目录是另一本。
         self.assertEqual(set(self._paths()), {
-            r"R:\media\写真\cover.jpg", r"R:\media\写真\extrafanart\1.jpg",
-            r"R:\media\写真\poster-1.jpg"})
+            r"R:\media\写真", r"R:\media\写真\extrafanart"})
 
     def test_movie_trailers_are_sidecars_and_short_main_features_are_kept(self):
         self._layout(['ABC-123/ABC-123.mp4', 'ABC-123/ABC-123-trailer.mp4',
@@ -652,6 +658,124 @@ class SystemMetadataTests(_ScanCase):
         self.assertEqual(result.files, 4)
         self.assertIn(r'R:\media\@creator\.hidden.mp4', self._paths())
         self.assertTrue(all((self.media / name).is_file() for name in names))
+
+
+class ComicScanTests(_ScanCase):
+    """直接含支持图片的目录聚合为一本漫画（`medium='comic'`）：页次序按文件名自然序、
+    页不逐张登记成 asset，重扫按相对路径更新次序并保留页 ID。"""
+
+    DECLARED = {"local": (r"R:\media",)}
+
+    def setUp(self):
+        super().setUp()
+        # 基类夹具在根上放了一张图，会让扫描根本身成了一本；这里清掉，各用例自己摆树。
+        (self.media / "cover.jpg").unlink()
+
+    def _scan_comic_root(self, **kwargs):
+        return self._scan(r"R:\media", declared_roots=self.DECLARED,
+                          mounts={"local": (self.media,)}, windows=False, **kwargs)
+
+    def _book_id(self, ledger_dir=r"R:\media\某书"):
+        connection = sqlite3.connect(self.db)
+        try:
+            row = connection.execute("SELECT id FROM asset WHERE location='local' AND path=?",
+                                     (ledger_dir,)).fetchone()
+        finally:
+            connection.close()
+        return None if row is None else int(row[0])
+
+    def _pages(self):
+        connection = sqlite3.connect(self.db)
+        try:
+            return [(row[0], int(row[1]), row[2], int(row[3])) for row in connection.execute(
+                "SELECT relative_path,id,COALESCE((SELECT path FROM asset WHERE id=comic_page.asset_id),''),ordinal "
+                "FROM comic_page ORDER BY ordinal")]
+        finally:
+            connection.close()
+
+    def test_a_directory_of_images_becomes_one_comic_with_naturally_ordered_pages(self):
+        book = self.media / "某书"
+        book.mkdir()
+        for name in ("1.jpg", "10.jpg", "2.png", "说明.txt"):
+            (book / name).write_bytes(b"x")
+        result, _ = self._scan_comic_root()
+        rows = self._paths()
+        self.assertEqual(rows.get(r"R:\media\某书"), "comic")
+        self.assertEqual(rows.get(r"R:\media\某书\说明.txt"), "other")
+        # 页不逐张登记：同目录的图片只活在页清单里，失踪清理才不会把一本拆成几个作品。
+        self.assertNotIn(r"R:\media\某书\1.jpg", rows)
+        self.assertEqual([(row[0], row[3]) for row in self._pages()],
+                         [("1.jpg", 1), ("2.png", 2), ("10.jpg", 3)])
+        # 基类夹具的 a.mp4 与 notes.txt 照旧登记。
+        self.assertEqual(result.files, 6)
+
+    def test_rescan_preserves_page_ids_and_reorders_when_a_page_is_inserted(self):
+        book = self.media / "某书"
+        book.mkdir()
+        for name in ("1.jpg", "2.jpg", "10.jpg"):
+            (book / name).write_bytes(b"x")
+        self._scan_comic_root()
+        first = {row[1]: row[0] for row in self._pages()}
+        (book / "1b.jpg").write_bytes(b"x")
+        self._scan_comic_root()
+        after = {row[1]: (row[0], row[3]) for row in self._pages()}
+        # 原有三页的页 ID 全部保留，1b.jpg 是新增的那一条。
+        self.assertEqual({page_id: after[page_id][0] for page_id in first}, first)
+        self.assertEqual(len(after), 4)
+        kept = next(page_id for page_id, name in first.items() if name == "2.jpg")
+        self.assertEqual(after[kept], ("2.jpg", 3))
+        self.assertEqual([row[0] for row in self._pages()],
+                         ["1.jpg", "1b.jpg", "2.jpg", "10.jpg"])
+
+    def test_rescan_keeps_page_ids_when_a_name_only_changes_case(self):
+        book = self.media / "某书"
+        book.mkdir()
+        (book / "1.jpg").write_bytes(b"x")
+        self._scan_comic_root()
+        original = {row[0]: row[1] for row in self._pages()}
+        (book / "1.jpg").rename(book / "1.JPG")
+        self._scan_comic_root()
+        # 页 ID 不变，相对路径跟着盘上的拼写走。
+        self.assertEqual({row[0].casefold(): row[1] for row in self._pages()}, original)
+
+    def test_rescan_drops_pages_that_left_the_directory(self):
+        book = self.media / "某书"
+        book.mkdir()
+        for name in ("1.jpg", "2.jpg"):
+            (book / name).write_bytes(b"x")
+        self._scan_comic_root()
+        (book / "2.jpg").unlink()
+        self._scan_comic_root()
+        self.assertEqual([row[0] for row in self._pages()], ["1.jpg"])
+
+    def test_the_scan_root_itself_can_be_a_book(self):
+        for name in ("1.jpg", "2.png", "3.webp"):
+            (self.media / name).write_bytes(b"x")
+        self._scan_comic_root()
+        self.assertEqual(self._paths().get(r"R:\media"), "comic")
+        self.assertEqual([row[0] for row in self._pages()], ["1.jpg", "2.png", "3.webp"])
+
+    def test_artwork_beside_a_video_stays_sidecar_and_the_rest_becomes_pages(self):
+        folder = self.media / "ABC-1"
+        folder.mkdir()
+        (folder / "ABC-1.mp4").write_bytes(b"v")
+        (folder / "poster.jpg").write_bytes(b"p")
+        (folder / "1.jpg").write_bytes(b"p")
+        self._scan_comic_root()
+        rows = self._paths()
+        self.assertEqual(rows.get(r"R:\media\ABC-1\ABC-1.mp4"), "video")
+        self.assertEqual(rows.get(r"R:\media\ABC-1"), "comic")
+        self.assertEqual([row[0] for row in self._pages()], ["1.jpg"])
+
+    def test_gif_images_are_not_comic_pages_and_stay_photo_assets(self):
+        book = self.media / "某书"
+        book.mkdir()
+        (book / "1.jpg").write_bytes(b"x")
+        (book / "动图.gif").write_bytes(b"x")
+        self._scan_comic_root()
+        rows = self._paths()
+        self.assertEqual(rows.get(r"R:\media\某书\动图.gif"), "image")
+        self.assertEqual([row[0] for row in self._pages()], ["1.jpg"])
 
 
 if __name__ == "__main__":

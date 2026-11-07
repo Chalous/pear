@@ -244,7 +244,7 @@ export function rankDetail(row: RankRow): string {
   const visits = Number(row.web_visits ?? row.visits ?? 0) - bookmarks;
   if (visits > 0) parts.push(`浏览 ${visits.toLocaleString()}`);
   if (bookmarks) parts.push(`书签 ${bookmarks.toLocaleString()}`);
-  if (row.peach_items) parts.push(`Peach ${Number(row.peach_items).toLocaleString()}`);
+  if (row.peach_items) parts.push(`Pear ${Number(row.peach_items).toLocaleString()}`);
   return parts.join(' · ');
 }
 

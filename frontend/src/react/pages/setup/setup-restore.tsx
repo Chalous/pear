@@ -34,7 +34,7 @@ export function SetupRestore({ onDone, onBack }: { onDone: (done: SetupDone) => 
       <div data-setup-step-scroll=""><div data-setup-step-content="">
       <header data-setup-step-heading="">
         <h1 id="auth-card-title" ref={heading} tabIndex={-1} className="text-title-1-semibold text-text-primary">使用已有数据</h1>
-        <p className="text-body-regular text-text-secondary">连接 Peach 数据目录，继续使用原来的配置与馆藏。</p>
+        <p className="text-body-regular text-text-secondary">连接 Pear 数据目录，继续使用原来的配置与馆藏。</p>
       </header>
       <div><Input label="已有数据目录" value={path} onChange={setPath} isRequired autoComplete="off" spellCheck="false"
         validationBehavior="aria" isInvalid={Boolean(error)}

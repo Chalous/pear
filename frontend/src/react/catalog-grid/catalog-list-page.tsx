@@ -245,6 +245,10 @@ function ListIdentity({ item, props, disabled }: { item: MediaItem; props: Catal
     if (props.selectMode) {
       props.actions.toggleSelection(item.id, event.shiftKey); return;
     }
+    /* 与卡片同一条口径：漫画点行直接进阅读器，回收站仍走资源那一档。 */
+    if (props.filters?.state !== 'trash' && String(item.medium) === 'comic' && props.actions.openComic) {
+      props.actions.openComic(item); return;
+    }
     const opener = props.filters?.state === 'trash' ? props.actions.openResource : props.actions.open;
     opener(item, event.currentTarget);
   };

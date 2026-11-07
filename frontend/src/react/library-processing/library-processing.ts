@@ -218,7 +218,7 @@ export function restartEffectText(state: LibraryProcessingData, scanAfterSave: b
   const effect = state.trigger === 'cli' ? '这个任务由命令行或托盘发起，在独立进程里运行，不受重启影响。'
     : state.status === 'paused' ? '已暂停的任务会保持暂停，重启后点继续即可接着处理。'
     : '正在进行的任务会随重启中断，重启后从中断处继续。';
-  return `保存后 Peach 会重新启动。${effect}${scanAfterSave ? '勾选的「保存后扫描并补全资料」会排在当前任务之后。' : ''}`;
+  return `保存后 Pear 会重新启动。${effect}${scanAfterSave ? '勾选的「保存后扫描并补全资料」会排在当前任务之后。' : ''}`;
 }
 
 /** 已有任务在跑时点同步的回执，写明这一轮是怎么发起的。 */

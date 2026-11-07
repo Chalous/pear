@@ -89,7 +89,7 @@ function DiskBar({ storage }: { storage: StorageState }) {
   const others = Math.max(0, storage.total_bytes - free - peach);
   const config = {
     /* 不用任何一类的图表色：这一段是整个数据目录，与上面某一类同色会读成「只有数据库」。 */
-    peach: { label: 'Peach 数据', colors: tone('var(--color-border-focus-ring)') },
+    peach: { label: 'Pear 数据', colors: tone('var(--color-border-focus-ring)') },
     others: { label: '其他文件', colors: tone(REST_COLOR) },
     free: { label: '可用', colors: tone('var(--color-background-tertiary-default)') },
   } satisfies ChartConfig;
@@ -100,7 +100,7 @@ function DiskBar({ storage }: { storage: StorageState }) {
   return (
     <div className="flex flex-col gap-2">
       <p className="text-caption-1-regular text-text-secondary">
-        所在磁盘共 {size(storage.total_bytes)}{storage.system_drive ? '（系统盘）' : ''}，Peach 占 {share(peach)}，
+        所在磁盘共 {size(storage.total_bytes)}{storage.system_drive ? '（系统盘）' : ''}，Pear 占 {share(peach)}，
         可用 {size(free)}
       </p>
       <EvilBarChart data={[{ disk: '磁盘', peach, others, free }]} config={config}

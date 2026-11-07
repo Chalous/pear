@@ -317,9 +317,9 @@ class InteractiveInitTests(unittest.TestCase):
         for key in settings_file.DIRECTORY_KEYS:
             self.assertTrue((self.data_root / key).is_dir(), key)
         self.certs.assert_called_once()
-        # 账本里的路径就是本机路径，每一行都指向真实文件。
+        # 账本里的路径就是本机路径：b.jpg 是根这本漫画的一页，行记在目录上，每一行都真实存在。
         self.assertEqual(self._ledger_paths(),
-                         sorted([str(self.media / "b.jpg"), str(self.media / "sub" / "a.mp4"),
+                         sorted([str(self.media), str(self.media / "sub" / "a.mp4"),
                                  str(second / "c.mp4")]))
         self.assertIn("✓ local: 2 文件", output)
         self.assertIn("✓ local: 1 文件", output)
@@ -338,11 +338,12 @@ class InteractiveInitTests(unittest.TestCase):
                          ("0.0.0.0", 9443, "peach-two"))
         self.assertIn("媒体目录", output)
         paths = self._ledger_paths()
-        self.assertEqual(paths, [r"R:\media\b.jpg", r"R:\media\sub\a.mp4"])
+        # b.jpg 是根这本漫画的一页，行记在目录上。
+        self.assertEqual(paths, [r"R:\media", r"R:\media\sub\a.mp4"])
         # 读取文件时，将数据库路径前缀之后的层级拼到本机媒体目录。
         for path in paths:
             tail = PureWindowsPath(path).relative_to(PureWindowsPath(r"R:\media")).parts
-            self.assertTrue(Path(loaded.mounts["local"][0]).joinpath(*tail).is_file(), path)
+            self.assertTrue(Path(loaded.mounts["local"][0]).joinpath(*tail).exists(), path)
 
     def test_an_invalid_media_directory_is_asked_again(self):
         missing = self.root / "nope"

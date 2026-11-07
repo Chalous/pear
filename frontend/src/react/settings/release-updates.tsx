@@ -34,8 +34,8 @@ export function ReleaseUpdates({ initial, initialJob }: { initial: ReleaseState;
   const oneClick = data.state === 'available' && !!data.one_click?.available;
   const rebuilding = container.job.state === 'updating';
   const confirmDockerUpdate = () => void confirmModal({
-    title: '一键更新', body: `Watchtower 会拉取 Peach ${data.latest_version || ''} 的镜像并重建容器，/data 数据卷保留。`
-      + '重建期间 Peach 暂时断开，进行中的任务在启动后续跑；有待执行的数据库迁移时，启动前先备份再迁移。',
+    title: '一键更新', body: `Watchtower 会拉取 Pear ${data.latest_version || ''} 的镜像并重建容器，/data 数据卷保留。`
+      + '重建期间 Pear 暂时断开，进行中的任务在启动后续跑；有待执行的数据库迁移时，启动前先备份再迁移。',
     confirmLabel: '开始更新', cancelLabel: '取消', onConfirm: container.run,
   });
 
@@ -49,7 +49,7 @@ export function ReleaseUpdates({ initial, initialJob }: { initial: ReleaseState;
     if (mounted.current) setJob(result);
   };
   const confirmRestart = () => void confirmModal({
-    title: '更新已准备好', body: `Peach ${job.version || ''} 将在重启后安装。`,
+    title: '更新已准备好', body: `Pear ${job.version || ''} 将在重启后安装。`,
     confirmLabel: '立即重启', cancelLabel: '稍后', onConfirm: restart,
   });
 
@@ -77,7 +77,7 @@ export function ReleaseUpdates({ initial, initialJob }: { initial: ReleaseState;
         if (!controller.signal.aborted && automatic.result) setData(automatic.result);
       } catch {
         failures += 1;
-        if (failures >= MAX_FAILURES && !controller.signal.aborted) setPollError('尚未连接到 Peach，请检查托盘后刷新页面。');
+        if (failures >= MAX_FAILURES && !controller.signal.aborted) setPollError('尚未连接到 Pear，请检查托盘后刷新页面。');
       }
       if (!controller.signal.aborted && failures < MAX_FAILURES) timer = setTimeout(poll, delay);
     };
@@ -114,7 +114,7 @@ export function ReleaseUpdates({ initial, initialJob }: { initial: ReleaseState;
       {data.package_kind === 'update'
         ? <Help>应用更新包复用已安装工具；工具缺失、损坏或版本变化时会另行下载所需工具包。</Help>
         : data.package_kind === 'full' ? <Help>本次更新包含媒体工具。</Help>
-          : data.package_kind === 'installer' ? <Help>下载后打开镜像，把 Peach 拖入「应用程序」替换旧版本，数据目录与设置保留；提示已损坏时按发布页说明移除隔离标记。</Help> : null}
+          : data.package_kind === 'installer' ? <Help>下载后打开镜像，把 Pear 拖入「应用程序」替换旧版本，数据目录与设置保留；提示已损坏时按发布页说明移除隔离标记。</Help> : null}
       {data.state === 'unchecked' && !data.checked_at && !error && job.state === 'idle' ? null : <Stack divided>
         {data.checked_at ? <Help>检查于 {new Date(data.checked_at * 1000).toLocaleString()}</Help> : null}
         {container.job.state === 'done' ? null : data.state === 'available' && !error

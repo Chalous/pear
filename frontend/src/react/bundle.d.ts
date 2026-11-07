@@ -99,7 +99,7 @@ export interface StoragePolicy {
   external_cache_max_gib: number;
 }
 
-export interface PeachProxyState { mode: string; proxy_saved: boolean; needs_selection: boolean }
+export interface PearProxyState { mode: string; proxy_saved: boolean; needs_selection: boolean }
 
 /** 一个能换镜像域名的外部入口站点。`host` 为空串就是没换过，走 `default_host`。 */
 export interface EntryLinkSite {
@@ -297,7 +297,7 @@ export interface ConfigurationFact {
   value: string;
   download_url?: string;
   download_label?: string;
-  /** 能由 Peach 装进数据目录的缺失工具（`ffmpeg`、`untrunc`），有它就不给下载外链。 */
+  /** 能由 Pear 装进数据目录的缺失工具（`ffmpeg`、`untrunc`），有它就不给下载外链。 */
   install_tool?: string;
 }
 
@@ -309,7 +309,7 @@ export interface ConfigurationData {
   startup?: StartupState;
   uninstall?: UninstallState;
   storage?: StorageState;
-  peach_proxy?: PeachProxyState;
+  peach_proxy?: PearProxyState;
   entry_links?: EntryLinksState;
   push_discovery?: PushDiscoveryState;
   downloads?: DownloadSettingsState;
@@ -359,7 +359,7 @@ export interface ConfigurationPanel {
   active: boolean;
 }
 
-/** Peach 配置的分组：媒体库与入库、来源与订阅、下载渠道、网络与访问、应用与维护。
+/** Pear 配置的分组：媒体库与入库、来源与订阅、下载渠道、网络与访问、应用与维护。
  *  `panel` 只在配置页里给，单独挂一组时没有。 */
 export interface ConfigurationGroupProps extends Pick<ConfigurationProps, 'receipt'> {
   data: ConfigurationData;

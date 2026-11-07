@@ -79,7 +79,7 @@ export function ExternalPlayback({ id, onOpened }: { id: number; onOpened?(): vo
       onClick={() => { setLoadError(''); setPlayers(null); setEpoch(value => value + 1) }}>重新检测播放器</Button> : null}
     {links ? <>
       <Input label="网络播放地址" value={links.url} isReadOnly />
-      <Help>链接有效期为 6 小时。VR 播放器可使用网络播放地址；另一台设备需要能访问当前 Peach 地址。</Help>
+      <Help>链接有效期为 6 小时。VR 播放器可使用网络播放地址；另一台设备需要能访问当前 Pear 地址。</Help>
     </> : null}
   </div>;
 }

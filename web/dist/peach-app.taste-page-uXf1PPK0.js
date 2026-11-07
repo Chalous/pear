@@ -1,7 +1,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "0bf149fb-a309-49a0-9fb3-d0f80ca427fa", e._sentryDebugIdIdentifier = "sentry-dbid-0bf149fb-a309-49a0-9fb3-d0f80ca427fa");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "db7e9acb-6651-4a7d-844e-fb667943e671", e._sentryDebugIdIdentifier = "sentry-dbid-db7e9acb-6651-4a7d-844e-fb667943e671");
 	} catch {}
 })();
 import { ActivePoints as e, AnimatedItems as t, CHART_CARD as n, CHART_COLORS as r, CartesianLabelListContextProvider as i, CategoryTick as a, ChartBackground as o, ChartContainer as s, ChartHead as c, ChartLegend as l, ChartLegendContent as u, ChartTip as d, ChartTooltip as f, ChartTooltipContent as p, DefaultZIndexes as m, Dots as h, EvilBarChart as g, LabelListFromLabelProp as _, Layer as v, LoadingIndicator as y, PolarChart as b, PolarLabelContextProvider as x, PolarLabelFromLabelProp as S, RegisterGraphicalItemId as C, SetPolarGraphicalItem as ee, SetPolarLegendPayload as w, SetTooltipEntrySettings as T, Text as E, ZIndexLayer as D, adaptEventsOfChild as te, addRadiusAxis as ne, arrayTooltipSearcher as re, categoryAxisWidth as ie, cn as ae, createSelector as O, defaultPolarChartProps as oe, defaultPolarRadiusAxisProps as se, fitLabel as ce, getAxisTypeBasedOnLayout as le, getBandSizeOfAxis as ue, getClassNameFromUnknown as de, getColorsCount as fe, getTooltipNameProp as pe, getValueByDataKey as me, identity as he, interpolate as ge, isArrayLike as _e, isCategoricalAxis as ve, isNullish as ye, iteratee as be, matchAnimationItems as xe, matchByIndex as Se, noop as Ce, polarToCartesian as k, removeRadiusAxis as we, resolveDefaultProps as A, selectAngleAxis as Te, selectChartDataAndAlwaysIgnoreIndexes as Ee, selectChartLayout as De, selectPolarViewBox as Oe, selectRadiusAxis as ke, selectUnfilteredPolarItems as Ae, svgPropertiesAndEvents as je, svgPropertiesNoEvents as j, svgPropertiesNoEventsFromUnknown as Me, tone as Ne, useAnimationCallbacks as Pe, useAnimationStartSnapshot as Fe, useAppDispatch as Ie, useAppSelector as M, useIsPanorama as Le, usePolarChartLayout as Re } from "./peach-app.chart-tip-CRxYp6KT.js";
@@ -1484,7 +1484,7 @@ function Ni({ browsers: e, sources: t, range: n, children: r }) {
 						maxLength: 1024,
 						isRequired: !0,
 						isDisabled: u.isPending,
-						hint: "请选择运行 Peach 的电脑上的浏览器资料。"
+						hint: "请选择运行 Pear 的电脑上的浏览器资料。"
 					}),
 					/* @__PURE__ */ (0, X.jsxs)("div", {
 						className: "flex gap-2",
@@ -1595,7 +1595,7 @@ function Ni({ browsers: e, sources: t, range: n, children: r }) {
 	});
 }
 // src/react/taste/taste-page.tsx
-var Pi = 10, Fi = wt(Qe, $e, "text-body-2-medium"), Ii = `${L()} flex flex-col gap-4`, Li = "rounded-xl bg-background-primary-default p-3", Ri = "读取运行 Peach 的这台电脑上的浏览历史与书签", zi = "导入或读取浏览记录后，这里会列出记录来自哪些设备。", Bi = "馆藏中暂时没有与你浏览过的内容相符的标签。", Vi = "读取浏览记录后，这里会按类别汇总你浏览过的内容。", Hi = "这些标签出现在浏览记录中，Peach 的观看或评价记录中尚未出现这些标签", Ui = "采集浏览记录后，这里会列出浏览过的标签。", Wi = "采集浏览记录后，这里会列出浏览过的创作者。", Gi = "采集浏览记录后，这里会列出常访问的网站。", Ki = "在 Peach 里播放或评价作品后，这里会列出对应的标签。", qi = "在 Peach 里播放或评价作品后，这里会列出对应的创作者。", Ji = "在 Peach 里播放或评价作品后，这里会列出对应的女优。", Yi = "在运行 Peach 的电脑上使用浏览器：点上面的「读取浏览器记录」。", Xi = "记录在其他设备上：导出文件后，选择「导入历史文件」或「导入书签文件」。书签支持浏览器导出的 HTML 文件和 Chromium Bookmarks JSON 文件。", Zi = "需要刷新时再次读取或导入；数据源可在页面底部移除。", Qi = "删除这个来源的已导入记录，原始文件保留。若浏览器仍启用，下次读取会再次导入。", $i = "peach-taste-guide-dismissed", ea = (0, W.createContext)(/* @__PURE__ */ (0, X.jsx)(Ue, {
+var Pi = 10, Fi = wt(Qe, $e, "text-body-2-medium"), Ii = `${L()} flex flex-col gap-4`, Li = "rounded-xl bg-background-primary-default p-3", Ri = "读取运行 Pear 的这台电脑上的浏览历史与书签", zi = "导入或读取浏览记录后，这里会列出记录来自哪些设备。", Bi = "馆藏中暂时没有与你浏览过的内容相符的标签。", Vi = "读取浏览记录后，这里会按类别汇总你浏览过的内容。", Hi = "这些标签出现在浏览记录中，Pear 的观看或评价记录中尚未出现这些标签", Ui = "采集浏览记录后，这里会列出浏览过的标签。", Wi = "采集浏览记录后，这里会列出浏览过的创作者。", Gi = "采集浏览记录后，这里会列出常访问的网站。", Ki = "在 Pear 里播放或评价作品后，这里会列出对应的标签。", qi = "在 Pear 里播放或评价作品后，这里会列出对应的创作者。", Ji = "在 Pear 里播放或评价作品后，这里会列出对应的女优。", Yi = "在运行 Pear 的电脑上使用浏览器：点上面的「读取浏览器记录」。", Xi = "记录在其他设备上：导出文件后，选择「导入历史文件」或「导入书签文件」。书签支持浏览器导出的 HTML 文件和 Chromium Bookmarks JSON 文件。", Zi = "需要刷新时再次读取或导入；数据源可在页面底部移除。", Qi = "删除这个来源的已导入记录，原始文件保留。若浏览器仍启用，下次读取会再次导入。", $i = "peach-taste-guide-dismissed", ea = (0, W.createContext)(/* @__PURE__ */ (0, X.jsx)(Ue, {
 	size: "small",
 	href: "/",
 	children: "浏览馆藏"
@@ -2116,7 +2116,7 @@ function ua(e) {
 							children: [/* @__PURE__ */ (0, X.jsx)(Ve, {
 								id: "peach",
 								className: at,
-								children: "Peach 观看与评价"
+								children: "Pear 观看与评价"
 							}), /* @__PURE__ */ (0, X.jsx)(Ve, {
 								id: "browser",
 								className: at,
@@ -2348,7 +2348,7 @@ function ua(e) {
 									/* @__PURE__ */ (0, X.jsx)($, {
 										accent: 0,
 										icon: gt,
-										term: "Peach 看过",
+										term: "Pear 看过",
 										figure: Number(x.peach_items || 0).toLocaleString(),
 										detail: Yt(x.peach_seconds || 0)
 									}),
@@ -2374,13 +2374,13 @@ function ua(e) {
 							}),
 							/* @__PURE__ */ (0, X.jsxs)("section", {
 								className: `${Ii} md:flex-row md:gap-6`,
-								"aria-label": "Peach 观看",
+								"aria-label": "Pear 观看",
 								children: [/* @__PURE__ */ (0, X.jsxs)("div", {
 									className: "flex shrink-0 flex-col gap-0.5 pb-5 md:w-72 md:pr-6 md:pb-0",
 									children: [
 										/* @__PURE__ */ (0, X.jsx)("span", {
 											className: "text-caption-1-regular text-text-secondary",
-											children: "Peach 观看"
+											children: "Pear 观看"
 										}),
 										/* @__PURE__ */ (0, X.jsx)("b", {
 											className: "text-display-4-medium tabular-nums text-text-primary",
@@ -2405,7 +2405,7 @@ function ua(e) {
 								})]
 							}),
 							/* @__PURE__ */ (0, X.jsx)(aa, {
-								label: "Peach 口味维度",
+								label: "Pear 口味维度",
 								onSignal: t,
 								panels: [
 									{
@@ -2482,4 +2482,4 @@ function da({ term: e, value: t, rest: n }) {
 }
 export { $i as TASTE_GUIDE_KEY, ua as TastePage };
 
-//# debugId=0bf149fb-a309-49a0-9fb3-d0f80ca427fa
+//# debugId=db7e9acb-6651-4a7d-844e-fb667943e671

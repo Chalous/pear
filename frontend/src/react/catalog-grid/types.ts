@@ -87,8 +87,11 @@ export interface MediaCardActions {
   wallPlayer?(item: MediaItem, frame: HTMLElement, signal: AbortSignal): Promise<(continuePlaying?: boolean) => void>;
   /** 打开详情，认领同一作品正在播放的实例。 */
   wallDetails?(item: MediaItem, anchor: HTMLElement): void;
-  /** 打开一张作品卡：小窗开着时在小窗里换片，分卷与版次组进各自的队列，其余打开详情。 */
+  /** 打开一张作品卡：小窗开着时在小窗里换片，分卷与版次组进各自的队列，其余打开详情。
+   *  漫画由壳的 `openComic` 接走：点卡直接进阅读器。 */
   open(item: MediaItem, anchor: HTMLElement): void;
+  /** 点开一本漫画：直接进阅读器；打不开时由壳给回执。详情走卡片上的「打开详情」。 */
+  openComic?(item: MediaItem): void;
   /** 回收站里的一张：视频打开详情，本地图片在新标签页看原图，其余切换选中。 */
   openResource(item: MediaItem, anchor: HTMLElement): void;
   /** 竖屏带里的一张：从它开始进沉浸模式。 */

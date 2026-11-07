@@ -66,7 +66,7 @@ function BrowserForm({ initial, receipt }: { initial: State; receipt(message: st
       {state.problems?.map(problem => <Help key={problem}>{problem}</Help>)}
       {state.enabled && state.active_provider && !state.providers.some(item => item.key === state.active_provider)
         ? <Help>已启用的下载渠道不可用，请选择渠道并更新令牌。</Help> : null}
-      <Input label="Peach 地址" value={window.location.origin} isReadOnly autoComplete="off" />
+      <Input label="Pear 地址" value={window.location.origin} isReadOnly autoComplete="off" />
       {token ? <>
         <Input label="浏览器添加专用令牌" type="password" value={token} isReadOnly autoComplete="new-password" />
         <div><Button variant="secondary" type="button" onClick={() => {
@@ -74,7 +74,7 @@ function BrowserForm({ initial, receipt }: { initial: State; receipt(message: st
             peach_pairing: 1, base: window.location.origin, token,
           })), () => receipt('已复制配对信息'));
         }} {...busyProps(action.busy === 'copy')}>复制配对信息</Button></div>
-        <Help>在用户脚本设置的「Peach 地址」中粘贴配对信息，即可填好地址与令牌。</Help>
+        <Help>在用户脚本设置的「Pear 地址」中粘贴配对信息，即可填好地址与令牌。</Help>
       </> : null}
       </div>
       {action.error ? <ErrorText>{action.error}</ErrorText> : null}

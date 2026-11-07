@@ -49,7 +49,7 @@ export function PortSettings({ data, receipt }: ConfigurationGroupProps) {
     });
   };
   if (saved) return <Section guide="port" title="访问地址"><Stack>
-    <Note tone="success" title="配置已保存">Peach 正在重新启动。
+    <Note tone="success" title="配置已保存">Pear 正在重新启动。
       <LinkButton href={saved.url} size="small">返回网络与访问</LinkButton>
     </Note>
   </Stack></Section>;
@@ -81,7 +81,7 @@ export function PortSettings({ data, receipt }: ConfigurationGroupProps) {
     {network?.editable && host === '0.0.0.0' && network.scope === 'local'
       ? <Help>保存并重启后显示手机连接地址。可在下方设置访问密码。</Help> : null}
     {action.error ? <Note tone="error" title="没有保存">{action.error}</Note> : null}
-  </Stack>{editable ? <Footer status="保存后 Peach 会重启，并跳转到新地址。">
+  </Stack>{editable ? <Footer status="保存后 Pear 会重启，并跳转到新地址。">
     <Button type="submit" {...busyProps(action.busy === 'save')}>保存配置</Button>
   </Footer> : null}</Section>;
 }

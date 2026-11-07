@@ -169,12 +169,12 @@ export function javBrowserSkeleton(): string {
   const shape = rememberedShape('javBrowser');
   const enabled = on(shape?.enabled);
   const status = '<div class="min-w-0 bg-background-primary-default rounded-2xl shadow-card p-5 border border-border-button-default flex flex-col gap-3">'
-    + `<div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-medium text-text-primary">Peach 用户脚本</span>${text('4em')}</div>`
+    + `<div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-medium text-text-primary">Pear 用户脚本</span>${text('4em')}</div>`
     + `<div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-regular text-text-secondary">浏览器添加</span>${chip()}</div>`
     + `<p class="text-caption-1-regular text-text-secondary">${text('70%')}</p>`
     + `<div class="flex flex-wrap items-center gap-2">${button('重新检测', 'secondary')}</div></div>`;
   return section('浏览器添加 JAV', stack(`<div class="flex min-w-0 flex-col gap-4">${status}${selectField('浏览器添加的下载渠道')}`
-    + `${on(shape?.ready) ? '' : help('请在媒体库中添加支持云下载的网盘，并配置账号与目标目录。')}${inputField('Peach 地址')}</div>`),
+    + `${on(shape?.ready) ? '' : help('请在媒体库中添加支持云下载的网盘，并配置账号与目标目录。')}${inputField('Pear 地址')}</div>`),
   (enabled ? button('关闭浏览器添加', 'secondary') : '') + button(enabled ? '更新渠道与令牌' : '启用并生成令牌'));
 }
 
@@ -240,7 +240,7 @@ const media = () => {
   <div class="self-start">${button('添加媒体库', 'secondary')}</div>
   <p class="text-body-2-regular text-text-secondary">${LIBRARY_FOLDER_HELP}</p>
   ${shape.cloud ? cloudHelp : ''}<span class="text-body-medium text-text-primary">${text('15em')}</span>`),
-  button('保存配置'), { status: '保存后 Peach 会重新启动。' })
+  button('保存配置'), { status: '保存后 Pear 会重新启动。' })
   + (shape.cloud ? cloudProxySkeleton() : '')
   + discoverySkeleton()
   + section('番号识别规则', stack(`${text('90%')}${text('60%')}<span class="skeleton ui-configuration-skeleton-input" style="width:100%;height:88px"></span>`), button('保存配置'))
@@ -317,12 +317,12 @@ const network = () => {
   return (addresses || on(shape?.port) ? section('访问地址', stack(addressFields + (addresses ? block('100%', '40px') : '')
       + (on(shape?.networkEditable) ? `<div class="flex flex-col gap-1.5">${fieldLabel('谁可以访问')}${block('min(100%, 20em)', '36px')}</div>` + (on(shape?.lan) ? inputField('局域网访问地址') : '') : '')
       + (on(shape?.port) ? inputField('端口') : '')), on(shape?.port) ? button('保存配置') : '',
-      on(shape?.port) ? { status: '保存后 Peach 会重启，并跳转到新地址。' } : {}) : '')
+      on(shape?.port) ? { status: '保存后 Pear 会重启，并跳转到新地址。' } : {}) : '')
     + section('访问密码', stack(accessBody(mode)), mode === 'locked' ? '' : button('保存配置'))
     + (mode === 'password' || mode === 'legacy' ? devicesSkeleton() : '')
     + section('Cloudflare 公网入口', stack((named ? block('10.5em', '36px') : '') + tunnel),
       button('启动公网入口', named ? 'secondary' : 'primary') + (named ? button('保存配置') : ''), { aside: chip() })
-    + section('Peach 代理', row('连接方式', 'Peach 访问外网和采集来源时使用。', 'ui-configuration-skeleton-select') + (on(shape?.proxyAddress) ? stack(inputField('代理地址'), true) : ''), button('保存配置'));
+    + section('Pear 代理', row('连接方式', 'Pear 访问外网和采集来源时使用。', 'ui-configuration-skeleton-select') + (on(shape?.proxyAddress) ? stack(inputField('代理地址'), true) : ''), button('保存配置'));
 };
 
 /* ---------- 应用与维护 ---------- */
@@ -345,7 +345,7 @@ const maintenance = () => {
   return section('检查更新', facts(releaseFacts) + (releaseNotes ? stack(help(text('50%')).repeat(releaseNotes), true) : ''),
     button('检查更新'), { aside: chip('4em'), status: text('5em') })
     + section('自动更新', row('自动检查新版本') + row('自动下载更新', '发现新版本后先下载，重启安装前会询问。') +row('检查频率', on(shape?.autoUpdateHelp) ? text('12em') : '', 'ui-configuration-skeleton-select'), button('保存配置'))
-    + section('开机自启', row('开机后启动 Peach') + row('只启动托盘，不打开网页', '开机后在后台运行，需要时从托盘打开页面。') +row('在桌面创建快捷方式', on(shape?.desktopNote) ? text('12em') : '')
+    + section('开机自启', row('开机后启动 Pear') + row('只启动托盘，不打开网页', '开机后在后台运行，需要时从托盘打开页面。') +row('在桌面创建快捷方式', on(shape?.desktopNote) ? text('12em') : '')
       + (on(shape?.startupNote) ? stack(help(text('60%')), true) : ''), button('保存配置'))
     + section('视频播放', row('转码方式', '用于播放时的视频转码。', 'ui-configuration-skeleton-select'))
     + section('存储空间', facts(['数据目录', '所在磁盘'])
@@ -355,8 +355,8 @@ const maintenance = () => {
     + (reporting || sharing ? section('数据上传', reporting + sharing) : '')
     + section('运行信息', facts(runtime.length ? runtime : RUNTIME_FACTS))
     + `<section aria-label="新手教程" class="w-full"><div class="flex w-full flex-col rounded-2xl bg-background-secondary-default pl-3">${controlRow('新手教程', '在所有设备上恢复右上角教程入口，保留已读进度', button('重新打开', 'secondary'))}</div></section>`
-    + (given(shape?.uninstall) ? section('卸载 Peach', (on(shape?.uninstallHelp) ? stack(help('卸载移除 Peach 程序本身，原始媒体文件保留。')) : '')
-      + row('完全卸载', '同时删除设置、本地数据库、观看记录、凭据和缓存') + stack(summary('数据目录'), true), button('卸载 Peach'), { status: text('16em') }) : '');
+    + (given(shape?.uninstall) ? section('卸载 Pear', (on(shape?.uninstallHelp) ? stack(help('卸载移除 Pear 程序本身，原始媒体文件保留。')) : '')
+      + row('完全卸载', '同时删除设置、本地数据库、观看记录、凭据和缓存') + stack(summary('数据目录'), true), button('卸载 Pear'), { status: text('16em') }) : '');
 };
 
 /** 各分区复用正式表单的 Section、Stack 与 SettingsRow 几何。 */

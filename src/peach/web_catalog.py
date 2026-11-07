@@ -16,7 +16,7 @@ import time
 from collections.abc import Callable
 from functools import lru_cache
 
-from . import entities, media_libraries, sample_images, settings_file
+from . import comics, entities, media_libraries, sample_images, settings_file
 
 from .catalog_rules import (
     LENGTH_TAGS,
@@ -209,12 +209,13 @@ AGENCY_SEARCH_CLAUSE = (
 )
 
 
-#: 普通馆藏展示在库正片，排除附属媒体、回收站和标「已消失」的资源。
+#: 普通馆藏展示在库正片与漫画，排除附属媒体、回收站和标「已消失」的资源。
 #: （`disposal` 为空，ADR-0087）。列表、搜索和补全
 #: 共用这一份。各写各的后果是补全会补出回收站里的作品——那一条点开是已经删掉的片，
 #: 而列表本身从来不显示它，所以只会在补全这一个表面上露出来。
+#: 漫画一本是一条 `medium='comic'` 的目录记录（comics.py），与视频同列展示。
 VISIBLE_CATALOG_ASSET = (
-    "a.medium='video' AND a.disposal IS NULL AND NOT peach_is_local_extra(a.name,a.path)"
+    "a.medium IN ('video','comic') AND a.disposal IS NULL AND NOT peach_is_local_extra(a.name,a.path)"
 )
 
 
@@ -1054,6 +1055,8 @@ def q_item(contract: WebContract, aid):
         if not r:
             return {"error": "not found"}
         d = dict(r)
+        # 漫画详情带上页数；页清单与取图按页 ID 走 /api/comic-pages 与 /comic-image。
+        d["comic_pages"] = comics.page_count(c, aid)
         d["sample_images"] = sample_images.detail_refs(c, d.get("code"))
         # 真相字段的字段级归属随详情一起下发：页面要显示某个值是谁写的、还能不能
         # 被自动写入者改，`mutation_revision` 则是编辑时回传的乐观并发凭据。

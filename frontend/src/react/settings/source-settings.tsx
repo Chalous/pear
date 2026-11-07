@@ -1,4 +1,4 @@
-/* 来源凭据、订阅采集、资源搜索与作品资料站点共用一个 Peach 配置分区。凭据与关注采集是这一组的本体，
+/* 来源凭据、订阅采集、资源搜索与作品资料站点共用一个 Pear 配置分区。凭据与关注采集是这一组的本体，
  * 排在前面；资源搜索与只换镜像地址的资料站点少改，排在后面。 */
 import { useQuery } from '@tanstack/react-query';
 import { ButtonLink } from '@/components/base/buttons/button';

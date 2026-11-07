@@ -407,7 +407,7 @@ function PikPakAccount({ state, settle, receipt, username, setUsername }: CardPr
         <FactList>
           <Fact term="账号">{account.username || '已登录'}</Fact>
           {account.method === 'browser' ? (
-            <Fact term="登录方式">浏览器登录，由 Peach 续期</Fact>
+            <Fact term="登录方式">浏览器登录，由 Pear 续期</Fact>
           ) : (
             <Fact term="密码">{account.remember ? '已保存，登录过期时自动重新登录' : '未保存，登录过期后需要回到这里重新登录'}</Fact>
           )}

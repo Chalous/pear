@@ -40,7 +40,7 @@ describe('章节进度', () => {
     const entry = (route: '/review' | '/quality-goals' | '/settings/network' | '/settings/appearance') => guideEntry({ id: 'entry', title: '', body: '', route })?.path;
     expect(entry('/review')).toEqual(['侧栏', '管理', '数据管理', '人工复核']);
     expect(entry('/quality-goals')).toEqual(['侧栏', '管理', '数据管理', '高清版']);
-    expect(entry('/settings/network')).toEqual(['侧栏底部的设置', 'Peach 配置', '网络与访问']);
+    expect(entry('/settings/network')).toEqual(['侧栏底部的设置', 'Pear 配置', '网络与访问']);
     expect(entry('/settings/appearance')).toEqual(['侧栏底部的设置', '外观与导航']);
   });
   it('快速导览在首页四步结束，详细章节都可以从主题目录找到', () => {

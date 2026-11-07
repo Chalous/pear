@@ -1,4 +1,4 @@
-/* 设置偏好与 Peach 配置的五份服务端数据，各一个 Query 键。
+/* 设置偏好与 Pear 配置的五份服务端数据，各一个 Query 键。
  *
  * - `['settings']`：跟数据库走、所有访问端同一份的那几项（`/api/settings`，`src/peach/web_settings.py`）。
  *   面板每次打开都重取一次，取回来交给壳对账（`host.syncRemote`）：界面偏好的真相仍是壳里那一份
@@ -9,7 +9,7 @@
  * - `['media-processing']`：这台机器生成预览的开关与抽帧、转码的编解码方式。配置页「视频预览」与
  *   「视频播放」两张卡读写同一份。
  *
- * 面板常驻不卸载，每次打开重取设置；Peach 配置在挂载时重取各自的数据。 */
+ * 面板常驻不卸载，每次打开重取设置；Pear 配置在挂载时重取各自的数据。 */
 import { useMutation, type QueryClient } from '@tanstack/react-query';
 
 import { apiGet, apiSend } from '../../api';
@@ -83,7 +83,7 @@ export const fetchFeedSchedule = (signal?: AbortSignal) =>
 export const fetchThumbnailJobs = (signal?: AbortSignal) =>
   apiGet<ThumbnailJobStatus>(THUMBNAIL_JOBS_URL, signal);
 
-/** 打开偏好弹窗时重取共享设置；采集状态由 Peach 配置中的控件读取。 */
+/** 打开偏好弹窗时重取共享设置；采集状态由 Pear 配置中的控件读取。 */
 export function refreshPanelData(client: QueryClient = queryClient): Promise<SyncedSettings | null> {
   return client.fetchQuery({
     queryKey: SETTINGS_KEY, queryFn: ({ signal }) => fetchSettings(signal), staleTime: 0,

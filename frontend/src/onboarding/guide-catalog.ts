@@ -15,7 +15,7 @@ export const INTERFACE_CHAPTERS: GuideChapter[] = [
     page('search', '搜索馆藏', '输入作品名、番号、艺人、厂牌或标签。搜索结果来自已经入库的内容。', '/', '#q, #searchBtn'),
     page('navigation', '切换浏览入口', '在侧栏按人物、厂牌和标签浏览。手机上用导航按钮展开侧栏；入口与顺序可以在设置里调整。', '/', '#filterBtn, [data-sidebar-nav]'),
     page('cards', '打开作品详情', '选择作品查看资料、版本和播放入口。首次扫描尚未入库时，可以先继续认识导航。', '/', '[data-media-grid] > [data-id], [data-catalog-row], [data-media-empty]'),
-    page('preferences', '调整自己的界面', '侧栏底部的设置包含显示与播放偏好；手机上先展开侧栏。媒体目录、网络和后台服务放在其中的 Peach 配置入口。', '/', '#settingsBtn, #filterBtn'),
+    page('preferences', '调整自己的界面', '侧栏底部的设置包含显示与播放偏好；手机上先展开侧栏。媒体目录、网络和后台服务放在其中的 Pear 配置入口。', '/', '#settingsBtn, #filterBtn'),
   ] },
   { id: 'find-play', kind: 'interface', title: '找到并播放', summary: '搜索、筛选、详情、版本、字幕和播放器。', steps: [
     page('library', '选择媒体库', '导航顶部可以切换全部媒体库或某个媒体库；手机上先展开侧栏。媒体库把不同目录组织成一组。', '/', '#brandHome, #filterBtn'),
@@ -24,7 +24,7 @@ export const INTERFACE_CHAPTERS: GuideChapter[] = [
     { ...step('detail', '作品详情', '这里显示当前作品的标题和源文件工具。评分、人物和标签在下方；有分卷或版本的作品可从馆藏卡片进入相应队列。', '/', '[data-item-title]'), surface: 'detail' },
     { ...step('player', '播放器控件', '底部控制条提供播放、进度、音量和全屏。右侧齿轮打开播放速度、字幕、画面旋转和清晰度等选项。', '/', '#stage .vjs-control-bar'), surface: 'player' },
     { ...step('subtitles', '字幕与播放选项', '从播放器齿轮菜单进入字幕，可以选择已有字幕、加载本地字幕文件或搜索字幕；播放速度和清晰度也在这个菜单中。', '/', '#stage [data-player-subtitles]'), surface: 'subtitles' },
-    { ...step('external', '外部播放器', '在这里选择本地播放器、M3U 播放列表或网络播放地址，再点打开。另一台设备需要能访问当前 Peach 地址。', '/', '#stage [data-local-playback-row]'), surface: 'detail' },
+    { ...step('external', '外部播放器', '在这里选择本地播放器、M3U 播放列表或网络播放地址，再点打开。另一台设备需要能访问当前 Pear 地址。', '/', '#stage [data-local-playback-row]'), surface: 'detail' },
   ] },
   { id: 'save', kind: 'interface', title: '保存喜欢的内容', summary: '评分、标记、播放列表与当前播放队列。', steps: [
     { ...page('marks', '评分', '点击星星给作品评分；下方的喜欢、稍后看和加入播放列表用于保存感兴趣的内容。', '/', '#stage [data-item-rating]'), surface: 'detail' },
@@ -63,25 +63,25 @@ export const INTERFACE_CHAPTERS: GuideChapter[] = [
   ] },
   { id: 'insights', kind: 'interface', title: '了解自己的馆藏', summary: '统计、口味，以及浏览历史和书签来源。', steps: [
     page('stats', '馆藏统计', '选择统计视图查看馆藏、存储和观看情况，各视图中的入口可继续查看相关作品。', '/stats', '[aria-label="统计视图"]'),
-    page('taste', '口味与记录', '在这里切换浏览器记录与 Peach 观看评价，分析各自的口味。', '/taste', '[aria-label="口味分析的数据来源"]'),
-    page('import', '取得浏览历史与书签', '读取浏览器记录需要在运行 Peach 的电脑操作；更多方式菜单可以导入历史或书签文件，适合其它设备。', '/taste', '[data-guide-target="history-import"]'),
+    page('taste', '口味与记录', '在这里切换浏览器记录与 Pear 观看评价，分析各自的口味。', '/taste', '[aria-label="口味分析的数据来源"]'),
+    page('import', '取得浏览历史与书签', '读取浏览器记录需要在运行 Pear 的电脑操作；更多方式菜单可以导入历史或书签文件，适合其它设备。', '/taste', '[data-guide-target="history-import"]'),
     page('history', '管理记录来源', '已取得的记录来源集中列在这里，可以停用本机浏览器读取或移除已导入的数据源；导览不会修改这些记录。', '/taste', 'section[aria-label="数据源"]'),
   ] },
   { id: 'external', kind: 'interface', title: '从外部加入内容', summary: '云下载、目录映射与浏览器添加。', steps: [
     page('downloads', '配置下载渠道', '先连接支持的渠道，再指定云端目标目录与本地媒体目录。下载完成后按目录规则入库。', '/settings/downloads', '[data-guide-target="download"]'),
     page('search', '搜索资源', '资源搜索使用配置的索引器。查到结果后还需要你主动选择下载。', '/settings/subscriptions', '[data-guide-target="indexers"]'),
-    page('browser', '浏览器添加 JAV', '用户脚本与 Peach 配对后可从浏览器添加作品。专用令牌、默认渠道和开关在下载渠道里管理。', '/settings/downloads', '[data-guide-target="browser"]'),
+    page('browser', '浏览器添加 JAV', '用户脚本与 Pear 配对后可从浏览器添加作品。专用令牌、默认渠道和开关在下载渠道里管理。', '/settings/downloads', '[data-guide-target="browser"]'),
   ] },
   { id: 'devices', kind: 'interface', title: '手机与其他设备', summary: '访问地址、密码、局域网和公网入口。', steps: [
-    page('address', '找到访问地址', '同一局域网的设备使用 Peach 的局域网地址。仅本机访问时，其它设备无法连接。', '/settings/network', '[data-guide-target="port"]'),
-    page('password', '访问密码', '能连接到 Peach 的设备按访问密码登录。显示偏好与访问权限是不同的设置。', '/settings/network', '[data-guide-target="access"]'),
+    page('address', '找到访问地址', '同一局域网的设备使用 Pear 的局域网地址。仅本机访问时，其它设备无法连接。', '/settings/network', '[data-guide-target="port"]'),
+    page('password', '访问密码', '能连接到 Pear 的设备按访问密码登录。显示偏好与访问权限是不同的设置。', '/settings/network', '[data-guide-target="access"]'),
     page('tunnel', '需要时启用公网入口', 'Cloudflare 公网入口适合离开局域网后访问，需要按实际部署配置连接信息。', '/settings/network', '[data-guide-target="tunnel"]'),
   ] },
 ];
 
 const local = '当前浏览器 · 修改后自动保存';
 const shared = '跟随馆藏 · 修改后自动保存';
-const saved = '运行 Peach 的电脑 · 确认后保存配置';
+const saved = '运行 Pear 的电脑 · 确认后保存配置';
 type Field = [string, string, string, string?, string?];
 const fields = (route: keyof typeof PREFERENCE_SECTIONS | keyof typeof CONFIGURATION_SECTIONS, entries: Field[], scope = local): GuideStep[] => entries.map(([id, title, body, target, override]) => step(id, title, body, `/settings/${route}`, target || `[data-guide-target="${id}"]`, override || scope));
 export const SETTING_CHAPTERS: GuideChapter[] = [
@@ -124,7 +124,7 @@ export const SETTING_CHAPTERS: GuideChapter[] = [
     ['policy', '媒体库处理方式', '这里选择整个媒体库的处理方式。自定义处理可分别选择探测、资料、封面、人物与预览。', '[data-guide-target="library-policy"]'],
     ['read-policy', '文件夹读取策略', '每个文件夹分别选择读取策略。正常读取允许按处理规则读取视频；代理保护适合计费挂载，限制自动读取视频。', '[data-guide-target="media"] [data-media-read-policy]'],
     ['mounts', '挂载状态', '文件夹路径旁显示已保存目录的挂载状态；新目录保存前可能没有状态。网盘挂载不可用时先恢复挂载，再运行扫描。', '[data-guide-target="media"] [data-folder-row]:has([data-mount]), [data-guide-target="mounts"]'],
-    ['cloud-proxy', 'CloudDrive 代理', '数据代理控制文件内容请求，API 代理控制接口请求。分别选择模式、地址与端口，认证需要时填写用户名和密码；它们与 Peach 代理分别配置。'],
+    ['cloud-proxy', 'CloudDrive 代理', '数据代理控制文件内容请求，API 代理控制接口请求。分别选择模式、地址与端口，认证需要时填写用户名和密码；它们与 Pear 代理分别配置。'],
     ['discovery', '自动发现新文件', '可监视本机文件夹或接收 CloudDrive2 通知。Webhook 用来接收事件，路径前缀映射把通知路径对应到媒体目录。'],
     ['codes', '番号识别规则', '当文件名无法识别时，检查或补充识别规则。规则会影响之后的识别，请先核对样例。'],
     ['preview', '视频预览', '生成视频预览会读取视频并产生缓存。时间轴预览的开关与采集间隔控制本机磁盘缩略图；抽帧解码方式决定生成预览使用的解码器。修改后自动保存，并受媒体库处理方式与读取策略约束。'],
@@ -139,12 +139,12 @@ export const SETTING_CHAPTERS: GuideChapter[] = [
   { id: 'downloads', kind: 'settings', title: CONFIGURATION_SECTIONS.downloads, summary: '云下载目录、账号与浏览器配对。', steps: fields('downloads', [
     ['download', '云下载', 'CloudDrive2 地址与 API 令牌用于连接服务，可自动查找或检查连接。115 和 PikPak 的目标目录决定云端存放位置，本地媒体目录映射用于下载后入库；等待上限控制等待时长。'],
     ['pikpak', 'PikPak 账号', '按页面选择账号密码或浏览器登录，连接状态用于判断是否可用。登录由你主动操作。'],
-    ['browser', '浏览器添加 JAV', '安装用户脚本并配对 Peach。默认渠道决定提交到哪里；启用开关控制功能，专用令牌可更新或关闭，脚本检测帮助确认配对。'],
+    ['browser', '浏览器添加 JAV', '安装用户脚本并配对 Pear。默认渠道决定提交到哪里；启用开关控制功能，专用令牌可更新或关闭，脚本检测帮助确认配对。'],
   ], saved) },
   { id: 'network', kind: 'settings', title: CONFIGURATION_SECTIONS.network, summary: '访问端口、代理、密码和公网入口。', steps: fields('network', [
     ['port', '访问地址与端口', '查看本机、局域网及其他设备可用的访问地址。端口设置保留当前值即可；保存端口变更后，需要使用页面提示的新地址。'],
-    ['proxy', 'Peach 代理', '来源联网可选择系统代理、直连或自定义代理地址。连接失败时先检查当前模式与地址。'],
-    ['access', '访问密码', '设置或修改进入 Peach 的密码；关闭后，能连接到 Peach 的设备可直接访问。'],
+    ['proxy', 'Pear 代理', '来源联网可选择系统代理、直连或自定义代理地址。连接失败时先检查当前模式与地址。'],
+    ['access', '访问密码', '设置或修改进入 Pear 的密码；关闭后，能连接到 Pear 的设备可直接访问。'],
     ['tunnel', 'Cloudflare 公网入口', '临时链接用于临时连接，命名隧道使用主机名与隧道令牌。连接状态显示是否已可用，按需要启用。'],
   ], saved) },
   { id: 'app-maintenance', kind: 'settings', title: CONFIGURATION_SECTIONS.maintenance, summary: '更新、存储、数据选择与应用维护。', steps: fields('maintenance', [
@@ -156,7 +156,7 @@ export const SETTING_CHAPTERS: GuideChapter[] = [
     ['ledger-backups', '账本备份', '立即备份当前账本，或从列表里的一份备份恢复。恢复会替换当前账本，替换前先另存一份；只有写入端能恢复。'],
     ['reporting', '数据上传', '版本统计与错误诊断、馆藏与口味明细是独立选择。明细上传前可查看预览，按自己的意愿开启。'],
     ['facts', '运行信息与新手教程', '运行信息用于核对环境。新手教程可以随时重开，阅读进度随本机账本在所有设备间共享。'],
-    ['uninstall', '卸载 Peach', '卸载移除程序；完全卸载还移除设置、资料库、记录、凭据和缓存。执行前核对页面列出的数据目录与确认内容。'],
+    ['uninstall', '卸载 Pear', '卸载移除程序；完全卸载还移除设置、资料库、记录、凭据和缓存。执行前核对页面列出的数据目录与确认内容。'],
   ], saved) },
   { id: 'diagnostics', kind: 'settings', title: CONFIGURATION_SECTIONS.diagnostics, summary: '遇到问题时查看检查项与诊断报告。', steps: fields('diagnostics', [
     ['attention', '需要关注的检查项', '从需要关注的项目进入原因与恢复入口；没有异常时查看库健康。', '[data-guide-target="attention"], [data-guide-target="health"]'],
@@ -209,7 +209,7 @@ const FIELD_DETAILS: Record<string, readonly [string, string][]> = {
     ['监视本机文件夹', '接收本机文件系统的变更，用于发现新内容。'],
     ['接收 CloudDrive2 通知', '通过 CloudDrive2 推送目录变化。'],
     ['Webhook', '供来源服务发送变更事件的接收入口。'],
-    ['路径前缀映射', '将来源通知里的路径换算为 Peach 能访问的媒体目录路径。'],
+    ['路径前缀映射', '将来源通知里的路径换算为 Pear 能访问的媒体目录路径。'],
   ],
   'follow-options': [
     ['首次采集范围', '决定新加入的关注来源回看多久；跟随馆藏保存。'],
@@ -219,15 +219,15 @@ const FIELD_DETAILS: Record<string, readonly [string, string][]> = {
     ['头像与 favicon 刷新', '页面显示现有刷新信息；头像用于识别创作者，favicon 用于识别站点。'],
   ],
   download: [
-    ['CloudDrive2 地址与 API 令牌', '地址定位服务，令牌授权 Peach 调用服务接口。'],
+    ['CloudDrive2 地址与 API 令牌', '地址定位服务，令牌授权 Pear 调用服务接口。'],
     ['自动查找与检查', '查找可连接的服务或核对当前连接。'],
     ['115 目标目录', '决定提交到 115 的内容保存到哪个云端目录。'],
     ['PikPak 目标目录', '决定提交到 PikPak 的内容保存到哪个云端目录。'],
-    ['媒体目录映射', '将云端目标对应到 Peach 能扫描的挂载路径，便于下载后入库。'],
+    ['媒体目录映射', '将云端目标对应到 Pear 能扫描的挂载路径，便于下载后入库。'],
     ['等待上限', '控制等待下载结果的最长时间。'],
   ],
   browser: [
-    ['脚本检测与配对', '确认用户脚本已安装，并与当前 Peach 服务连接。'],
+    ['脚本检测与配对', '确认用户脚本已安装，并与当前 Pear 服务连接。'],
     ['默认渠道', '决定从浏览器添加时默认使用的下载渠道。'],
     ['启用', '控制浏览器添加功能是否接受请求。'],
     ['专用令牌', '授权用户脚本连接；更新后需要重新配对，关闭后停止使用该功能。'],
@@ -246,16 +246,16 @@ const FIELD_DETAILS: Record<string, readonly [string, string][]> = {
   ],
   indexers: [
     ['名称', '用于区分资源搜索来源。'], ['Torznab 地址', '索引器提供的查询接口地址。'],
-    ['API key', '授权 Peach 使用该索引器；按索引器提供的信息填写。'],
+    ['API key', '授权 Pear 使用该索引器；按索引器提供的信息填写。'],
   ],
   proxy: [
-    ['系统代理', '采用运行 Peach 的电脑提供的代理配置。'], ['直连', '直接连接来源。'],
-    ['自定义代理地址', '指定 Peach 使用的代理；已保存时留空保留当前地址。'],
+    ['系统代理', '采用运行 Pear 的电脑提供的代理配置。'], ['直连', '直接连接来源。'],
+    ['自定义代理地址', '指定 Pear 使用的代理；已保存时留空保留当前地址。'],
   ],
   access: [
     ['当前访问密码', '修改访问密码时用于验证当前密码。'],
     ['新访问密码与确认', '两次填写相同密码，保存后使用新密码登录。'],
-    ['关闭访问密码', '保存后，能连接到 Peach 的设备可直接进入。'],
+    ['关闭访问密码', '保存后，能连接到 Pear 的设备可直接进入。'],
   ],
   tunnel: [
     ['临时链接', '适合临时使用的公网访问入口。'], ['命名隧道', '连接已配置的固定公网入口。'],
@@ -263,9 +263,9 @@ const FIELD_DETAILS: Record<string, readonly [string, string][]> = {
     ['连接状态', '用于判断公网入口是否已经可访问。'],
   ],
   startup: [
-    ['开机后启动 Peach', '系统登录后启动应用；可用性取决于当前平台。'],
+    ['开机后启动 Pear', '系统登录后启动应用；可用性取决于当前平台。'],
     ['只启动托盘，不打开网页', '开机启动时保留后台运行，按需要再打开页面。'],
-    ['在桌面创建快捷方式', '提供打开 Peach 的桌面入口。'],
+    ['在桌面创建快捷方式', '提供打开 Pear 的桌面入口。'],
   ],
   reporting: [
     ['发送版本统计与错误诊断', '上传版本、系统信息、故障类型、代码位置与发生次数。'],
@@ -275,7 +275,7 @@ const FIELD_DETAILS: Record<string, readonly [string, string][]> = {
 };
 for (const chapter of SETTING_CHAPTERS) for (const item of chapter.steps) {
   item.details = FIELD_DETAILS[item.id];
-  if (item.id === 'preview' || item.id === 'transcode') item.scope = '运行 Peach 的电脑 · 修改后自动保存';
+  if (item.id === 'preview' || item.id === 'transcode') item.scope = '运行 Pear 的电脑 · 修改后自动保存';
   if (item.id === 'follow-options' || item.id === 'sources' || item.id === 'reporting' || item.id === 'storage'
     || item.id === 'ledger-backups') item.scope = '按页面中各项的保存或确认动作生效';
 }

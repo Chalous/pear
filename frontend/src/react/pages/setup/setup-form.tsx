@@ -228,12 +228,12 @@ export function SetupForm({ setup, onDone, onRestore }: { setup: SetupQuestions;
       <div data-setup-step-content="" style={{ '--setup-direction': `${direction * 20}px` } as CSSProperties}>
         <header data-setup-step-heading="" key={step}>
           <h1 id="auth-card-title" data-copy-key={`setup.title.${step}`} ref={stepTitle} tabIndex={-1} className="text-title-1-semibold text-text-primary">
-            {step === 0 ? '欢迎使用 Peach' : step === 1 ? '你的媒体，放在哪里？' : step === 2 ? (setup.docker ? '访问与网络' : '在哪里使用 Peach？') : '准备好开始了'}
+            {step === 0 ? '欢迎使用 Pear' : step === 1 ? '你的媒体，放在哪里？' : step === 2 ? (setup.docker ? '访问与网络' : '在哪里使用 Pear？') : '准备好开始了'}
           </h1>
           <p data-copy-key={`setup.description.${step}`} className="text-body-regular text-text-secondary">
-            {step === 0 ? '花一点时间，让 Peach 更适合你。' : step === 1 ? '连接已有文件夹，或先进入界面看看。'
+            {step === 0 ? '花一点时间，让 Pear 更适合你。' : step === 1 ? '连接已有文件夹，或先进入界面看看。'
               : step === 2 ? (setup.docker ? '为馆藏设置访问密码，并选择资料采集的连接方式。' : '选择访问范围，也可以为馆藏设置密码。')
-              : '确认这些选择，剩下的交给 Peach。'}
+              : '确认这些选择，剩下的交给 Pear。'}
           </p>
         </header>
       <div hidden={step !== 0}>
@@ -352,13 +352,13 @@ export function SetupForm({ setup, onDone, onRestore }: { setup: SetupQuestions;
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-0.5">
             <Label id="setup-password-title" elementType="span">访问密码</Label>
-            <p id="setup-access-description" className="text-body-2-regular text-text-secondary">开启后，访问 Peach 需要先登录。</p>
+            <p id="setup-access-description" className="text-body-2-regular text-text-secondary">开启后，访问 Pear 需要先登录。</p>
           </div>
           <Switch aria-labelledby="setup-password-title" aria-describedby="setup-access-description"
             isSelected={accessOn} onChange={setAccessOn} />
         </div>
-        <Help>{lan || setup.docker ? '局域网访问推荐设置密码。未设置时，同一网络中能连接 Peach 的设备可直接进入。'
-          : '只有这台电脑可以访问；设置密码后，打开 Peach 仍需登录。'}</Help>
+        <Help>{lan || setup.docker ? '局域网访问推荐设置密码。未设置时，同一网络中能连接 Pear 的设备可直接进入。'
+          : '只有这台电脑可以访问；设置密码后，打开 Pear 仍需登录。'}</Help>
         </>}
         {accessOn
           ? <PasswordPair label="访问密码" password={password} confirmation={confirmation}
@@ -369,7 +369,7 @@ export function SetupForm({ setup, onDone, onRestore }: { setup: SetupQuestions;
       </CardGroup>
 
       <CardGroup labelledBy="setup-proxy-title">
-        <GroupTitle id="setup-proxy-title">Peach 代理</GroupTitle>
+        <GroupTitle id="setup-proxy-title">Pear 代理</GroupTitle>
         <Help>用于资料采集、封面和工具下载，可在配置页修改。</Help>
         <div className="flex flex-col items-start gap-1.5">
           <Label elementType="span" id="setup-proxy-mode-label">连接方式</Label>
@@ -402,7 +402,7 @@ export function SetupForm({ setup, onDone, onRestore }: { setup: SetupQuestions;
         {skipMedia ? <Help>添加媒体目录后，再选择处理方式并开始扫描。</Help> : <>
         <div className="flex flex-col gap-1.5">
           <Checkbox isSelected={scanNow} onChange={setScanNow}>{scanLabel(filled)}</Checkbox>
-          <Help>{scanNow ? '扫描会在后台开始，期间可以进入 Peach。' : '先保存处理方式，稍后在「媒体库与入库」开始扫描。'}</Help>
+          <Help>{scanNow ? '扫描会在后台开始，期间可以进入 Pear。' : '先保存处理方式，稍后在「媒体库与入库」开始扫描。'}</Help>
         </div>
         {folders.rows.some(row => row.cost === 'metered')
           ? <Help>开启代理保护的目录不会自动读取视频信息或生成预览；播放时会读取视频。</Help>

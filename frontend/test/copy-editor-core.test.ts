@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import '../src/copy-editor-core.js';
 
-const core = (globalThis as unknown as { PeachCopyEditorCore: {
+const core = (globalThis as unknown as { PearCopyEditorCore: {
   readJson(response: Response): Promise<unknown>;
   resolveDraft(edits: Record<string, string> | null, original: string): string;
   applyDrafts(root: Node, edits: Record<string, string>, originals: WeakMap<Node, string>, skip?: string): void;
-} }).PeachCopyEditorCore;
+} }).PearCopyEditorCore;
 
 describe('原位改字核心', () => {
   it('读取 JSON 成功结果与服务端失败原因', async () => {

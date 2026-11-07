@@ -106,7 +106,7 @@ export function lastSeen(seconds: number, now = Date.now() / 1000): string {
 }
 
 function origin(row: DeviceSession): string {
-  if (row.network === 'loopback') return '运行 Peach 的电脑';
+  if (row.network === 'loopback') return '运行 Pear 的电脑';
   if (!row.network) return '';
   return row.remote ? `公网入口 · ${row.network}` : row.network;
 }
@@ -136,7 +136,7 @@ function DeviceList({ initial, receipt }: { initial: DeviceSessionList; receipt(
 
   const revoke = (row: DeviceSession) => void confirmModal({
     title: '撤销这台设备的登录',
-    body: `${deviceName(row)}（${describe(row)}）下次打开 Peach 需要重新输入访问密码。`,
+    body: `${deviceName(row)}（${describe(row)}）下次打开 Pear 需要重新输入访问密码。`,
     confirmLabel: '撤销登录',
     onConfirm: async () => {
       setList(await apiSend<DeviceSessionList>(`${URL}/revoke`, { revision: list.revision, id: row.id }));
@@ -145,7 +145,7 @@ function DeviceList({ initial, receipt }: { initial: DeviceSessionList; receipt(
   });
   const revokeOthers = () => void confirmModal({
     title: '撤销其他设备的登录',
-    body: `除本机以外的 ${others.length} 台设备下次打开 Peach 需要重新输入访问密码。`,
+    body: `除本机以外的 ${others.length} 台设备下次打开 Pear 需要重新输入访问密码。`,
     confirmLabel: '撤销登录',
     onConfirm: async () => {
       const next = await apiSend<DeviceSessionList & { removed: number }>(`${URL}/revoke`, { revision: list.revision, scope: 'others' });
@@ -171,7 +171,7 @@ function DeviceList({ initial, receipt }: { initial: DeviceSessionList; receipt(
           </Rows>
         : <Stack><Help>还没有浏览器用访问密码登录过。</Help></Stack>}
       {!list.manageable && others.length
-        ? <Stack divided><Help>在运行 Peach 的电脑上打开这一页才能撤销。</Help></Stack>
+        ? <Stack divided><Help>在运行 Pear 的电脑上打开这一页才能撤销。</Help></Stack>
         : null}
       {list.manageable && others.length
         ? <Footer status="修改访问密码会让全部设备退出。">

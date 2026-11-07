@@ -5,7 +5,7 @@ import { SettingsRow } from '@/components/application/settings/settings-rows';
 import { Button } from '@/components/base/buttons/button';
 
 import { apiSend } from '../../api';
-import type { ConfigurationGroupProps, PeachProxyState } from '../bundle';
+import type { ConfigurationGroupProps, PearProxyState } from '../bundle';
 import { Note } from '../components/note';
 import { AccessSettings } from './access-settings';
 import { ApiTokenSettings } from './api-token-settings';
@@ -33,12 +33,12 @@ export function NetworkSettings({ data, receipt, panel, issues }: ConfigurationG
         : null}
       {data.certificate ? <CertificateTrust initial={data.certificate} /> : null}
       {data.tunnel ? <TunnelSettings revision={data.revision} initial={data.tunnel} receipt={receipt} /> : null}
-      {data.peach_proxy ? <PeachProxy initial={data.peach_proxy} receipt={receipt} /> : null}
+      {data.peach_proxy ? <PearProxy initial={data.peach_proxy} receipt={receipt} /> : null}
     </div>
   );
 }
 
-export function PeachProxy({ initial, receipt }: { initial: PeachProxyState; receipt(message: string): void }) {
+export function PearProxy({ initial, receipt }: { initial: PearProxyState; receipt(message: string): void }) {
   const [saved, setSaved] = useState(initial);
   const [mode, setMode] = useState(initial.mode);
   const [address, setAddress] = useState('');
@@ -46,14 +46,14 @@ export function PeachProxy({ initial, receipt }: { initial: PeachProxyState; rec
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    void action.run('save', (signal) => apiSend<PeachProxyState>('/api/configuration/peach-proxy', { mode, proxy: address }, 'POST', signal),
+    void action.run('save', (signal) => apiSend<PearProxyState>('/api/configuration/peach-proxy', { mode, proxy: address }, 'POST', signal),
       (next) => { setSaved(next); setAddress(''); receipt('已保存配置'); });
   };
 
   return (
-    <Section id="peachProxy" guide="proxy" title="Peach 代理" onSubmit={submit}>
+    <Section id="peachProxy" guide="proxy" title="Pear 代理" onSubmit={submit}>
       <Rows>
-        <SettingsRow label="连接方式" description="Peach 访问外网和采集来源时使用。">
+        <SettingsRow label="连接方式" description="Pear 访问外网和采集来源时使用。">
           <ProxyModeSelect mode={mode} onChange={setMode} />
         </SettingsRow>
       </Rows>

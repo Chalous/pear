@@ -21,6 +21,7 @@ from peach import __version__
 from support.amane import write_amane_metadata
 from support.ledger import fresh_ledger
 from support.mp4 import minimal_mp4
+from support.web import route_client
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -108,6 +109,9 @@ CREATE TABLE asset_entity(
   asset_id INTEGER,entity_id INTEGER,role TEXT,source TEXT,confidence REAL,
   metadata_json TEXT DEFAULT '{}',first_seen_at TEXT,last_seen_at TEXT,
   UNIQUE(asset_id,entity_id,role,source));
+CREATE TABLE comic_page(
+  id INTEGER PRIMARY KEY,asset_id INTEGER NOT NULL,relative_path TEXT NOT NULL,
+  ordinal INTEGER NOT NULL,UNIQUE(asset_id,relative_path));
 CREATE TABLE entity_membership(
   member_id INTEGER PRIMARY KEY,agency_id INTEGER,source TEXT,
   confidence REAL DEFAULT 1.0,checked_at TEXT);
@@ -4412,6 +4416,78 @@ class LoginPageWithoutSessionTests(unittest.IsolatedAsyncioTestCase):
         script = await self.client.get("/dist/no-such.js")
         self.assertEqual(script.status_code, 404)
         self.assertEqual(script.json(), {"error": "这个地址下没有页面。"})
+
+
+class ComicWebTests(unittest.TestCase):
+    """漫画的读取面：页清单按次序给页 ID 与 URL，取图按页 ID 在授权根内解析，
+    浏览器不提交磁盘路径；目录临时离线报「目录不可用」，馆藏不动。"""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name).resolve()
+        self.book = self.root / "book"
+        self.book.mkdir()
+        (self.book / "1.jpg").write_bytes(b"jpeg-bytes")
+        (self.book / "2.png").write_bytes(b"png-bytes")
+        self.db = fresh_ledger(self.root)
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("INSERT INTO asset(id,location,path,name,medium,size) VALUES(1,?,?,?,?,?)",
+                               ('local', str(self.book), self.book.name, 'comic', 20))
+            connection.executemany("INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(1,?,?)",
+                                   [("1.jpg", 1), ("2.png", 2)])
+        from peach.api import create_app
+        from peach.config import PeachSettings
+        self.app = create_app(PeachSettings(configured=True, db_path=self.db,
+            follow_state_root=self.root / 'state', allowed_media_roots=(self.root,)))
+        self.addCleanup(self.app.state.http_transport.close)
+
+    def test_page_list_orders_pages_and_never_exposes_paths(self):
+        with route_client(self.app) as client:
+            payload = client.get('/api/comic-pages?id=1').json()
+        self.assertEqual([page['url'] for page in payload['pages']],
+                         ['/comic-image?page=1', '/comic-image?page=2'])
+        self.assertEqual([page['ordinal'] for page in payload['pages']], [1, 2])
+        self.assertNotIn(str(self.root), json.dumps(payload))
+
+    def test_page_image_and_cover_serve_bytes_inside_allowed_roots(self):
+        with route_client(self.app) as client:
+            page = client.get('/comic-image?page=1')
+            cover = client.get('/comic-cover?asset=1')
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(page.content, b"jpeg-bytes")
+        self.assertEqual(page.headers['content-type'], 'image/jpeg')
+        self.assertEqual(cover.content, b"jpeg-bytes")
+
+    def test_unknown_page_asset_and_comic_return_404_or_not_found(self):
+        with route_client(self.app) as client:
+            self.assertEqual(client.get('/comic-image?page=99').status_code, 404)
+            self.assertEqual(client.get('/comic-cover?asset=99').status_code, 404)
+            self.assertEqual(client.get('/api/comic-pages?id=99').json()['error'], 'not found')
+
+    def test_offline_directory_reports_unavailable_and_keeps_the_book(self):
+        ghost = self.root / "ghost"
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("INSERT INTO asset(id,location,path,name,medium,size) VALUES(2,?,?,?,?,?)",
+                               ('local', str(ghost), ghost.name, 'comic', 0))
+            connection.execute("INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(2,'1.jpg',1)")
+        with route_client(self.app) as client:
+            payload = client.get('/api/comic-pages?id=2').json()
+            image = client.get('/comic-image?page=3')
+            items = client.get('/api/items').json()['items']
+        self.assertEqual(payload['error'], 'offline')
+        self.assertEqual(payload['message'], '目录不可用')
+        self.assertEqual(image.status_code, 503)
+        # 馆藏与页清单都还在，盘回来就能接着读。
+        self.assertTrue(any(row['id'] == 2 for row in items))
+
+    def test_item_detail_carries_the_page_count_and_catalog_lists_the_book(self):
+        with route_client(self.app) as client:
+            item = client.get('/api/item?id=1').json()
+            items = client.get('/api/items').json()['items']
+        self.assertEqual(item['medium'], 'comic')
+        self.assertEqual(item['comic_pages'], 2)
+        self.assertTrue(any(row['id'] == 1 for row in items))
 
 
 if __name__ == "__main__":

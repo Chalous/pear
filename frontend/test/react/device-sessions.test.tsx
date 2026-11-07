@@ -55,7 +55,7 @@ it('列出设备：本机排第一并标「本机」，其余写最近活动与�
   expect(rows(host)).toEqual(['Chrome · Windows', 'Safari · iPhone', '未识别的浏览器']);
   const card = section(host, '已登录的设备')!;
   expect(card.textContent).toContain('本机');
-  expect(card.textContent).toContain('最近活动 刚刚 · 运行 Peach 的电脑');
+  expect(card.textContent).toContain('最近活动 刚刚 · 运行 Pear 的电脑');
   expect(card.textContent).toContain('最近活动 5 分钟前 · 198.51.100.0/24');
   expect(card.textContent).toContain('最近活动 3 天前 · 公网入口 · 203.0.113.0/24');
   expect(card.querySelector('button[aria-label="撤销 Chrome · Windows 的登录"]')).toBeNull();
@@ -131,12 +131,12 @@ it('撤销其他设备只留本机，回执写撤销了几台', async () => {
   expect(receipt).toHaveBeenCalledWith('已撤销 2 台设备的登录');
 });
 
-it('不在运行 Peach 的电脑上时只列出，不给撤销键', async () => {
+it('不在运行 Pear 的电脑上时只列出，不给撤销键', async () => {
   serve(listing([phone, row({ id: 'dddddddddddddddd', current: true, device: 'Safari · iPhone' })], false));
   const host = await render();
   const card = section(host, '已登录的设备')!;
   expect(card.querySelectorAll('button')).toHaveLength(0);
-  expect(card.textContent).toContain('在运行 Peach 的电脑上打开这一页才能撤销。');
+  expect(card.textContent).toContain('在运行 Pear 的电脑上打开这一页才能撤销。');
 });
 
 it('访问密码分区只在需要登录时带出设备列表', async () => {

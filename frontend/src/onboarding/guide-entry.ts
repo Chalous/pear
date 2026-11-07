@@ -23,7 +23,7 @@ export function guideEntry(step: GuideStep): GuideEntry | undefined {
     const preference = PREFERENCE_SECTIONS[key as keyof typeof PREFERENCE_SECTIONS];
     if (preference) return preferences(preference);
     const configuration = CONFIGURATION_SECTIONS[key as keyof typeof CONFIGURATION_SECTIONS];
-    if (configuration) return { path: ['侧栏底部的设置', 'Peach 配置', configuration], hint: sidebarHint };
+    if (configuration) return { path: ['侧栏底部的设置', 'Pear 配置', configuration], hint: sidebarHint };
   }
   const params = new URLSearchParams(query);
   if (pathname === '/jav' || params.get('jav') === '1') {

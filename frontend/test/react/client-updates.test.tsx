@@ -76,7 +76,7 @@ it('首次读取只保存运行基线，发行版可更新时提供现有设置�
   const { slot, fetcher, navigate } = await render(available());
   expect(slot.querySelector('[data-client-update]')?.getAttribute('data-client-update')).toBe('available');
   expect(slot.textContent).toContain('有可用更新。');
-  expect(slot.textContent).toContain('Peach 0.10.0');
+  expect(slot.textContent).toContain('Pear 0.10.0');
   expect(linkNamed('查看更新', slot)?.getAttribute('href')).toBe(RELEASE_UPDATES_PATH);
   await click(linkNamed('查看更新', slot));
   expect(navigate).toHaveBeenCalledWith(RELEASE_UPDATES_PATH);
@@ -106,7 +106,7 @@ it('稍后隐藏相同更新，发行版本和准备状态变化时重新提示'
   expect(slot.childElementCount).toBe(0);
   fetcher.mockResolvedValue(response(available('0.11.0')));
   await tick();
-  expect(slot.textContent).toContain('Peach 0.11.0');
+  expect(slot.textContent).toContain('Pear 0.11.0');
   await click(buttonNamed('稍后', slot));
   fetcher.mockResolvedValue(response({ ...available('0.11.0'), update_job: { state: 'ready', progress: 100, version: '0.11.0' } }));
   await tick();

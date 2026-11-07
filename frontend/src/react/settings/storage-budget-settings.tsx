@@ -11,8 +11,8 @@ import { busyProps, useAction } from './use-action';
 
 const NUMBERS = [
   ['minimum_free_gib', '磁盘保留空间', '留空自动保留 5%，最低 1 GiB、最高 40 GiB'],
-  ['data_max_gib', 'Peach 数据上限', '达到上限暂停补修与缓存写入'],
-  ['cache_max_gib', 'Peach 缓存上限', '播放、网络媒体与缩略图缓存'],
+  ['data_max_gib', 'Pear 数据上限', '达到上限暂停补修与缓存写入'],
+  ['cache_max_gib', 'Pear 缓存上限', '播放、网络媒体与缩略图缓存'],
 ] as const;
 
 export function StorageBudgetSettings({ initial, after, receipt }: {
