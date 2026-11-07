@@ -14,7 +14,7 @@ const questions = (over: Partial<SetupQuestions> = {}): SetupQuestions => ({
   windows: true,
   standalone: false,
   questions: [
-    { key: 'data_root', label: '数据目录', help: ['Peach 数据库、缓存和设置文件都放在这里。'], default: 'C:\\peach-data',
+    { key: 'data_root', label: '数据目录', help: ['Pear 数据库、缓存和设置文件都放在这里。'], default: 'C:\\peach-data',
       required: true, advanced: false, input: 'folder', prefix: '', suffix: '' },
     { key: 'media_dir', label: '媒体目录', help: ['选择存放视频和图片的现有文件夹。'], default: 'D:\\Videos',
       required: true, advanced: false, input: 'folders', prefix: '', suffix: '' },
@@ -94,7 +94,7 @@ it('分步设置返回后保留目录，确认前不提交配置', async () => {
   await click(buttonNamed('开始设置', host));
   await type(paths(host)[0], 'F:\\Library');
   await click(buttonNamed('继续', host));
-  expect(host.querySelector('h1')?.textContent).toBe('在哪里使用 Peach？');
+  expect(host.querySelector('h1')?.textContent).toBe('在哪里使用 Pear？');
   await click(buttonNamed('返回', host));
   expect(paths(host)[0]?.value).toBe('F:\\Library');
   expect(fetcher.mock.calls.filter(([url]) => url === SETUP_URL)).toHaveLength(0);
@@ -102,9 +102,9 @@ it('分步设置返回后保留目录，确认前不提交配置', async () => {
 
 it('编辑草稿随步骤匹配场景标题、说明和操作文字', async () => {
   const { host } = await open();
-  const core = (globalThis as unknown as { PeachCopyEditorCore: {
+  const core = (globalThis as unknown as { PearCopyEditorCore: {
     applyDrafts(root: Node, edits: Record<string, string>, originals: WeakMap<Node, string>): void;
-  } }).PeachCopyEditorCore;
+  } }).PearCopyEditorCore;
   const originals = new WeakMap<Node, string>();
   const edits = {
     '你的私人媒体空间。': '私人馆藏。',
@@ -120,7 +120,7 @@ it('编辑草稿随步骤匹配场景标题、说明和操作文字', async () =
   expect(caption()).toEqual(['让文件成为馆藏。', '按媒体库归类，文件保留在原来的位置。']);
   await click(buttonNamed('下一步', host));
   apply();
-  expect(caption()).toEqual(['从书桌，到手边。', '电脑与手机，连接同一套 Peach。']);
+  expect(caption()).toEqual(['从书桌，到手边。', '电脑与手机，连接同一套 Pear。']);
   await click(buttonNamed('下一步', host));
   apply();
   expect(caption()).toEqual(['全都准备好了。', '确认后保存，扫描按你的选择开始。']);
@@ -155,7 +155,7 @@ function expectAnnounced(root: HTMLElement, input: Element | null | undefined, m
 
 it('目录与访问范围直接显示，端口和局域网名称按需展开', async () => {
   const { host } = await open();
-  expect(host.querySelector('h1')?.textContent).toBe('欢迎使用 Peach');
+  expect(host.querySelector('h1')?.textContent).toBe('欢迎使用 Pear');
   expect(paths(host).map((input) => input.value)).toEqual(['']);
   expect(advanced(host)?.getAttribute('aria-expanded')).toBe('false');
   expect(field(host, 'port')?.value).toBe('8900');
@@ -270,7 +270,7 @@ describe('访问密码', () => {
   });
 });
 
-describe('Peach 代理', () => {
+describe('Pear 代理', () => {
   const proxyMode = (host: ParentNode) => host.querySelector('[aria-labelledby="setup-proxy-title"] [aria-haspopup="listbox"]');
 
   it('跟随环境为初始值，自定义地址随设置提交，直连不携带隐藏地址', async () => {
@@ -464,13 +464,13 @@ describe('完成态', () => {
     await submitForm(host);
     expect(host.querySelector('h1')?.textContent).toBe('可以开始使用了');
     expect(host.textContent).toContain('馆藏，准备开启。');
-    expect(host.textContent).toContain('首次扫描已排队，在后台整理媒体库，期间可以照常使用 Peach。');
-    const entry = [...host.querySelectorAll('a')].find((link) => link.textContent === '进入 Peach');
+    expect(host.textContent).toContain('首次扫描已排队，在后台整理媒体库，期间可以照常使用 Pear。');
+    const entry = [...host.querySelectorAll('a')].find((link) => link.textContent === '进入 Pear');
     expect(entry?.getAttribute('href')).toBe('http://127.0.0.1:8900/?onboarding=1');
     expect(document.activeElement).toBe(entry);
     const facts = [...host.querySelectorAll('summary')].find((node) => node.textContent === '运行信息');
     expect(facts?.getAttribute('aria-expanded')).toBe('false');
-    expect(document.title).toBe('Peach · 设置完成');
+    expect(document.title).toBe('Pear · 设置完成');
   });
 
   it('选了导入浏览器历史又没扫描时，入口换成导入历史', async () => {
@@ -567,7 +567,7 @@ it('别的设备打开时读题接口回 403，只说去哪里打开、不画表
   const host = await mount(<SetupPage />);
   await settle();
   expect(host.querySelector('form')).toBeNull();
-  expect(host.querySelector('[role="alert"]')?.textContent).toBe('请在运行 Peach 的这台电脑上打开设置。');
+  expect(host.querySelector('[role="alert"]')?.textContent).toBe('请在运行 Pear 的这台电脑上打开设置。');
 });
 
 it('读题失败时给原因和重试', async () => {

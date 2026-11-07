@@ -1,7 +1,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "3e8ea6e1-595e-4933-b49d-50549b15d4f9", e._sentryDebugIdIdentifier = "sentry-dbid-3e8ea6e1-595e-4933-b49d-50549b15d4f9");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "5c97edf8-538b-458a-8de0-f1ad59cbb91b", e._sentryDebugIdIdentifier = "sentry-dbid-5c97edf8-538b-458a-8de0-f1ad59cbb91b");
 	} catch {}
 })();
 import { AnimatedItems as e, Cell as t, ChartBackground as n, ChartContainer as r, ChartLegend as i, ChartLegendContent as a, ChartTip as o, ChartTooltip as s, ChartTooltipContent as c, Curve as l, DATA_ITEM_GRAPHICAL_ITEM_ID_ATTRIBUTE_NAME as u, DATA_ITEM_INDEX_ATTRIBUTE_NAME as d, DefaultZIndexes as f, EvilBarChart as p, LabelList as m, LabelListFromLabelProp as h, Layer as g, LoadingIndicator as _, PolarChart as v, PolarLabelContextProvider as y, PolarLabelListContextProvider as b, RegisterGraphicalItemId as x, Sector as S, SetPolarGraphicalItem as C, SetPolarLegendPayload as w, SetTooltipEntrySettings as T, Shape as ee, TIP_SWATCH as te, Text as ne, ZIndexLayer as re, adaptEventsOfChild as ie, arrayTooltipSearcher as ae, createSelector as oe, defaultPolarChartProps as se, findAllByType as ce, get as le, getClassNameFromUnknown as ue, getColorsCount as de, getMaxRadius as fe, getPercentValue as pe, getTooltipNameProp as me, getValueByDataKey as he, interpolate as ge, isNumber as _e, matchAppend as ve, mathSign as ye, polarToCartesian as be, resolveDefaultProps as xe, selectActiveTooltipDataKey as Se, selectActiveTooltipGraphicalItemId as Ce, selectActiveTooltipIndex as we, selectChartDataAndAlwaysIgnoreIndexes as Te, selectChartOffsetInternal as Ee, selectUnfilteredPolarItems as De, svgPropertiesNoEvents as Oe, svgPropertiesNoEventsFromUnknown as ke, tone as Ae, useAnimationCallbacks as je, useAppSelector as Me, useMouseClickItemDispatch as Ne, useMouseEnterItemDispatch as Pe, useMouseLeaveItemDispatch as Fe, usePolarChartLayout as Ie } from "./peach-app.chart-tip-CRxYp6KT.js";
@@ -64,7 +64,7 @@ function vr({ enabled: e, release: t }) {
 	let { frame: n, attempt: r, status: i, retry: a } = gr(), o = typeof i == "object", s = o && !_r(i.version, t.minimum_version), c = o && !_r(i.version, t.version), l = i === "checking" ? "progress" : i === "missing" ? "neutral" : s || c || !i.paired ? "warning" : "success", u = i === "checking" ? "检测中" : i === "missing" ? "未检测到" : s ? "需更新" : c ? "可更新" : i.paired ? "已连接" : "待配对", d = i === "checking" ? "checking" : i === "missing" ? "missing" : s ? "required" : c ? "available" : i.paired ? e ? "enabled" : "disabled" : "unpaired";
 	return /* @__PURE__ */ (0, Q.jsxs)(Q.Fragment, { children: [/* @__PURE__ */ (0, Q.jsx)("iframe", {
 		ref: n,
-		title: "Peach 用户脚本检测",
+		title: "Pear 用户脚本检测",
 		hidden: !0,
 		src: "/integrations/peach-userscript-bridge"
 	}, r), /* @__PURE__ */ (0, Q.jsxs)("div", {
@@ -80,7 +80,7 @@ function vr({ enabled: e, release: t }) {
 				className: "flex flex-wrap items-center justify-between gap-3",
 				children: [/* @__PURE__ */ (0, Q.jsx)("span", {
 					className: "text-body-medium text-text-primary",
-					children: "Peach 用户脚本"
+					children: "Pear 用户脚本"
 				}), /* @__PURE__ */ (0, Q.jsx)(ur, {
 					tone: l,
 					children: /* @__PURE__ */ (0, Q.jsx)("span", {
@@ -110,7 +110,7 @@ function vr({ enabled: e, release: t }) {
 			/* @__PURE__ */ (0, Q.jsx)("p", {
 				"data-copy-key": `userscript.${d}.message`,
 				className: "text-caption-1-regular text-text-secondary",
-				children: i === "checking" ? "正在检测当前浏览器的用户脚本。" : i === "missing" ? "确认脚本已启用并更新至最新版。Chrome 还需在 Tampermonkey 扩展详情中开启「允许用户脚本」或开发者模式，并允许访问当前 Peach 站点；刷新页面后重新检测。" : s ? `请更新至 v${t.minimum_version} 或更高版本。` : c ? `用户脚本 v${t.version} 可更新。` : i.paired ? e ? "可在支持的站点直接加入 Peach 馆藏。" : "启用浏览器添加后，可在支持的站点直接加入 Peach 馆藏。" : "生成令牌后复制配对信息，在用户脚本设置中粘贴并保存。"
+				children: i === "checking" ? "正在检测当前浏览器的用户脚本。" : i === "missing" ? "确认脚本已启用并更新至最新版。Chrome 还需在 Tampermonkey 扩展详情中开启「允许用户脚本」或开发者模式，并允许访问当前 Pear 站点；刷新页面后重新检测。" : s ? `请更新至 v${t.minimum_version} 或更高版本。` : c ? `用户脚本 v${t.version} 可更新。` : i.paired ? e ? "可在支持的站点直接加入 Pear 馆藏。" : "启用浏览器添加后，可在支持的站点直接加入 Pear 馆藏。" : "生成令牌后复制配对信息，在用户脚本设置中粘贴并保存。"
 			}),
 			/* @__PURE__ */ (0, Q.jsxs)("div", {
 				className: "flex flex-wrap items-center gap-2",
@@ -119,7 +119,7 @@ function vr({ enabled: e, release: t }) {
 						href: t.install_url,
 						children: /* @__PURE__ */ (0, Q.jsx)("span", {
 							"data-copy-key": `userscript.${i === "missing" ? "install" : "update"}.action`,
-							children: s || c ? "更新用户脚本" : "安装 Peach 用户脚本"
+							children: s || c ? "更新用户脚本" : "安装 Pear 用户脚本"
 						})
 					}) : null,
 					i === "missing" ? /* @__PURE__ */ (0, Q.jsx)(A, {
@@ -206,7 +206,7 @@ function xr({ initial: e, receipt: t }) {
 				n.problems?.map((e) => /* @__PURE__ */ (0, Q.jsx)(N, { children: e }, e)),
 				n.enabled && n.active_provider && !n.providers.some((e) => e.key === n.active_provider) ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "已启用的下载渠道不可用，请选择渠道并更新令牌。" }) : null,
 				/* @__PURE__ */ (0, Q.jsx)(P, {
-					label: "Peach 地址",
+					label: "Pear 地址",
 					value: window.location.origin,
 					isReadOnly: !0,
 					autoComplete: "off"
@@ -232,7 +232,7 @@ function xr({ initial: e, receipt: t }) {
 						...K(c.busy === "copy"),
 						children: "复制配对信息"
 					}) }),
-					/* @__PURE__ */ (0, Q.jsx)(N, { children: "在用户脚本设置的「Peach 地址」中粘贴配对信息，即可填好地址与令牌。" })
+					/* @__PURE__ */ (0, Q.jsx)(N, { children: "在用户脚本设置的「Pear 地址」中粘贴配对信息，即可填好地址与令牌。" })
 				] }) : null
 			]
 		}), c.error ? /* @__PURE__ */ (0, Q.jsx)(k, { children: c.error }) : null] }), /* @__PURE__ */ (0, Q.jsxs)(M, { children: [n.enabled ? /* @__PURE__ */ (0, Q.jsx)(E, {
@@ -667,7 +667,7 @@ function Fr({ state: e, settle: t, receipt: n, username: r, setUsername: i }) {
 				children: g.username || "已登录"
 			}), g.method === "browser" ? /* @__PURE__ */ (0, Q.jsx)(j, {
 				term: "登录方式",
-				children: "浏览器登录，由 Peach 续期"
+				children: "浏览器登录，由 Pear 续期"
 			}) : /* @__PURE__ */ (0, Q.jsx)(j, {
 				term: "密码",
 				children: g.remember ? "已保存，登录过期时自动重新登录" : "未保存，登录过期后需要回到这里重新登录"
@@ -1965,7 +1965,7 @@ function va({ storage: e }) {
 	if (e.total_bytes === null || e.free_bytes === null || !e.usage) return null;
 	let t = Math.min(e.usage.total_bytes, e.total_bytes), n = e.free_bytes, r = Math.max(0, e.total_bytes - n - t), i = {
 		peach: {
-			label: "Peach 数据",
+			label: "Pear 数据",
 			colors: Ae("var(--color-border-focus-ring)")
 		},
 		others: {
@@ -1985,7 +1985,7 @@ function va({ storage: e }) {
 				"所在磁盘共 ",
 				ha(e.total_bytes),
 				e.system_drive ? "（系统盘）" : "",
-				"，Peach 占 ",
+				"，Pear 占 ",
 				((t) => {
 					let n = t / e.total_bytes * 100;
 					return n < .1 ? "不到 0.1%" : `${n.toFixed(+(n < 10))}%`;
@@ -2086,12 +2086,12 @@ var xa = [
 	],
 	[
 		"data_max_gib",
-		"Peach 数据上限",
+		"Pear 数据上限",
 		"达到上限暂停补修与缓存写入"
 	],
 	[
 		"cache_max_gib",
-		"Peach 缓存上限",
+		"Pear 缓存上限",
 		"播放、网络媒体与缩略图缓存"
 	]
 ];
@@ -2319,7 +2319,7 @@ function ja({ initial: e, receipt: t }) {
 		let r = n.usage ? J(n.usage.total_bytes) : "";
 		await an({
 			title: "迁移数据目录",
-			body: `将 ${r} 数据从 ${n.data_root} 移到 ${t}。迁移期间 Peach 会退出，完成后自动重新打开；原位置的数据在新位置核对无误后删除。`,
+			body: `将 ${r} 数据从 ${n.data_root} 移到 ${t}。迁移期间 Pear 会退出，完成后自动重新打开；原位置的数据在新位置核对无误后删除。`,
 			confirmLabel: "迁移数据目录",
 			onConfirm: async () => {
 				try {
@@ -2355,7 +2355,7 @@ function ja({ initial: e, receipt: t }) {
 					n.job.state === "measuring" ? /* @__PURE__ */ (0, Q.jsx)(ka, { job: n.job }) : null,
 					f?.capacity_error ? /* @__PURE__ */ (0, Q.jsxs)(k, { children: ["容量统计不完整：", f.capacity_error] }) : null,
 					f?.allocated_bytes == null ? null : /* @__PURE__ */ (0, Q.jsxs)(N, { children: [
-						"Peach 数据实际占盘 ",
+						"Pear 数据实际占盘 ",
 						J(f.allocated_bytes),
 						"；分类图按文件大小统计。"
 					] }),
@@ -2582,24 +2582,24 @@ function Ia({ facts: e, receipt: t }) {
 }
 function La({ uninstall: e, receipt: t }) {
 	let [n, r] = (0, Z.useState)(!1), [i, a] = (0, Z.useState)(""), o = () => void an({
-		title: "卸载 Peach",
+		title: "卸载 Pear",
 		danger: !0,
-		body: n ? "将退出 Peach，移除程序、开机自启、桌面图标、设置、本地数据库、观看记录、凭据和缓存。原始媒体文件保留。" : "将退出 Peach 并移除程序、开机自启和桌面图标。设置、本地数据库、观看记录与缓存保留。",
-		confirmLabel: "卸载 Peach",
+		body: n ? "将退出 Pear，移除程序、开机自启、桌面图标、设置、本地数据库、观看记录、凭据和缓存。原始媒体文件保留。" : "将退出 Pear 并移除程序、开机自启和桌面图标。设置、本地数据库、观看记录与缓存保留。",
+		confirmLabel: "卸载 Pear",
 		onConfirm: async () => {
 			let e = await G("/api/configuration/uninstall", {
 				delete_data: n,
-				confirmation: "卸载 Peach"
+				confirmation: "卸载 Pear"
 			});
 			a(e.message);
 		}
 	}), s = i || e.message, c = [.../* @__PURE__ */ new Set([e.data_root, ...e.directories])];
 	return /* @__PURE__ */ (0, Q.jsxs)(L, {
-		id: "uninstallPeach",
+		id: "uninstallPear",
 		guide: "uninstall",
-		title: "卸载 Peach",
+		title: "卸载 Pear",
 		children: [
-			e.available ? /* @__PURE__ */ (0, Q.jsx)(V, { children: /* @__PURE__ */ (0, Q.jsx)(N, { children: "卸载移除 Peach 程序本身，原始媒体文件保留。" }) }) : null,
+			e.available ? /* @__PURE__ */ (0, Q.jsx)(V, { children: /* @__PURE__ */ (0, Q.jsx)(N, { children: "卸载移除 Pear 程序本身，原始媒体文件保留。" }) }) : null,
 			/* @__PURE__ */ (0, Q.jsx)(I, { children: /* @__PURE__ */ (0, Q.jsx)(B, {
 				label: "完全卸载",
 				description: "同时删除设置、本地数据库、观看记录、凭据和缓存",
@@ -2630,7 +2630,7 @@ function La({ uninstall: e, receipt: t }) {
 					variant: "danger",
 					disabled: !e.available || !!i,
 					onClick: o,
-					children: "卸载 Peach"
+					children: "卸载 Pear"
 				})
 			})
 		]
@@ -2670,21 +2670,21 @@ function Ba(e) {
 function Va({ job: e }) {
 	return e.state === "updating" ? /* @__PURE__ */ (0, Q.jsx)(N, {
 		role: "status",
-		children: "Watchtower 正在拉取新镜像并重建容器。期间 Peach 会断开一会儿，新版本启动后这里会提示刷新。"
+		children: "Watchtower 正在拉取新镜像并重建容器。期间 Pear 会断开一会儿，新版本启动后这里会提示刷新。"
 	}) : e.state === "done" ? /* @__PURE__ */ (0, Q.jsxs)(N, {
 		role: "status",
 		children: [
-			"已更新到 Peach ",
+			"已更新到 Pear ",
 			e.version,
 			"，刷新页面即可使用。"
 		]
-	}) : e.state === "timeout" ? /* @__PURE__ */ (0, Q.jsxs)(V, { children: [/* @__PURE__ */ (0, Q.jsx)(k, { children: "15 分钟内没有看到新版本启动。在 compose.yaml 所在目录查看 Watchtower 与 Peach 的日志：" }), /* @__PURE__ */ (0, Q.jsx)(tt, {
+	}) : e.state === "timeout" ? /* @__PURE__ */ (0, Q.jsxs)(V, { children: [/* @__PURE__ */ (0, Q.jsx)(k, { children: "15 分钟内没有看到新版本启动。在 compose.yaml 所在目录查看 Watchtower 与 Pear 的日志：" }), /* @__PURE__ */ (0, Q.jsx)(tt, {
 		label: "查看更新日志",
 		steps: [{
 			text: "Watchtower 的拉取与重建记录",
 			command: "docker compose logs watchtower"
 		}, {
-			text: "Peach 的启动与数据库迁移记录",
+			text: "Pear 的启动与数据库迁移记录",
 			command: "docker compose logs peach"
 		}]
 	})] }) : null;
@@ -2708,7 +2708,7 @@ function Ka({ initial: e, initialJob: t }) {
 		progress: 0
 	}), [o, s] = (0, Z.useState)(""), c = Y(), l = (0, Z.useRef)(!1), u = (0, Z.useRef)(!0), d = Ha.has(i.state), f = Ba(e.current_version), p = n.state === "available" && !!n.one_click?.available, m = f.job.state === "updating", h = () => void an({
 		title: "一键更新",
-		body: `Watchtower 会拉取 Peach ${n.latest_version || ""} 的镜像并重建容器，/data 数据卷保留。重建期间 Peach 暂时断开，进行中的任务在启动后续跑；有待执行的数据库迁移时，启动前先备份再迁移。`,
+		body: `Watchtower 会拉取 Pear ${n.latest_version || ""} 的镜像并重建容器，/data 数据卷保留。重建期间 Pear 暂时断开，进行中的任务在启动后续跑；有待执行的数据库迁移时，启动前先备份再迁移。`,
 		confirmLabel: "开始更新",
 		cancelLabel: "取消",
 		onConfirm: f.run
@@ -2721,7 +2721,7 @@ function Ka({ initial: e, initialJob: t }) {
 		u.current && a(e);
 	}, _ = () => void an({
 		title: "更新已准备好",
-		body: `Peach ${i.version || ""} 将在重启后安装。`,
+		body: `Pear ${i.version || ""} 将在重启后安装。`,
 		confirmLabel: "立即重启",
 		cancelLabel: "稍后",
 		onConfirm: g
@@ -2742,7 +2742,7 @@ function Ka({ initial: e, initialJob: t }) {
 				let n = await W("/api/configuration/automatic-updates", e.signal);
 				!e.signal.aborted && n.result && r(n.result);
 			} catch {
-				o += 1, o >= Wa && !e.signal.aborted && s("尚未连接到 Peach，请检查托盘后刷新页面。");
+				o += 1, o >= Wa && !e.signal.aborted && s("尚未连接到 Pear，请检查托盘后刷新页面。");
 			}
 			!e.signal.aborted && o < Wa && (n = setTimeout(c, t));
 		};
@@ -2789,7 +2789,7 @@ function Ka({ initial: e, initialJob: t }) {
 					children: [n.package_kind === "update" ? "应用更新包" : n.package_kind === "installer" ? "macOS 安装镜像" : "应用与工具", n.asset_size ? ` · ${(n.asset_size / 1048576).toFixed(1)} MB` : ""]
 				}) : null
 			] }),
-			n.package_kind === "update" ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "应用更新包复用已安装工具；工具缺失、损坏或版本变化时会另行下载所需工具包。" }) : n.package_kind === "full" ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "本次更新包含媒体工具。" }) : n.package_kind === "installer" ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "下载后打开镜像，把 Peach 拖入「应用程序」替换旧版本，数据目录与设置保留；提示已损坏时按发布页说明移除隔离标记。" }) : null,
+			n.package_kind === "update" ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "应用更新包复用已安装工具；工具缺失、损坏或版本变化时会另行下载所需工具包。" }) : n.package_kind === "full" ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "本次更新包含媒体工具。" }) : n.package_kind === "installer" ? /* @__PURE__ */ (0, Q.jsx)(N, { children: "下载后打开镜像，把 Pear 拖入「应用程序」替换旧版本，数据目录与设置保留；提示已损坏时按发布页说明移除隔离标记。" }) : null,
 			n.state === "unchecked" && !n.checked_at && !b && i.state === "idle" ? null : /* @__PURE__ */ (0, Q.jsxs)(V, {
 				divided: !0,
 				children: [
@@ -2974,9 +2974,9 @@ function Xa({ startup: e, receipt: t }) {
 		children: [
 			/* @__PURE__ */ (0, Q.jsxs)(I, { children: [
 				/* @__PURE__ */ (0, Q.jsx)(B, {
-					label: "开机后启动 Peach",
+					label: "开机后启动 Pear",
 					children: /* @__PURE__ */ (0, Q.jsx)(U, {
-						"aria-label": "开机后启动 Peach",
+						"aria-label": "开机后启动 Pear",
 						isSelected: n,
 						isDisabled: !e.available,
 						onChange: r
@@ -3970,7 +3970,7 @@ function Mo({ data: e, receipt: t }) {
 			tone: "success",
 			title: "配置已保存",
 			children: [
-				"Peach 正在重新启动。稍后自动跳转，或点击",
+				"Pear 正在重新启动。稍后自动跳转，或点击",
 				/* @__PURE__ */ (0, Q.jsx)(_t, {
 					href: y.url,
 					size: "small",
@@ -4218,7 +4218,7 @@ function Mo({ data: e, receipt: t }) {
 													children: e
 												}, e))
 											}) : null,
-											/* @__PURE__ */ (0, Q.jsx)(N, { children: "地址填写 smb://服务器/共享/目录。按共享账号权限读写；整理和删除由对应操作触发，资料和预览保存在 Peach 数据目录。" })
+											/* @__PURE__ */ (0, Q.jsx)(N, { children: "地址填写 smb://服务器/共享/目录。按共享账号权限读写；整理和删除由对应操作触发，资料和预览保存在 Pear 数据目录。" })
 										]
 									}) : null]
 								}, i)), /* @__PURE__ */ (0, Q.jsx)("div", {
@@ -4269,7 +4269,7 @@ function Mo({ data: e, receipt: t }) {
 				children: h
 			}) : null
 		] }), /* @__PURE__ */ (0, Q.jsx)(M, {
-			status: "保存后 Peach 会重新启动。",
+			status: "保存后 Pear 会重新启动。",
 			children: /* @__PURE__ */ (0, Q.jsx)(E, {
 				type: "submit",
 				...K(C.busy === "save"),
@@ -4857,7 +4857,7 @@ function Qo({ initial: e, receipt: t, devices: n, after: r }) {
 					i.mode === "open" ? /* @__PURE__ */ (0, Q.jsx)(F, {
 						tone: "warning",
 						title: "未设置访问密码",
-						children: "能连接到 Peach 的设备打开地址就能看馆藏，不需要登录。"
+						children: "能连接到 Pear 的设备打开地址就能看馆藏，不需要登录。"
 					}) : null,
 					i.mode === "password" || i.mode === "legacy" ? /* @__PURE__ */ (0, Q.jsx)(D, {
 						isSelected: f,
@@ -4890,7 +4890,7 @@ function Qo({ initial: e, receipt: t, devices: n, after: r }) {
 					f ? /* @__PURE__ */ (0, Q.jsx)(F, {
 						tone: "warning",
 						title: "访问范围",
-						children: "保存后，能连接到 Peach 的设备将直接访问馆藏。"
+						children: "保存后，能连接到 Pear 的设备将直接访问馆藏。"
 					}) : null,
 					_.error ? /* @__PURE__ */ (0, Q.jsx)(k, { children: _.error }) : null
 				] })
@@ -5139,7 +5139,7 @@ function hs(e, t = Date.now() / 1e3) {
 	return n < 60 ? "刚刚" : n < 3600 ? `${Math.floor(n / 60)} 分钟前` : n < 86400 ? `${Math.floor(n / 3600)} 小时前` : n < 2592e3 ? `${Math.floor(n / 86400)} 天前` : (/* @__PURE__ */ new Date(e * 1e3)).toLocaleDateString("zh-CN");
 }
 function gs(e) {
-	return e.network === "loopback" ? "运行 Peach 的电脑" : e.network ? e.remote ? `公网入口 · ${e.network}` : e.network : "";
+	return e.network === "loopback" ? "运行 Pear 的电脑" : e.network ? e.remote ? `公网入口 · ${e.network}` : e.network : "";
 }
 var _s = (e) => [`最近活动 ${hs(e.last_seen)}`, gs(e)].filter(Boolean).join(" · ");
 function vs({ revision: e, receipt: t }) {
@@ -5171,7 +5171,7 @@ function ys({ initial: e, receipt: t }) {
 	}, [n, i.length]);
 	let a = (e) => void an({
 		title: "撤销这台设备的登录",
-		body: `${os(e)}（${_s(e)}）下次打开 Peach 需要重新输入访问密码。`,
+		body: `${os(e)}（${_s(e)}）下次打开 Pear 需要重新输入访问密码。`,
 		confirmLabel: "撤销登录",
 		onConfirm: async () => {
 			r(await G(`${as}/revoke`, {
@@ -5199,7 +5199,7 @@ function ys({ initial: e, receipt: t }) {
 			}, e.id)) }) : /* @__PURE__ */ (0, Q.jsx)(V, { children: /* @__PURE__ */ (0, Q.jsx)(N, { children: "还没有浏览器用访问密码登录过。" }) }),
 			!n.manageable && i.length ? /* @__PURE__ */ (0, Q.jsx)(V, {
 				divided: !0,
-				children: /* @__PURE__ */ (0, Q.jsx)(N, { children: "在运行 Peach 的电脑上打开这一页才能撤销。" })
+				children: /* @__PURE__ */ (0, Q.jsx)(N, { children: "在运行 Pear 的电脑上打开这一页才能撤销。" })
 			}) : null,
 			n.manageable && i.length ? /* @__PURE__ */ (0, Q.jsx)(M, {
 				status: "修改访问密码会让全部设备退出。",
@@ -5207,7 +5207,7 @@ function ys({ initial: e, receipt: t }) {
 					variant: "secondary",
 					onClick: () => void an({
 						title: "撤销其他设备的登录",
-						body: `除本机以外的 ${i.length} 台设备下次打开 Peach 需要重新输入访问密码。`,
+						body: `除本机以外的 ${i.length} 台设备下次打开 Pear 需要重新输入访问密码。`,
 						confirmLabel: "撤销登录",
 						onConfirm: async () => {
 							let e = await G(`${as}/revoke`, {
@@ -5243,7 +5243,7 @@ function xs({ data: e, receipt: t }) {
 		children: /* @__PURE__ */ (0, Q.jsx)(V, { children: /* @__PURE__ */ (0, Q.jsxs)(F, {
 			tone: "success",
 			title: "配置已保存",
-			children: ["Peach 正在重新启动。", /* @__PURE__ */ (0, Q.jsx)(_t, {
+			children: ["Pear 正在重新启动。", /* @__PURE__ */ (0, Q.jsx)(_t, {
 				href: f.url,
 				size: "small",
 				children: "返回网络与访问"
@@ -5330,7 +5330,7 @@ function xs({ data: e, receipt: t }) {
 				children: m.error
 			}) : null
 		] }), r ? /* @__PURE__ */ (0, Q.jsx)(M, {
-			status: "保存后 Peach 会重启，并跳转到新地址。",
+			status: "保存后 Pear 会重启，并跳转到新地址。",
 			children: /* @__PURE__ */ (0, Q.jsx)(E, {
 				type: "submit",
 				...K(m.busy === "save"),
@@ -5499,7 +5499,7 @@ function ks({ revision: e, initial: t, receipt: n }) {
 			r.error ? /* @__PURE__ */ (0, Q.jsx)(k, { children: r.error }) : null,
 			h.error ? /* @__PURE__ */ (0, Q.jsx)(k, { children: h.error }) : null
 		] }), /* @__PURE__ */ (0, Q.jsxs)(M, {
-			status: r.enabled ? "Peach 重启后自动恢复。" : void 0,
+			status: r.enabled ? "Pear 重启后自动恢复。" : void 0,
 			children: [/* @__PURE__ */ (0, Q.jsx)(E, {
 				variant: r.named_available ? "secondary" : "primary",
 				onClick: () => v("toggle", !g, (e) => n(e.enabled ? "公网入口已启动" : "公网入口已停止")),
@@ -5554,7 +5554,7 @@ function js({ initial: e, receipt: t }) {
 	return /* @__PURE__ */ (0, Q.jsxs)(L, {
 		id: "peachProxy",
 		guide: "proxy",
-		title: "Peach 代理",
+		title: "Pear 代理",
 		onSubmit: (e) => {
 			e.preventDefault(), c.run("save", (e) => G("/api/configuration/peach-proxy", {
 				mode: i,
@@ -5566,7 +5566,7 @@ function js({ initial: e, receipt: t }) {
 		children: [
 			/* @__PURE__ */ (0, Q.jsx)(I, { children: /* @__PURE__ */ (0, Q.jsx)(B, {
 				label: "连接方式",
-				description: "Peach 访问外网和采集来源时使用。",
+				description: "Pear 访问外网和采集来源时使用。",
 				children: /* @__PURE__ */ (0, Q.jsx)(ws, {
 					mode: i,
 					onChange: a
@@ -5598,7 +5598,7 @@ function js({ initial: e, receipt: t }) {
 	});
 }
 // src/react/follow-manage/credentials.tsx
-var Ms = "将清除这个来源在本机和共享副本中的登录凭据。", Ns = "其他系统用户可以读取此凭据文件。请在运行 Peach 的 Mac 或 Linux 电脑上，将文件权限设为仅当前用户可读写（0600）。";
+var Ms = "将清除这个来源在本机和共享副本中的登录凭据。", Ns = "其他系统用户可以读取此凭据文件。请在运行 Pear 的 Mac 或 Linux 电脑上，将文件权限设为仅当前用户可读写（0600）。";
 function Ps(e, t) {
 	return (e.shared_fields || []).includes(t) ? "来自共享，留空表示不改" : e.fields.includes(t) ? "已保存，留空表示不改" : "未填写";
 }
@@ -6286,4 +6286,4 @@ function Qs({ data: e, receipt: t, reopenTutorial: n, section: r, diagnostics: i
 }
 export { Ys as ConfigurationPage };
 
-//# debugId=3e8ea6e1-595e-4933-b49d-50549b15d4f9
+//# debugId=5c97edf8-538b-458a-8de0-f1ad59cbb91b

@@ -45,7 +45,7 @@ import {
   type CoverJob, type ReportedCheck, type ScrapingData, type Source, type SourceReport,
 } from './scraping';
 
-const NETWORKS = [['peach', 'Peach 代理'], ['direct', '直接连接']] as const;
+const NETWORKS = [['peach', 'Pear 代理'], ['direct', '直接连接']] as const;
 
 /** 连接方式的选项。数据库里存着这两种以外的值（旧版写下的、手改的）时把它原样列成一项，
  *  下拉框照实显示现在是什么，不落到空占位上。 */
@@ -180,7 +180,7 @@ function SourceCard({ source, toast }: { source: Source } & ScrapingProps) {
         {network === 'peach'
           ? <span className="self-start">
               <LinkButton href="/settings/library#peachProxy" size="small" trailingIcon={RiArrowRightLine}>
-                配置 Peach 代理
+                配置 Pear 代理
               </LinkButton>
             </span>
           : null}
@@ -432,7 +432,7 @@ function AmaneBridgeCard({ toast }: ScrapingProps) {
         {data.problem
           ? <Note tone="error">{data.problem}</Note>
           : <Help>
-              amane（{data.license}）提供这些内置站点的解析能力。首次需要时，Peach 会自动准备锁定的 {data.version} 版本；安装包内已有可用环境时直接使用。
+              amane（{data.license}）提供这些内置站点的解析能力。首次需要时，Pear 会自动准备锁定的 {data.version} 版本；安装包内已有可用环境时直接使用。
               手动安装也使用此版本，不随上游自动升级。
             </Help>}
         {running ? <LoadingDots label="正在重建运行环境" /> : null}

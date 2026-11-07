@@ -1,7 +1,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "6fcfa524-490c-4c81-834d-09d1b05b276f", e._sentryDebugIdIdentifier = "sentry-dbid-6fcfa524-490c-4c81-834d-09d1b05b276f");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "cc5c4587-0922-4451-97b4-e8ec4ee058a7", e._sentryDebugIdIdentifier = "sentry-dbid-cc5c4587-0922-4451-97b4-e8ec4ee058a7");
 	} catch {}
 })();
 import { $fe21c36db05242bb$export$d7b12c4107be0d61 as e, AMANE_BRIDGE_CHECK_URL as t, AMANE_BRIDGE_KEY as n, AMANE_BRIDGE_REBUILD_URL as r, Button as i, CHECK_ALL_KEY as a, COVER_JOB_KEY as o, CUSTOM_SOURCES_KEY as s, CUSTOM_SOURCES_URL as c, Checkbox as l, Disclosure as u, ErrorText as d, ExternalLink as f, Fact as p, FactList as m, FieldLabel as h, Footer as g, Help as _, Input as v, IssueRow as y, LinkButton as ee, LoadingDots as b, Note as x, Progress as S, Rows as te, SCRAPING_CHECK_ALL_URL as C, SCRAPING_CHECK_URL as ne, SCRAPING_COVER_URL as w, SCRAPING_KEY as T, SCRAPING_SETTINGS_URL as re, SEGMENT as ie, SEGMENTED_TRACK as ae, Section as E, SegmentedRadioGroup as oe, Select$1 as se, SelectField as D, SelectItem as ce, SettingsRow as le, Stack as O, StatusLabel as k, __toESM as A, apiSend as j, busyProps as M, checkText as ue, composingKey as N, confirmModal as de, errorMessage as P, esc as F, fetchAmaneBridge as I, fetchCheckAllJob as L, fetchCoverJob as R, fetchCustomSources as z, fetchSources as fe, i2 as pe, momentText as me, queryClient as B, require_jsx_runtime as he, require_react as ge, spinnerHtml as _e, useAction as V, useBackgroundJob as H, useMutation as U, useQuery as W } from "./peach-app.js";
@@ -151,7 +151,7 @@ function we({ initial: e, cancel: t, saved: n }) {
 					label: "来源连接方式",
 					epoch: 0,
 					value: r.network || "direct",
-					options: [["direct", "直连"], ["peach_proxy", "Peach 代理"]],
+					options: [["direct", "直连"], ["peach_proxy", "Pear 代理"]],
 					onPick: (e) => y({ network: e })
 				})]
 			}),
@@ -239,7 +239,7 @@ function we({ initial: e, cancel: t, saved: n }) {
 	});
 }
 // src/react/scraping/scraping-page.tsx
-var Y = [["peach", "Peach 代理"], ["direct", "直接连接"]];
+var Y = [["peach", "Pear 代理"], ["direct", "直接连接"]];
 function X(e) {
 	return Y.some(([t]) => t === e) || !e ? [...Y] : [...Y, [e, e]];
 }
@@ -341,7 +341,7 @@ function Ee({ source: t, toast: n }) {
 							href: "/settings/library#peachProxy",
 							size: "small",
 							trailingIcon: pe,
-							children: "配置 Peach 代理"
+							children: "配置 Pear 代理"
 						})
 					}) : null,
 					t.browser ? /* @__PURE__ */ (0, J.jsx)("p", {
@@ -670,7 +670,7 @@ function je({ toast: e }) {
 					}) : /* @__PURE__ */ (0, J.jsxs)(_, { children: [
 						"amane（",
 						d.license,
-						"）提供这些内置站点的解析能力。首次需要时，Peach 会自动准备锁定的 ",
+						"）提供这些内置站点的解析能力。首次需要时，Pear 会自动准备锁定的 ",
 						d.version,
 						" 版本；安装包内已有可用环境时直接使用。 手动安装也使用此版本，不随上游自动升级。"
 					] }),
@@ -729,4 +729,4 @@ function Me({ toast: e }) {
 }
 export { Me as ScrapingPage, Z as linkHost, X as networkOptions };
 
-//# debugId=6fcfa524-490c-4c81-834d-09d1b05b276f
+//# debugId=cc5c4587-0922-4451-97b4-e8ec4ee058a7

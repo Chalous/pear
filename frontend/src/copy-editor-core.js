@@ -415,5 +415,5 @@
       },
     };
   }
-  globalThis.PeachCopyEditorCore = Object.freeze({ version: 1, create, createTools, attachToolbarDrag, readJson, resolveDraft, applyDrafts, replaceTextParts });
+  globalThis.PearCopyEditorCore = Object.freeze({ version: 1, create, createTools, attachToolbarDrag, readJson, resolveDraft, applyDrafts, replaceTextParts });
 })();

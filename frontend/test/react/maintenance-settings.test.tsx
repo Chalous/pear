@@ -27,7 +27,7 @@ it('分区依次是运行信息、新手教程、卸载；缺依赖的运行信�
   };
   const host = await mount(<MaintenanceSettings data={data} receipt={vi.fn()} reopenTutorial={vi.fn()} />);
   expect([...host.firstElementChild!.children].map((node) => node.getAttribute('aria-label')))
-    .toEqual(['运行信息', '新手教程', '卸载 Peach']);
+    .toEqual(['运行信息', '新手教程', '卸载 Pear']);
   const facts = section(host, '运行信息')!;
   expect([...facts.querySelectorAll('dt')].map((dt) => dt.textContent)).toEqual(['版本', 'FFmpeg']);
   const link = facts.querySelector('a[href="https://ffmpeg.org/download.html"]');
@@ -116,7 +116,7 @@ describe('检查更新', () => {
     expect(host.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('100');
     expect(modal).toHaveBeenCalledTimes(1);
     expect(modal.mock.calls[0]?.[0]).toMatchObject({
-      title: '更新已准备好', body: 'Peach 0.10.0 将在重启后安装。', confirmLabel: '立即重启', cancelLabel: '稍后',
+      title: '更新已准备好', body: 'Pear 0.10.0 将在重启后安装。', confirmLabel: '立即重启', cancelLabel: '稍后',
     });
     expect(fetcher).not.toHaveBeenCalled();
     await act(async () => { await modal.mock.calls[0]?.[0].onConfirm?.(); });
@@ -156,12 +156,12 @@ describe('检查更新', () => {
   });
 
   it('macOS 独立包没有应用内安装，给本机架构的安装镜像下载键', async () => {
-    const dmg = 'https://github.com/peach-mitao/peach/releases/download/v1.0.0/Peach-1.0.0-macos-arm64.dmg';
+    const dmg = 'https://github.com/peach-mitao/peach/releases/download/v1.0.0/Pear-1.0.0-macos-arm64.dmg';
     const host = await mount(<ReleaseUpdates initial={{ ...release, in_app_update: false, state: 'available',
       latest_version: '1.0.0', message: '有新版本可下载。', package_kind: 'installer', asset_url: dmg, asset_size: 300 * 1048576 }} />);
     const updates = section(host, '检查更新')!;
     expect(updates.textContent).toContain('macOS 安装镜像 · 300.0 MB');
-    expect(updates.textContent).toContain('把 Peach 拖入「应用程序」');
+    expect(updates.textContent).toContain('把 Pear 拖入「应用程序」');
     expect(buttonNamed('下载并安装', updates)).toBeNull();
     const link = [...updates.querySelectorAll('a')].find((a) => a.textContent === '下载新版本');
     expect(link?.getAttribute('href')).toBe(dmg);
@@ -191,28 +191,28 @@ describe('检查更新', () => {
 
 it('卸载默认保留数据，勾选完全卸载后确认文案点名要删的东西，受理后锁住', async () => {
   const modal = vi.spyOn(legacyUi, 'confirmModal');
-  const fetcher = fetchMock(200, { message: 'Peach 将在几秒后退出并卸载。' });
+  const fetcher = fetchMock(200, { message: 'Pear 将在几秒后退出并卸载。' });
   vi.stubGlobal('fetch', fetcher);
   const host = await mount(<UninstallSettings uninstall={uninstall} receipt={vi.fn()} />);
-  const area = host.querySelector('#uninstallPeach')!;
+  const area = host.querySelector('#uninstallPear')!;
   expect(area.textContent).toContain('原始媒体文件保留');
   const full = area.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
   expect(full.checked).toBe(false);
   expect([...area.querySelectorAll('details p')].map(p => p.textContent)).toEqual(['fixture', 'fixture/cache']);
   // 每条路径自己带一颗打开键：要删的是哪几个目录，看一眼比照着路径再翻一遍快。
   expect([...area.querySelectorAll('details button[aria-label="在资源管理器中显示"]')]).toHaveLength(2);
-  await click(buttonNamed('卸载 Peach', area));
-  expect(modal.mock.calls[0]?.[0]).toMatchObject({ title: '卸载 Peach', danger: true, confirmLabel: '卸载 Peach' });
+  await click(buttonNamed('卸载 Pear', area));
+  expect(modal.mock.calls[0]?.[0]).toMatchObject({ title: '卸载 Pear', danger: true, confirmLabel: '卸载 Pear' });
   expect(String(modal.mock.calls[0]?.[0].body)).toContain('设置、本地数据库、观看记录与缓存保留');
   expect(fetcher).not.toHaveBeenCalled();
   await click(full);
-  await click(buttonNamed('卸载 Peach', area));
+  await click(buttonNamed('卸载 Pear', area));
   const options = modal.mock.calls[1]![0];
   expect(String(options.body)).toContain('凭据和缓存');
   await act(async () => { await options.onConfirm?.(); });
-  expect(sentBody(fetcher)).toEqual({ delete_data: true, confirmation: '卸载 Peach' });
-  expect(area.querySelector('[role="status"]')?.textContent).toBe('Peach 将在几秒后退出并卸载。');
-  expect(buttonNamed('卸载 Peach', area)?.disabled).toBe(true);
+  expect(sentBody(fetcher)).toEqual({ delete_data: true, confirmation: '卸载 Pear' });
+  expect(area.querySelector('[role="status"]')?.textContent).toBe('Pear 将在几秒后退出并卸载。');
+  expect(buttonNamed('卸载 Pear', area)?.disabled).toBe(true);
 });
 
 describe('新手教程', () => {

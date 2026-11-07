@@ -2,7 +2,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "529c2296-c2d5-4a6c-9082-2e5f4d46f8f7", e._sentryDebugIdIdentifier = "sentry-dbid-529c2296-c2d5-4a6c-9082-2e5f4d46f8f7");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "a15dd4cd-34e9-4cd4-ab39-2cce6c20b9a7", e._sentryDebugIdIdentifier = "sentry-dbid-a15dd4cd-34e9-4cd4-ab39-2cce6c20b9a7");
 	} catch {}
 })();
 var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescriptor, r = Object.getOwnPropertyNames, i = Object.getPrototypeOf, a = Object.prototype.hasOwnProperty, o = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e = null), t.exports), s = (e, i, o, s) => {
@@ -11214,7 +11214,7 @@ function Wt(e) {
 function B({ data: e }) {
 	let t = Wt(e.status);
 	return (0, j.useEffect)(() => {
-		document.title = `Peach · ${t}`;
+		document.title = `Pear · ${t}`;
 	}, [t]), /* @__PURE__ */ (0, z.jsx)(Bt, {
 		title: t,
 		lede: e.status === "404" ? void 0 : e.detail,
@@ -19255,7 +19255,7 @@ function mm({ tone: e, title: t, action: n, extra: r, children: i, actionLayout:
 	}
 }
 // src/react/pages/first-access.ts
-var hm = "请从部署 Peach 的机器或同一局域网打开 Peach 完成设置，或在启动容器时设置 PEACH_ACCESS_PASSWORD。", gm = Ft({
+var hm = "请从部署 Pear 的机器或同一局域网打开 Pear 完成设置，或在启动容器时设置 PEACH_ACCESS_PASSWORD。", gm = Ft({
 	sm: {
 		track: "h-4 w-7",
 		trackRadius: {
@@ -19666,7 +19666,7 @@ function Jm({ data: e, navigate: t = qm }) {
 	let [n, r] = (0, j.useState)(!0), [i, a] = (0, j.useState)(""), [o, s] = (0, j.useState)(""), [c, l] = (0, j.useState)({}), [u, d] = (0, j.useState)(""), [f, p] = (0, j.useState)(!1);
 	return /* @__PURE__ */ (0, z.jsx)(Bt, {
 		title: "访问设置",
-		lede: "这台 Peach 还没有访问设置，先决定打开时要不要登录。",
+		lede: "这台 Pear 还没有访问设置，先决定打开时要不要登录。",
 		children: /* @__PURE__ */ (0, z.jsxs)("form", {
 			"aria-labelledby": "auth-card-title",
 			className: "flex flex-col gap-6",
@@ -19698,7 +19698,7 @@ function Jm({ data: e, navigate: t = qm }) {
 					}
 					n?.errors && Object.keys(n.errors).length ? l(n.errors) : d(n?.error || "没能保存访问设置，请重试");
 				} catch {
-					d("连接不到 Peach，请确认它仍在运行后重试");
+					d("连接不到 Pear，请确认它仍在运行后重试");
 				}
 				p(!1);
 			},
@@ -19718,7 +19718,7 @@ function Jm({ data: e, navigate: t = qm }) {
 								}), /* @__PURE__ */ (0, z.jsx)("p", {
 									id: "access-setup-description",
 									className: "text-body-2-regular text-text-secondary",
-									children: "开启后，访问 Peach 需要先登录。"
+									children: "开启后，访问 Pear 需要先登录。"
 								})]
 							}), /* @__PURE__ */ (0, z.jsx)(vm, {
 								"aria-labelledby": "access-setup-title",
@@ -19729,7 +19729,7 @@ function Jm({ data: e, navigate: t = qm }) {
 								}
 							})]
 						}),
-						/* @__PURE__ */ (0, z.jsx)(Rm, { children: "局域网访问推荐设置密码。未设置时，同一网络中能连接 Peach 的设备可直接进入。" }),
+						/* @__PURE__ */ (0, z.jsx)(Rm, { children: "局域网访问推荐设置密码。未设置时，同一网络中能连接 Pear 的设备可直接进入。" }),
 						n ? /* @__PURE__ */ (0, z.jsx)(ym, {
 							label: "访问密码",
 							password: i,
@@ -19768,7 +19768,7 @@ function Jm({ data: e, navigate: t = qm }) {
 }
 var Ym = (e) => /* @__PURE__ */ (0, z.jsxs)(z.Fragment, { children: [
 	"在",
-	e ? "宿主机" : "运行 Peach 的环境中",
+	e ? "宿主机" : "运行 Pear 的环境中",
 	"执行 ",
 	/* @__PURE__ */ (0, z.jsx)("code", {
 		className: "wrap-anywhere",
@@ -19782,7 +19782,7 @@ function Xm({ data: e }) {
 function Zm({ data: e }) {
 	let t = e.mode === "legacy" || e.mode === "denied", [n, r] = (0, j.useState)(e.error || (e.invalid === "true" ? t ? "访问口令不正确" : "访问密码不正确" : ""));
 	return /* @__PURE__ */ (0, z.jsxs)(Bt, {
-		title: "Peach",
+		title: "Pear",
 		children: [e.mode === "denied" ? /* @__PURE__ */ (0, z.jsx)(mm, {
 			tone: "warning",
 			children: hm
@@ -19849,7 +19849,7 @@ async function nh(e, t, n) {
 			}
 		});
 	} catch (e) {
-		throw t.signal?.aborted ? e : new th(0, "连接不到 Peach，请确认它仍在运行后重试");
+		throw t.signal?.aborted ? e : new th(0, "连接不到 Pear，请确认它仍在运行后重试");
 	}
 	let i = await r.json().catch(() => null);
 	if (!r.ok) throw new th(r.status, i?.error || n, i?.errors, i?.docker === !0);
@@ -19906,13 +19906,13 @@ function fh() {
 	});
 }
 function ph({ step: e }) {
-	let t = e === 0 ? "你的私人媒体空间。" : e === 1 ? "让文件成为馆藏。" : e === 2 ? "从书桌，到手边。" : e === 3 ? "全都准备好了。" : e === "restore" ? "从熟悉的地方继续。" : "馆藏，准备开启。", n = e === 0 ? "把喜欢的内容，整理成自己的收藏。" : e === 1 ? "按媒体库归类，文件保留在原来的位置。" : e === 2 ? "电脑与手机，连接同一套 Peach。" : e === 3 ? "确认后保存，扫描按你的选择开始。" : e === "restore" ? "沿用原来的配置与记录，接着使用。" : "进入 Peach，开始探索你的收藏。";
+	let t = e === 0 ? "你的私人媒体空间。" : e === 1 ? "让文件成为馆藏。" : e === 2 ? "从书桌，到手边。" : e === 3 ? "全都准备好了。" : e === "restore" ? "从熟悉的地方继续。" : "馆藏，准备开启。", n = e === 0 ? "把喜欢的内容，整理成自己的收藏。" : e === 1 ? "按媒体库归类，文件保留在原来的位置。" : e === 2 ? "电脑与手机，连接同一套 Pear。" : e === 3 ? "确认后保存，扫描按你的选择开始。" : e === "restore" ? "沿用原来的配置与记录，接着使用。" : "进入 Pear，开始探索你的收藏。";
 	return /* @__PURE__ */ (0, z.jsxs)("aside", {
 		"data-setup-scene": "",
 		children: [
 			/* @__PURE__ */ (0, z.jsxs)("div", {
 				"data-setup-scene-brand": "",
-				children: [/* @__PURE__ */ (0, z.jsx)(dh, { variant: "brand" }), /* @__PURE__ */ (0, z.jsx)("span", { children: "Peach" })]
+				children: [/* @__PURE__ */ (0, z.jsx)(dh, { variant: "brand" }), /* @__PURE__ */ (0, z.jsx)("span", { children: "Pear" })]
 			}),
 			/* @__PURE__ */ (0, z.jsx)("div", {
 				"data-setup-scene-art": "",
@@ -19981,7 +19981,7 @@ function mh({ step: e, children: t }) {
 function hh({ done: e }) {
 	let t = (0, j.useRef)(null);
 	return (0, j.useEffect)(() => {
-		document.title = "Peach · 设置完成", t.current?.focus();
+		document.title = "Pear · 设置完成", t.current?.focus();
 	}, []), (0, j.useEffect)(() => {
 		let t = e.redirect;
 		if (!t) return;
@@ -20012,11 +20012,11 @@ function hh({ done: e }) {
 								children: "可以开始使用了"
 							}), /* @__PURE__ */ (0, z.jsx)("p", {
 								className: "text-body-regular text-text-secondary",
-								children: "你的 Peach 已准备就绪。"
+								children: "你的 Pear 已准备就绪。"
 							})]
 						}), /* @__PURE__ */ (0, z.jsxs)("div", { children: [/* @__PURE__ */ (0, z.jsx)("p", {
 							className: "text-body-regular text-text-primary",
-							children: e.restored ? "已连接已有数据目录。" : e.skip_media ? "可在「媒体库与入库」添加媒体目录并开始扫描。" : e.scan_requested ? "首次扫描已排队，在后台整理媒体库，期间可以照常使用 Peach。" : "稍后在配置页开始扫描媒体库。"
+							children: e.restored ? "已连接已有数据目录。" : e.skip_media ? "可在「媒体库与入库」添加媒体目录并开始扫描。" : e.scan_requested ? "首次扫描已排队，在后台整理媒体库，期间可以照常使用 Pear。" : "稍后在配置页开始扫描媒体库。"
 						}), /* @__PURE__ */ (0, z.jsx)(Um, {
 							summary: "运行信息",
 							children: /* @__PURE__ */ (0, z.jsx)(Vm, { children: e.facts.map((e) => /* @__PURE__ */ (0, z.jsxs)(Hm, {
@@ -20039,7 +20039,7 @@ function hh({ done: e }) {
 					children: /* @__PURE__ */ (0, z.jsx)(zt, {
 						ref: t,
 						href: e.url,
-						children: e.history_guide ? "导入浏览器历史记录" : "进入 Peach"
+						children: e.history_guide ? "导入浏览器历史记录" : "进入 Pear"
 					})
 				})
 			]
@@ -22165,11 +22165,11 @@ function uv({ setup: e, onDone: t, onRestore: n }) {
 									ref: s,
 									tabIndex: -1,
 									className: "text-title-1-semibold text-text-primary",
-									children: r === 0 ? "欢迎使用 Peach" : r === 1 ? "你的媒体，放在哪里？" : r === 2 ? e.docker ? "访问与网络" : "在哪里使用 Peach？" : "准备好开始了"
+									children: r === 0 ? "欢迎使用 Pear" : r === 1 ? "你的媒体，放在哪里？" : r === 2 ? e.docker ? "访问与网络" : "在哪里使用 Pear？" : "准备好开始了"
 								}), /* @__PURE__ */ (0, z.jsx)("p", {
 									"data-copy-key": `setup.description.${r}`,
 									className: "text-body-regular text-text-secondary",
-									children: r === 0 ? "花一点时间，让 Peach 更适合你。" : r === 1 ? "连接已有文件夹，或先进入界面看看。" : r === 2 ? e.docker ? "为馆藏设置访问密码，并选择资料采集的连接方式。" : "选择访问范围，也可以为馆藏设置密码。" : "确认这些选择，剩下的交给 Peach。"
+									children: r === 0 ? "花一点时间，让 Pear 更适合你。" : r === 1 ? "连接已有文件夹，或先进入界面看看。" : r === 2 ? e.docker ? "为馆藏设置访问密码，并选择资料采集的连接方式。" : "选择访问范围，也可以为馆藏设置密码。" : "确认这些选择，剩下的交给 Pear。"
 								})]
 							}, r),
 							/* @__PURE__ */ (0, z.jsx)("div", {
@@ -22444,7 +22444,7 @@ function uv({ setup: e, onDone: t, onRestore: n }) {
 													}), /* @__PURE__ */ (0, z.jsx)("p", {
 														id: "setup-access-description",
 														className: "text-body-2-regular text-text-secondary",
-														children: "开启后，访问 Peach 需要先登录。"
+														children: "开启后，访问 Pear 需要先登录。"
 													})]
 												}), /* @__PURE__ */ (0, z.jsx)(vm, {
 													"aria-labelledby": "setup-password-title",
@@ -22452,7 +22452,7 @@ function uv({ setup: e, onDone: t, onRestore: n }) {
 													isSelected: E,
 													onChange: D
 												})]
-											}), /* @__PURE__ */ (0, z.jsx)(Rm, { children: Fe || e.docker ? "局域网访问推荐设置密码。未设置时，同一网络中能连接 Peach 的设备可直接进入。" : "只有这台电脑可以访问；设置密码后，打开 Peach 仍需登录。" })] }),
+											}), /* @__PURE__ */ (0, z.jsx)(Rm, { children: Fe || e.docker ? "局域网访问推荐设置密码。未设置时，同一网络中能连接 Pear 的设备可直接进入。" : "只有这台电脑可以访问；设置密码后，打开 Pear 仍需登录。" })] }),
 											E ? /* @__PURE__ */ (0, z.jsx)(ym, {
 												label: "访问密码",
 												password: O,
@@ -22470,7 +22470,7 @@ function uv({ setup: e, onDone: t, onRestore: n }) {
 										children: [
 											/* @__PURE__ */ (0, z.jsx)(Ht, {
 												id: "setup-proxy-title",
-												children: "Peach 代理"
+												children: "Pear 代理"
 											}),
 											/* @__PURE__ */ (0, z.jsx)(Rm, { children: "用于资料采集、封面和工具下载，可在配置页修改。" }),
 											/* @__PURE__ */ (0, z.jsxs)("div", {
@@ -22532,7 +22532,7 @@ function uv({ setup: e, onDone: t, onRestore: n }) {
 												isSelected: te,
 												onChange: ne,
 												children: cv(je)
-											}), /* @__PURE__ */ (0, z.jsx)(Rm, { children: te ? "扫描会在后台开始，期间可以进入 Peach。" : "先保存处理方式，稍后在「媒体库与入库」开始扫描。" })]
+											}), /* @__PURE__ */ (0, z.jsx)(Rm, { children: te ? "扫描会在后台开始，期间可以进入 Pear。" : "先保存处理方式，稍后在「媒体库与入库」开始扫描。" })]
 										}), v.rows.some((e) => e.cost === "metered") ? /* @__PURE__ */ (0, z.jsx)(Rm, { children: "开启代理保护的目录不会自动读取视频信息或生成预览；播放时会读取视频。" }) : null] })]
 									}),
 									me ? /* @__PURE__ */ (0, z.jsx)(zm, { children: me }) : null,
@@ -22659,7 +22659,7 @@ function dv({ onDone: e, onBack: t }) {
 								children: "使用已有数据"
 							}), /* @__PURE__ */ (0, z.jsx)("p", {
 								className: "text-body-regular text-text-secondary",
-								children: "连接 Peach 数据目录，继续使用原来的配置与馆藏。"
+								children: "连接 Pear 数据目录，继续使用原来的配置与馆藏。"
 							})]
 						}), /* @__PURE__ */ (0, z.jsx)("div", { children: /* @__PURE__ */ (0, z.jsx)(pm, {
 							label: "已有数据目录",
@@ -22749,10 +22749,10 @@ function fv() {
 							children: [/* @__PURE__ */ (0, z.jsx)("h1", {
 								id: "auth-card-title",
 								className: "text-title-1-semibold text-text-primary",
-								children: "欢迎使用 Peach"
+								children: "欢迎使用 Pear"
 							}), /* @__PURE__ */ (0, z.jsx)("p", {
 								className: "text-body-regular text-text-secondary",
-								children: "花一点时间，让 Peach 更适合你。"
+								children: "花一点时间，让 Pear 更适合你。"
 							})]
 						}),
 						e.kind === "loading" ? /* @__PURE__ */ (0, z.jsxs)("div", {
@@ -22768,7 +22768,7 @@ function fv() {
 						}) : null,
 						e.kind === "denied" ? /* @__PURE__ */ (0, z.jsx)(mm, {
 							tone: "error",
-							children: e.docker ? hm : "请在运行 Peach 的这台电脑上打开设置。"
+							children: e.docker ? hm : "请在运行 Pear 的这台电脑上打开设置。"
 						}) : null,
 						e.kind === "failed" ? /* @__PURE__ */ (0, z.jsx)(mm, {
 							tone: "error",
@@ -22797,4 +22797,4 @@ E();
 var mv = document.getElementById("peach-page"), hv = mv ? pv[mv.dataset.page ?? ""] : void 0;
 mv && hv && (0, M.createRoot)(mv).render(/* @__PURE__ */ (0, z.jsx)(hv, { data: { ...mv.dataset } }));
 
-//# debugId=529c2296-c2d5-4a6c-9082-2e5f4d46f8f7
+//# debugId=a15dd4cd-34e9-4cd4-ab39-2cce6c20b9a7

@@ -15,7 +15,7 @@ const render = (item: Record<string, unknown>) => {
   return host;
 };
 
-it('未入库新作的官方封面经 Peach 代理取图，页面不出现图床地址', () => {
+it('未入库新作的官方封面经 Pear 代理取图，页面不出现图床地址', () => {
   const host = render({ code: 'ABC-001', has_cover: false,
     cover_url: 'https://awsimgsrc.dmm.co.jp/pics_dig/digital/video/abc00001/abc00001pl.jpg' });
   const image = host.querySelector('img')!;

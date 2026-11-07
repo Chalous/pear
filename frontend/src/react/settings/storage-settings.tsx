@@ -153,7 +153,7 @@ export function StorageSettings({ initial, receipt }: { initial: StorageState; r
     const size = storage.usage ? fmtSize(storage.usage.total_bytes) : '';
     await confirmModal({
       title: '迁移数据目录',
-      body: `将 ${size} 数据从 ${storage.data_root} 移到 ${target}。迁移期间 Peach 会退出，完成后自动重新打开；原位置的数据在新位置核对无误后删除。`,
+      body: `将 ${size} 数据从 ${storage.data_root} 移到 ${target}。迁移期间 Pear 会退出，完成后自动重新打开；原位置的数据在新位置核对无误后删除。`,
       confirmLabel: '迁移数据目录',
       onConfirm: async () => {
         try {
@@ -191,7 +191,7 @@ export function StorageSettings({ initial, receipt }: { initial: StorageState; r
       <Stack divided>
         {storage.job.state === 'measuring' ? <Measuring job={storage.job} /> : null}
         {usage?.capacity_error ? <ErrorText>容量统计不完整：{usage.capacity_error}</ErrorText> : null}
-        {usage?.allocated_bytes != null ? <Help>Peach 数据实际占盘 {fmtSize(usage.allocated_bytes)}；分类图按文件大小统计。</Help> : null}
+        {usage?.allocated_bytes != null ? <Help>Pear 数据实际占盘 {fmtSize(usage.allocated_bytes)}；分类图按文件大小统计。</Help> : null}
         {usage
           ? <div data-storage-result="" className={cardClass({ variant: 'outlined', padding: 'none', className: 'flex flex-col' })}>
               <div className="border-b border-separator-border p-4"><StorageOverview storage={storage} /></div>

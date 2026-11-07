@@ -27,8 +27,8 @@ export interface DownloadPrefill { code?: string; title?: string; origin?: strin
 const RECEIPTS: Partial<Record<DownloadSubmitResult['outcome'], string>> = {
   submitted: '已提交离线下载，进度在任务中心',
   adopted: '这个磁力已有任务，没有重复提交',
-  adopted_remote: '网盘中已有相同的下载任务，Peach 已开始跟踪进度',
-  deferred: '网盘暂时没有响应，Peach 会自动重新提交，进度在任务中心',
+  adopted_remote: '网盘中已有相同的下载任务，Pear 已开始跟踪进度',
+  deferred: '网盘暂时没有响应，Pear 会自动重新提交，进度在任务中心',
 };
 
 export function CloudDownloadDialog({ prefill, close, receipt, provider }: {

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { RiFolderLine, RiPlayFill, RiSearchLine } from '@remixicon/react';
 import macbook from '../../../../../resources/setup/macbook.png';
 import iphone from '../../../../../resources/setup/iphone.png';
-import { PeachSilhouette } from './peach-silhouette';
+import { PearSilhouette } from './peach-silhouette';
 
 type SceneStep = number | 'restore' | 'done';
 
@@ -21,13 +21,13 @@ export function SetupScene({ step }: { step: SceneStep }) {
     : step === 'restore' ? '从熟悉的地方继续。' : '馆藏，准备开启。';
   const description = step === 0 ? '把喜欢的内容，整理成自己的收藏。'
     : step === 1 ? '按媒体库归类，文件保留在原来的位置。'
-    : step === 2 ? '电脑与手机，连接同一套 Peach。'
+    : step === 2 ? '电脑与手机，连接同一套 Pear。'
     : step === 3 ? '确认后保存，扫描按你的选择开始。'
-    : step === 'restore' ? '沿用原来的配置与记录，接着使用。' : '进入 Peach，开始探索你的收藏。';
+    : step === 'restore' ? '沿用原来的配置与记录，接着使用。' : '进入 Pear，开始探索你的收藏。';
   return <aside data-setup-scene="">
-    <div data-setup-scene-brand=""><PeachSilhouette variant="brand" /><span>Peach</span></div>
+    <div data-setup-scene-brand=""><PearSilhouette variant="brand" /><span>Pear</span></div>
     <div data-setup-scene-art="" key={step} aria-hidden="true">
-      {step === 0 ? <PeachSilhouette variant="welcome" />
+      {step === 0 ? <PearSilhouette variant="welcome" />
         : step === 3 || step === 'done' ? <img data-setup-original-mark="" src="/peach-logo.png" alt="" width={148} height={148} />
         : step === 2 ? <div data-setup-devices="">
         <div data-setup-macbook=""><img src={macbook} alt="" /><div data-setup-device-screen=""><LibraryPreview /></div></div>

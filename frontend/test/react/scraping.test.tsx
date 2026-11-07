@@ -121,14 +121,14 @@ it('首屏用 prefetch 缓存画出来源与任务，挂载时不重复请求', 
   expect(bridge).not.toBeNull();
   expect(bridge?.textContent).toContain('已安装版本0.16.1');
   expect(bridge?.textContent).toContain('FC2PPVDB、AVSOX');
-  expect(bridge?.textContent).toContain('首次需要时，Peach 会自动准备锁定的 0.16.1 版本');
+  expect(bridge?.textContent).toContain('首次需要时，Pear 会自动准备锁定的 0.16.1 版本');
   expect(bridge?.textContent).toContain('安装包内已有可用环境时直接使用');
   expect(buttonNamed('重新安装', bridge!)).not.toBeNull();
   // 连接方式是 BoardUI 的 Select，画出来的是按钮；原生 select 是 React Aria 藏在后面
   // 供表单取值的那一个，不是这一行的长相。
-  expect(host.querySelector('[aria-haspopup=listbox]')?.textContent?.trim()).toBe('Peach 代理');
+  expect(host.querySelector('[aria-haspopup=listbox]')?.textContent?.trim()).toBe('Pear 代理');
   expect(host.querySelector<HTMLAnchorElement>('a[href="/settings/library#peachProxy"]')?.textContent)
-    .toContain('配置 Peach 代理');
+    .toContain('配置 Pear 代理');
   expect(host.querySelector<HTMLAnchorElement>('a[href="https://www.javbus.com/"]')?.target).toBe('_blank');
 });
 
@@ -395,7 +395,7 @@ it('amane 桥：检查上游只填「上游最新版本」那一行，重建跟�
 });
 
 it('amane 桥：安装包缺桥文件时卡片写出原因，安装键停用', async () => {
-  const problem = '安装包里缺少 amane 桥的文件：C:/Peach/_internal/tools/amane-bridge/pyproject.toml；重新安装 Peach 后可用';
+  const problem = '安装包里缺少 amane 桥的文件：C:/Pear/_internal/tools/amane-bridge/pyproject.toml；重新安装 Pear 后可用';
   const { host } = await open({
     ...quiet(),
     'GET /api/scraping/amane-bridge': () => ({ body: {
@@ -404,7 +404,7 @@ it('amane 桥：安装包缺桥文件时卡片写出原因，安装键停用', a
   });
   const bridge = section(host, 'amane')!;
   expect(bridge.textContent).toContain(problem);
-  expect(bridge.textContent).not.toContain('Peach 内置的');
+  expect(bridge.textContent).not.toContain('Pear 内置的');
   expect(buttonNamed('安装', bridge)?.disabled).toBe(true);
 });
 
@@ -412,5 +412,5 @@ it('登录外链只写主机名；数据库里认不出的连接方式原样列�
   expect(linkHost('https://www.javbus.com/login?next=%2F')).toBe('www.javbus.com');
   expect(linkHost('不是地址')).toBe('不是地址');
   expect(networkOptions('peach').map(([key]) => key)).toEqual(['peach', 'direct']);
-  expect(networkOptions('socks-legacy')).toEqual([['peach', 'Peach 代理'], ['direct', '直接连接'], ['socks-legacy', 'socks-legacy']]);
+  expect(networkOptions('socks-legacy')).toEqual([['peach', 'Pear 代理'], ['direct', '直接连接'], ['socks-legacy', 'socks-legacy']]);
 });

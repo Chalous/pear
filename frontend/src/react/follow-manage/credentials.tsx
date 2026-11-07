@@ -27,7 +27,7 @@ import { SourceIcon } from './source-view';
 import { RiKey2Line } from '@remixicon/react';
 
 const CLEAR_BODY = '将清除这个来源在本机和共享副本中的登录凭据。';
-const WORLD_READABLE = '其他系统用户可以读取此凭据文件。请在运行 Peach 的 Mac 或 Linux 电脑上，将文件权限设为仅当前用户可读写（0600）。';
+const WORLD_READABLE = '其他系统用户可以读取此凭据文件。请在运行 Pear 的 Mac 或 Linux 电脑上，将文件权限设为仅当前用户可读写（0600）。';
 
 /** 一个字段此刻的样子：共享回填的、本机存过的，还是从来没填过。 */
 function fieldHint(row: CredentialRow, name: string): string {
@@ -74,7 +74,7 @@ function CredentialForm({ row, readOnly, toast }:
     <div className="flex flex-col gap-3">
       <Help>
         {row.why}
-        {/* 「去取」跳到那个站自己的页面，会离开 Peach，所以带外链标。 */}
+        {/* 「去取」跳到那个站自己的页面，会离开 Pear，所以带外链标。 */}
         {row.where ? <> <ExternalLink href={row.where}>获取凭据</ExternalLink></> : null}
       </Help>
       {row.howto ? <Help>{row.howto}</Help> : null}

@@ -156,7 +156,7 @@ export function TutorialCenter({ actions }: { actions: ShellActions }) {
       });
       invitationSession.current = intro;
       void intro.show({ id: 'tutorial-entry', title: '从这里打开新手教程',
-        body: '点击这个指南针，先用 4 步认识 Peach。其他功能用到时再看。', target: '#tutorialBtn' }, 0, 1);
+        body: '点击这个指南针，先用 4 步认识 Pear。其他功能用到时再看。', target: '#tutorialBtn' }, 0, 1);
     }).catch(() => setSyncError('教程提示未能加载，请重新读取。'));
     return () => {
       cancelled = true;
@@ -271,7 +271,7 @@ export function TutorialCenter({ actions }: { actions: ShellActions }) {
               ? '本章已结束，未显示的步骤尚未完成，可以稍后继续。'
               : chapter.id === 'basics'
               ? progressRef.current.completed
-                ? '快速导览已完成，所有设备的教程入口都会收起。以后可到设置 → Peach 配置 → 应用与维护 → 新手教程重新打开，其余内容按需查看。'
+                ? '快速导览已完成，所有设备的教程入口都会收起。以后可到设置 → Pear 配置 → 应用与维护 → 新手教程重新打开，其余内容按需查看。'
                 : '导览已结束，但完成状态未保存。请重新读取教程状态后再试。'
               : '这段导览已完成。需要时再了解其他功能。');
           } else { position.current = next; show() }

@@ -2,7 +2,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "8add4d7e-2d58-42ac-a88b-e5d432ef84eb", e._sentryDebugIdIdentifier = "sentry-dbid-8add4d7e-2d58-42ac-a88b-e5d432ef84eb");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "a3a7c95b-fc3c-4345-9d33-529dbbe51797", e._sentryDebugIdIdentifier = "sentry-dbid-a3a7c95b-fc3c-4345-9d33-529dbbe51797");
 	} catch {}
 })();
 var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescriptor, r = Object.getOwnPropertyNames, i = Object.getPrototypeOf, a = Object.prototype.hasOwnProperty, o = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e = null), t.exports), s = (e, n) => {
@@ -11348,18 +11348,18 @@ function bn(e, t = 0) {
 	let n = String(e?.message ?? e ?? ""), r = Number(t || e?.status || n.match(/\b(400|401|403|404|408|409|413|429|500|502|503|504)\b/)?.[1]), i = {
 		400: "提交内容有误，请检查输入后重试。",
 		401: "登录已失效，请刷新页面重新登录。",
-		403: "当前设备没有执行此操作的权限，请在运行 Peach 的电脑上操作。",
+		403: "当前设备没有执行此操作的权限，请在运行 Pear 的电脑上操作。",
 		404: "请求的内容已不存在，请刷新列表。",
 		408: "请求超时，请稍后重试。",
 		409: "当前状态不允许此操作，请刷新后重试。",
 		413: "提交内容过大，请减少数量后重试。",
 		429: "请求过于频繁，请稍后重试。",
-		500: "Peach 服务处理失败，请重试；持续失败时查看托盘日志。",
-		502: "Peach 服务没有取回结果，请稍后重试；持续失败时查看托盘日志。",
-		503: "Peach 服务暂时不可用，请稍后重试。",
+		500: "Pear 服务处理失败，请重试；持续失败时查看托盘日志。",
+		502: "Pear 服务没有取回结果，请稍后重试；持续失败时查看托盘日志。",
+		503: "Pear 服务暂时不可用，请稍后重试。",
 		504: "等待服务响应超时，请稍后重试。"
 	};
-	return /Failed to fetch|fetch failed|NetworkError|Load failed|network request failed|ERR_CONNECTION/i.test(n) ? "无法连接到 Peach 服务，请确认网络连接和托盘服务已启动。" : e?.name === "TimeoutError" || !r && /timed? ?out|timeout/i.test(n) ? "等待服务响应超时，请检查连接后重试。" : /[㐀-鿿]/.test(n) && !/^请求失败[（(]/.test(n) ? n : i[r] ? i[r] : "操作未完成，请重试；持续失败时查看托盘日志。";
+	return /Failed to fetch|fetch failed|NetworkError|Load failed|network request failed|ERR_CONNECTION/i.test(n) ? "无法连接到 Pear 服务，请确认网络连接和托盘服务已启动。" : e?.name === "TimeoutError" || !r && /timed? ?out|timeout/i.test(n) ? "等待服务响应超时，请检查连接后重试。" : /[㐀-鿿]/.test(n) && !/^请求失败[（(]/.test(n) ? n : i[r] ? i[r] : "操作未完成，请重试；持续失败时查看托盘日志。";
 }
 // src/core/icon-geometry.ts
 var xn = {
@@ -15457,7 +15457,7 @@ var ap = {
 	},
 	"/settings/library": {
 		section: "configuration",
-		title: "Peach 配置",
+		title: "Pear 配置",
 		refresh: "reopen"
 	},
 	"/tasks": {
@@ -31104,7 +31104,7 @@ var dj = [
 	],
 	[
 		"configuration",
-		"Peach 配置",
+		"Pear 配置",
 		"folder-cog"
 	]
 ], pj = [
@@ -31146,7 +31146,7 @@ var zle = (e, t) => mj(t).flatMap((t) => t === "configuration" && !e ? [] : fj.f
 		]
 	},
 	configuration: {
-		label: "Peach 配置",
+		label: "Pear 配置",
 		items: [
 			["library", "媒体库与入库"],
 			["sources", "来源与订阅"],
@@ -46885,7 +46885,7 @@ var Qve = 2e3, $ve = 1e4, $H = "连接中断，正在重新读取处理进度", 
 	cli: "由命令行或托盘发起"
 };
 function tye(e, t) {
-	return `保存后 Peach 会重新启动。${e.trigger === "cli" ? "这个任务由命令行或托盘发起，在独立进程里运行，不受重启影响。" : e.status === "paused" ? "已暂停的任务会保持暂停，重启后点继续即可接着处理。" : "正在进行的任务会随重启中断，重启后从中断处继续。"}${t ? "勾选的「保存后扫描并补全资料」会排在当前任务之后。" : ""}`;
+	return `保存后 Pear 会重新启动。${e.trigger === "cli" ? "这个任务由命令行或托盘发起，在独立进程里运行，不受重启影响。" : e.status === "paused" ? "已暂停的任务会保持暂停，重启后点继续即可接着处理。" : "正在进行的任务会随重启中断，重启后从中断处继续。"}${t ? "勾选的「保存后扫描并补全资料」会排在当前任务之后。" : ""}`;
 }
 function nye(e) {
 	let t = eye[e.trigger || ""];
@@ -48233,7 +48233,7 @@ function Lye({ toast: e }) {
 	}, []), null;
 }
 // src/react/network-banner.tsx
-var Rye = ["network-status"], zye = "Peach 连不上外网，资料采集、关注更新和在线来源暂不可用；本机媒体照常浏览和播放。";
+var Rye = ["network-status"], zye = "Pear 连不上外网，资料采集、关注更新和在线来源暂不可用；本机媒体照常浏览和播放。";
 function Bye(e) {
 	return e?.state === "online" ? 12e4 : 3e4;
 }
@@ -48254,7 +48254,7 @@ function Vye() {
 			children: /* @__PURE__ */ (0, I.jsx)("use", { href: "#i-alert" })
 		}), /* @__PURE__ */ (0, I.jsx)("p", { children: zye })] }), /* @__PURE__ */ (0, I.jsx)("a", {
 			href: "/settings/network#peachProxy",
-			children: "检查 Peach 代理"
+			children: "检查 Pear 代理"
 		})]
 	}), t);
 }
@@ -48301,7 +48301,7 @@ var eW = (e, t, n, r, i, a) => ({
 			tW("search", "搜索馆藏", "输入作品名、番号、艺人、厂牌或标签。搜索结果来自已经入库的内容。", "/", "#q, #searchBtn"),
 			tW("navigation", "切换浏览入口", "在侧栏按人物、厂牌和标签浏览。手机上用导航按钮展开侧栏；入口与顺序可以在设置里调整。", "/", "#filterBtn, [data-sidebar-nav]"),
 			tW("cards", "打开作品详情", "选择作品查看资料、版本和播放入口。首次扫描尚未入库时，可以先继续认识导航。", "/", "[data-media-grid] > [data-id], [data-catalog-row], [data-media-empty]"),
-			tW("preferences", "调整自己的界面", "侧栏底部的设置包含显示与播放偏好；手机上先展开侧栏。媒体目录、网络和后台服务放在其中的 Peach 配置入口。", "/", "#settingsBtn, #filterBtn")
+			tW("preferences", "调整自己的界面", "侧栏底部的设置包含显示与播放偏好；手机上先展开侧栏。媒体目录、网络和后台服务放在其中的 Pear 配置入口。", "/", "#settingsBtn, #filterBtn")
 		]
 	},
 	{
@@ -48326,7 +48326,7 @@ var eW = (e, t, n, r, i, a) => ({
 				surface: "subtitles"
 			},
 			{
-				...eW("external", "外部播放器", "在这里选择本地播放器、M3U 播放列表或网络播放地址，再点打开。另一台设备需要能访问当前 Peach 地址。", "/", "#stage [data-local-playback-row]"),
+				...eW("external", "外部播放器", "在这里选择本地播放器、M3U 播放列表或网络播放地址，再点打开。另一台设备需要能访问当前 Pear 地址。", "/", "#stage [data-local-playback-row]"),
 				surface: "detail"
 			}
 		]
@@ -48415,8 +48415,8 @@ var eW = (e, t, n, r, i, a) => ({
 		summary: "统计、口味，以及浏览历史和书签来源。",
 		steps: [
 			tW("stats", "馆藏统计", "选择统计视图查看馆藏、存储和观看情况，各视图中的入口可继续查看相关作品。", "/stats", "[aria-label=\"统计视图\"]"),
-			tW("taste", "口味与记录", "在这里切换浏览器记录与 Peach 观看评价，分析各自的口味。", "/taste", "[aria-label=\"口味分析的数据来源\"]"),
-			tW("import", "取得浏览历史与书签", "读取浏览器记录需要在运行 Peach 的电脑操作；更多方式菜单可以导入历史或书签文件，适合其它设备。", "/taste", "[data-guide-target=\"history-import\"]"),
+			tW("taste", "口味与记录", "在这里切换浏览器记录与 Pear 观看评价，分析各自的口味。", "/taste", "[aria-label=\"口味分析的数据来源\"]"),
+			tW("import", "取得浏览历史与书签", "读取浏览器记录需要在运行 Pear 的电脑操作；更多方式菜单可以导入历史或书签文件，适合其它设备。", "/taste", "[data-guide-target=\"history-import\"]"),
 			tW("history", "管理记录来源", "已取得的记录来源集中列在这里，可以停用本机浏览器读取或移除已导入的数据源；导览不会修改这些记录。", "/taste", "section[aria-label=\"数据源\"]")
 		]
 	},
@@ -48428,7 +48428,7 @@ var eW = (e, t, n, r, i, a) => ({
 		steps: [
 			tW("downloads", "配置下载渠道", "先连接支持的渠道，再指定云端目标目录与本地媒体目录。下载完成后按目录规则入库。", "/settings/downloads", "[data-guide-target=\"download\"]"),
 			tW("search", "搜索资源", "资源搜索使用配置的索引器。查到结果后还需要你主动选择下载。", "/settings/subscriptions", "[data-guide-target=\"indexers\"]"),
-			tW("browser", "浏览器添加 JAV", "用户脚本与 Peach 配对后可从浏览器添加作品。专用令牌、默认渠道和开关在下载渠道里管理。", "/settings/downloads", "[data-guide-target=\"browser\"]")
+			tW("browser", "浏览器添加 JAV", "用户脚本与 Pear 配对后可从浏览器添加作品。专用令牌、默认渠道和开关在下载渠道里管理。", "/settings/downloads", "[data-guide-target=\"browser\"]")
 		]
 	},
 	{
@@ -48437,12 +48437,12 @@ var eW = (e, t, n, r, i, a) => ({
 		title: "手机与其他设备",
 		summary: "访问地址、密码、局域网和公网入口。",
 		steps: [
-			tW("address", "找到访问地址", "同一局域网的设备使用 Peach 的局域网地址。仅本机访问时，其它设备无法连接。", "/settings/network", "[data-guide-target=\"port\"]"),
-			tW("password", "访问密码", "能连接到 Peach 的设备按访问密码登录。显示偏好与访问权限是不同的设置。", "/settings/network", "[data-guide-target=\"access\"]"),
+			tW("address", "找到访问地址", "同一局域网的设备使用 Pear 的局域网地址。仅本机访问时，其它设备无法连接。", "/settings/network", "[data-guide-target=\"port\"]"),
+			tW("password", "访问密码", "能连接到 Pear 的设备按访问密码登录。显示偏好与访问权限是不同的设置。", "/settings/network", "[data-guide-target=\"access\"]"),
 			tW("tunnel", "需要时启用公网入口", "Cloudflare 公网入口适合离开局域网后访问，需要按实际部署配置连接信息。", "/settings/network", "[data-guide-target=\"tunnel\"]")
 		]
 	}
-], Gye = "当前浏览器 · 修改后自动保存", rW = "跟随馆藏 · 修改后自动保存", iW = "运行 Peach 的电脑 · 确认后保存配置", aW = (e, t, n = Gye) => t.map(([t, r, i, a, o]) => eW(t, r, i, `/settings/${e}`, a || `[data-guide-target="${t}"]`, o || n)), oW = [
+], Gye = "当前浏览器 · 修改后自动保存", rW = "跟随馆藏 · 修改后自动保存", iW = "运行 Pear 的电脑 · 确认后保存配置", aW = (e, t, n = Gye) => t.map(([t, r, i, a, o]) => eW(t, r, i, `/settings/${e}`, a || `[data-guide-target="${t}"]`, o || n)), oW = [
 	{
 		id: "appearance",
 		kind: "settings",
@@ -48660,7 +48660,7 @@ var eW = (e, t, n, r, i, a) => ({
 			[
 				"cloud-proxy",
 				"CloudDrive 代理",
-				"数据代理控制文件内容请求，API 代理控制接口请求。分别选择模式、地址与端口，认证需要时填写用户名和密码；它们与 Peach 代理分别配置。"
+				"数据代理控制文件内容请求，API 代理控制接口请求。分别选择模式、地址与端口，认证需要时填写用户名和密码；它们与 Pear 代理分别配置。"
 			],
 			[
 				"discovery",
@@ -48732,7 +48732,7 @@ var eW = (e, t, n, r, i, a) => ({
 			[
 				"browser",
 				"浏览器添加 JAV",
-				"安装用户脚本并配对 Peach。默认渠道决定提交到哪里；启用开关控制功能，专用令牌可更新或关闭，脚本检测帮助确认配对。"
+				"安装用户脚本并配对 Pear。默认渠道决定提交到哪里；启用开关控制功能，专用令牌可更新或关闭，脚本检测帮助确认配对。"
 			]
 		], iW)
 	},
@@ -48749,13 +48749,13 @@ var eW = (e, t, n, r, i, a) => ({
 			],
 			[
 				"proxy",
-				"Peach 代理",
+				"Pear 代理",
 				"来源联网可选择系统代理、直连或自定义代理地址。连接失败时先检查当前模式与地址。"
 			],
 			[
 				"access",
 				"访问密码",
-				"设置或修改进入 Peach 的密码；关闭后，能连接到 Peach 的设备可直接访问。"
+				"设置或修改进入 Pear 的密码；关闭后，能连接到 Pear 的设备可直接访问。"
 			],
 			[
 				"tunnel",
@@ -48812,7 +48812,7 @@ var eW = (e, t, n, r, i, a) => ({
 			],
 			[
 				"uninstall",
-				"卸载 Peach",
+				"卸载 Pear",
 				"卸载移除程序；完全卸载还移除设置、资料库、记录、凭据和缓存。执行前核对页面列出的数据目录与确认内容。"
 			]
 		], iW)
@@ -48887,7 +48887,7 @@ var eW = (e, t, n, r, i, a) => ({
 		["监视本机文件夹", "接收本机文件系统的变更，用于发现新内容。"],
 		["接收 CloudDrive2 通知", "通过 CloudDrive2 推送目录变化。"],
 		["Webhook", "供来源服务发送变更事件的接收入口。"],
-		["路径前缀映射", "将来源通知里的路径换算为 Peach 能访问的媒体目录路径。"]
+		["路径前缀映射", "将来源通知里的路径换算为 Pear 能访问的媒体目录路径。"]
 	],
 	"follow-options": [
 		["首次采集范围", "决定新加入的关注来源回看多久；跟随馆藏保存。"],
@@ -48897,15 +48897,15 @@ var eW = (e, t, n, r, i, a) => ({
 		["头像与 favicon 刷新", "页面显示现有刷新信息；头像用于识别创作者，favicon 用于识别站点。"]
 	],
 	download: [
-		["CloudDrive2 地址与 API 令牌", "地址定位服务，令牌授权 Peach 调用服务接口。"],
+		["CloudDrive2 地址与 API 令牌", "地址定位服务，令牌授权 Pear 调用服务接口。"],
 		["自动查找与检查", "查找可连接的服务或核对当前连接。"],
 		["115 目标目录", "决定提交到 115 的内容保存到哪个云端目录。"],
 		["PikPak 目标目录", "决定提交到 PikPak 的内容保存到哪个云端目录。"],
-		["媒体目录映射", "将云端目标对应到 Peach 能扫描的挂载路径，便于下载后入库。"],
+		["媒体目录映射", "将云端目标对应到 Pear 能扫描的挂载路径，便于下载后入库。"],
 		["等待上限", "控制等待下载结果的最长时间。"]
 	],
 	browser: [
-		["脚本检测与配对", "确认用户脚本已安装，并与当前 Peach 服务连接。"],
+		["脚本检测与配对", "确认用户脚本已安装，并与当前 Pear 服务连接。"],
 		["默认渠道", "决定从浏览器添加时默认使用的下载渠道。"],
 		["启用", "控制浏览器添加功能是否接受请求。"],
 		["专用令牌", "授权用户脚本连接；更新后需要重新配对，关闭后停止使用该功能。"]
@@ -48924,17 +48924,17 @@ var eW = (e, t, n, r, i, a) => ({
 	indexers: [
 		["名称", "用于区分资源搜索来源。"],
 		["Torznab 地址", "索引器提供的查询接口地址。"],
-		["API key", "授权 Peach 使用该索引器；按索引器提供的信息填写。"]
+		["API key", "授权 Pear 使用该索引器；按索引器提供的信息填写。"]
 	],
 	proxy: [
-		["系统代理", "采用运行 Peach 的电脑提供的代理配置。"],
+		["系统代理", "采用运行 Pear 的电脑提供的代理配置。"],
 		["直连", "直接连接来源。"],
-		["自定义代理地址", "指定 Peach 使用的代理；已保存时留空保留当前地址。"]
+		["自定义代理地址", "指定 Pear 使用的代理；已保存时留空保留当前地址。"]
 	],
 	access: [
 		["当前访问密码", "修改访问密码时用于验证当前密码。"],
 		["新访问密码与确认", "两次填写相同密码，保存后使用新密码登录。"],
-		["关闭访问密码", "保存后，能连接到 Peach 的设备可直接进入。"]
+		["关闭访问密码", "保存后，能连接到 Pear 的设备可直接进入。"]
 	],
 	tunnel: [
 		["临时链接", "适合临时使用的公网访问入口。"],
@@ -48944,9 +48944,9 @@ var eW = (e, t, n, r, i, a) => ({
 		["连接状态", "用于判断公网入口是否已经可访问。"]
 	],
 	startup: [
-		["开机后启动 Peach", "系统登录后启动应用；可用性取决于当前平台。"],
+		["开机后启动 Pear", "系统登录后启动应用；可用性取决于当前平台。"],
 		["只启动托盘，不打开网页", "开机启动时保留后台运行，按需要再打开页面。"],
-		["在桌面创建快捷方式", "提供打开 Peach 的桌面入口。"]
+		["在桌面创建快捷方式", "提供打开 Pear 的桌面入口。"]
 	],
 	reporting: [
 		["发送版本统计与错误诊断", "上传版本、系统信息、故障类型、代码位置与发生次数。"],
@@ -48954,7 +48954,7 @@ var eW = (e, t, n, r, i, a) => ({
 		["上传预览", "查看本次会包含的内容，再决定是否启用明细上传。"]
 	]
 };
-for (let e of oW) for (let t of e.steps) t.details = Kye[t.id], (t.id === "preview" || t.id === "transcode") && (t.scope = "运行 Peach 的电脑 · 修改后自动保存"), (t.id === "follow-options" || t.id === "sources" || t.id === "reporting" || t.id === "storage" || t.id === "ledger-backups") && (t.scope = "按页面中各项的保存或确认动作生效");
+for (let e of oW) for (let t of e.steps) t.details = Kye[t.id], (t.id === "preview" || t.id === "transcode") && (t.scope = "运行 Pear 的电脑 · 修改后自动保存"), (t.id === "follow-options" || t.id === "sources" || t.id === "reporting" || t.id === "storage" || t.id === "ledger-backups") && (t.scope = "按页面中各项的保存或确认动作生效");
 var sW = [...nW, ...oW], qye = [
 	{
 		id: "browse",
@@ -49258,7 +49258,7 @@ function dbe({ kind: e, query: t, setQuery: n, context: r, progress: i, loading:
 			/* @__PURE__ */ (0, I.jsxs)(pW, {
 				completed: u,
 				icon: e === "interface" ? jV : QV,
-				title: e === "interface" ? "先认识 Peach" : "按习惯调整 Peach",
+				title: e === "interface" ? "先认识 Pear" : "按习惯调整 Pear",
 				description: e === "interface" ? "先用 4 步认识常用入口，其余功能用到时再看。" : "先了解外观与导航，其余设置按需要查看。",
 				children: [u ? /* @__PURE__ */ (0, I.jsx)(hW, {}) : /* @__PURE__ */ (0, I.jsxs)("span", {
 					className: "text-body-2-regular text-text-secondary",
@@ -49385,7 +49385,7 @@ function fbe(e) {
 		if (t) return {
 			path: [
 				"侧栏底部的设置",
-				"Peach 配置",
+				"Pear 配置",
 				t
 			],
 			hint: gW
@@ -49816,7 +49816,7 @@ function gbe({ actions: e }) {
 			}), x.current = a, a.show({
 				id: "tutorial-entry",
 				title: "从这里打开新手教程",
-				body: "点击这个指南针，先用 4 步认识 Peach。其他功能用到时再看。",
+				body: "点击这个指南针，先用 4 步认识 Pear。其他功能用到时再看。",
 				target: "#tutorialBtn"
 			}, 0, 1));
 		}).catch(() => m("教程提示未能加载，请重新读取。")), () => {
@@ -49938,7 +49938,7 @@ function gbe({ actions: e }) {
 							...C.current,
 							completed: !0
 						}, { action: "complete" }), await k.current, a !== S.current) return;
-						ie(!0), o(t.kind), g(cW(C.current, t) ? t.id === "basics" ? C.current.completed ? "快速导览已完成，所有设备的教程入口都会收起。以后可到设置 → Peach 配置 → 应用与维护 → 新手教程重新打开，其余内容按需查看。" : "导览已结束，但完成状态未保存。请重新读取教程状态后再试。" : "这段导览已完成。需要时再了解其他功能。" : "本章已结束，未显示的步骤尚未完成，可以稍后继续。");
+						ie(!0), o(t.kind), g(cW(C.current, t) ? t.id === "basics" ? C.current.completed ? "快速导览已完成，所有设备的教程入口都会收起。以后可到设置 → Pear 配置 → 应用与维护 → 新手教程重新打开，其余内容按需查看。" : "导览已结束，但完成状态未保存。请重新读取教程状态后再试。" : "这段导览已完成。需要时再了解其他功能。" : "本章已结束，未显示的步骤尚未完成，可以稍后继续。");
 					} else w.current = n, l();
 				}
 			}), l();
@@ -50091,7 +50091,7 @@ function bbe({ navigate: e }) {
 		c.build_id
 	] : [l, u]);
 	if (d === r) return null;
-	let f = l === "refresh" ? "Peach 已更新，刷新页面即可使用。" : l === "ready" ? "更新已准备好，可重启安装。" : l === "preparing" ? "正在准备更新。" : "有可用更新。";
+	let f = l === "refresh" ? "Pear 已更新，刷新页面即可使用。" : l === "ready" ? "更新已准备好，可重启安装。" : l === "preparing" ? "正在准备更新。" : "有可用更新。";
 	return (0, Lt.createPortal)(/* @__PURE__ */ (0, I.jsxs)("aside", {
 		className: "ui-project-banner peach-react",
 		role: "status",
@@ -50105,7 +50105,7 @@ function bbe({ navigate: e }) {
 			children: f
 		}), l !== "refresh" && u ? /* @__PURE__ */ (0, I.jsxs)("span", {
 			"data-copy-ignore": "",
-			children: [" Peach ", u]
+			children: [" Pear ", u]
 		}) : null] })] }), /* @__PURE__ */ (0, I.jsxs)("div", {
 			className: "flex-wrap",
 			children: [l === "refresh" ? /* @__PURE__ */ (0, I.jsx)(aU, {
@@ -50861,8 +50861,8 @@ function Nbe({ initialCode: e, reason: t, choose: n, onSearch: r, onWork: i }) {
 var Pbe = {
 	submitted: "已提交离线下载，进度在任务中心",
 	adopted: "这个磁力已有任务，没有重复提交",
-	adopted_remote: "网盘中已有相同的下载任务，Peach 已开始跟踪进度",
-	deferred: "网盘暂时没有响应，Peach 会自动重新提交，进度在任务中心"
+	adopted_remote: "网盘中已有相同的下载任务，Pear 已开始跟踪进度",
+	deferred: "网盘暂时没有响应，Pear 会自动重新提交，进度在任务中心"
 };
 function qW({ prefill: e, close: t, receipt: n, provider: r }) {
 	return /* @__PURE__ */ (0, I.jsx)(pH, {
@@ -72573,10 +72573,10 @@ function CMe({ tab: e, epoch: t, configurable: n, openConfiguration: r, onSelect
 					type: "button",
 					disabled: n !== !0,
 					onClick: r,
-					title: n === !1 ? "请在运行 Peach 的设备上打开 Peach 配置" : void 0,
+					title: n === !1 ? "请在运行 Pear 的设备上打开 Pear 配置" : void 0,
 					children: [
 						/* @__PURE__ */ (0, I.jsx)(ZF, { name: "folder-cog" }),
-						"Peach 配置",
+						"Pear 配置",
 						/* @__PURE__ */ (0, I.jsx)(ZF, { name: "chevron-right" })
 					]
 				})
@@ -73856,7 +73856,7 @@ function W0() {
 }
 function G0() {
 	let e = v0("javBrowser"), t = y0(e?.enabled);
-	return j0("浏览器添加 JAV", A0(`<div class="flex min-w-0 flex-col gap-4">${`<div class="min-w-0 bg-background-primary-default rounded-2xl shadow-card p-5 border border-border-button-default flex flex-col gap-3"><div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-medium text-text-primary">Peach 用户脚本</span>${C0("4em")}</div><div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-regular text-text-secondary">浏览器添加</span>${E0()}</div><p class="text-caption-1-regular text-text-secondary">${C0("70%")}</p><div class="flex flex-wrap items-center gap-2">${O0("重新检测", "secondary")}</div></div>`}${R0("浏览器添加的下载渠道")}${y0(e?.ready) ? "" : F0("请在媒体库中添加支持云下载的网盘，并配置账号与目标目录。")}${L0("Peach 地址")}</div>`), (t ? O0("关闭浏览器添加", "secondary") : "") + O0(t ? "更新渠道与令牌" : "启用并生成令牌"));
+	return j0("浏览器添加 JAV", A0(`<div class="flex min-w-0 flex-col gap-4">${`<div class="min-w-0 bg-background-primary-default rounded-2xl shadow-card p-5 border border-border-button-default flex flex-col gap-3"><div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-medium text-text-primary">Pear 用户脚本</span>${C0("4em")}</div><div class="flex flex-wrap items-center justify-between gap-3"><span class="text-body-regular text-text-secondary">浏览器添加</span>${E0()}</div><p class="text-caption-1-regular text-text-secondary">${C0("70%")}</p><div class="flex flex-wrap items-center gap-2">${O0("重新检测", "secondary")}</div></div>`}${R0("浏览器添加的下载渠道")}${y0(e?.ready) ? "" : F0("请在媒体库中添加支持云下载的网盘，并配置账号与目标目录。")}${L0("Pear 地址")}</div>`), (t ? O0("关闭浏览器添加", "secondary") : "") + O0(t ? "更新渠道与令牌" : "启用并生成令牌"));
 }
 var K0 = (e, t) => `<div class="flex min-w-0 flex-col gap-3">${I0(e)}${js(C0("6em"))}` + (t ? `<div class="flex flex-wrap gap-3"><div class="min-w-40 flex-1">${L0(`${e}地址`)}</div><div class="w-full sm:w-28">${L0(`${e}端口`)}</div></div>${V0("代理认证")}` : "") + "</div>";
 function q0() {
@@ -73904,7 +73904,7 @@ var lNe = () => {
 	return j0("媒体库与目录", A0(`${aNe}<div class="flex flex-col gap-4">${e.folders.map((t) => iNe(t, e.folders.length)).join("")}</div>
   <div class="self-start">${O0("添加媒体库", "secondary")}</div>
   <p class="text-body-2-regular text-text-secondary">${p0}</p>
-  ${e.cloud ? oNe : ""}<span class="text-body-medium text-text-primary">${C0("15em")}</span>`), O0("保存配置"), { status: "保存后 Peach 会重新启动。" }) + (e.cloud ? q0() : "") + cNe() + j0("番号识别规则", A0(`${C0("90%")}${C0("60%")}<span class="skeleton ui-configuration-skeleton-input" style="width:100%;height:88px"></span>`), O0("保存配置")) + j0("视频预览", N0("生成视频预览", "为本地视频生成九宫格与时间轴预览；关闭后仍按入库规则探测时长与分辨率。") + N0("时间轴预览", "按所选间隔抽帧，仅处理本机磁盘上的视频。", "ui-configuration-skeleton-select") + N0("抽帧解码方式", "用于生成封面、九宫格和时间轴。", "ui-configuration-skeleton-select"));
+  ${e.cloud ? oNe : ""}<span class="text-body-medium text-text-primary">${C0("15em")}</span>`), O0("保存配置"), { status: "保存后 Pear 会重新启动。" }) + (e.cloud ? q0() : "") + cNe() + j0("番号识别规则", A0(`${C0("90%")}${C0("60%")}<span class="skeleton ui-configuration-skeleton-input" style="width:100%;height:88px"></span>`), O0("保存配置")) + j0("视频预览", N0("生成视频预览", "为本地视频生成九宫格与时间轴预览；关闭后仍按入库规则探测时长与分辨率。") + N0("时间轴预览", "按所选间隔抽帧，仅处理本机磁盘上的视频。", "ui-configuration-skeleton-select") + N0("抽帧解码方式", "用于生成封面、九宫格和时间轴。", "ui-configuration-skeleton-select"));
 }, uNe = () => `<div>${O0("采集来源与登录状态", "secondary")}</div>` + U0() + j0("关注采集", M0("自动检查更新", "", "<span class=\"flex items-center gap-2\"><span class=\"skeleton ui-configuration-skeleton-toggle\"></span><span class=\"skeleton ui-configuration-skeleton-input\" style=\"width:96px\"></span></span>") + P0("订阅源拉取") + N0("首次采集范围", "新关注的来源第一次回看多久以前的内容。", "ui-configuration-skeleton-select") + P0("头像刷新", "重新获取关注创作者的头像。") + P0("favicon 刷新", "重新获取来源站点的图标。")) + W0() + j0("作品资料站点", A0(`<p class="text-body-2-regular text-text-secondary">${m0}</p>${L0(B0("JavDB 地址"), h0)}${L0(B0("MISSAV 地址"), h0)}`), O0("保存配置")), dNe = () => {
 	let e = v0("downloads"), t = y0(e?.pikpak), n = y0(e?.pikpakRoots) ? R0(B0("PikPak 根目录对应的媒体目录")) : `<div class="flex flex-col gap-1">${I0(B0("PikPak 根目录对应的媒体目录"))}${F0("先在「媒体库与入库」添加 PikPak 挂载文件夹。")}</div>`, r = y0(e?.cloud) ? j0("云下载", A0(L0("CloudDrive2 地址") + L0("CloudDrive2 API 令牌", "需要离线任务权限。") + (y0(e?.has115) ? L0(B0("115 目标目录"), "应位于自动入库的云端路径前缀内。") : "") + (t ? L0(B0("PikPak 目标目录"), "目录要已经存在。") + n : "") + L0("等待上限（小时）", C0("14em"))), O0("检查连接", "secondary") + O0("保存配置")) : "", i = y0(e?.pikpakLoggedIn);
 	return r + (t ? j0("PikPak 账号", i ? H0(["账号", C0("4em")]) : A0(L0("账号") + L0("密码") + z0("保存密码，登录过期时自动重新登录")), i ? O0("登出", "secondary") : (y0(e?.browserLogin) ? O0("用浏览器登录", "secondary") : "") + O0("登录"), {
@@ -73933,7 +73933,7 @@ var pNe = () => {
 		"手机连接地址",
 		"备用 IP 地址"
 	][t])}</div>${O0("复制地址", "secondary")}</div>`).join("");
-	return (i || y0(e?.port) ? j0("访问地址", A0(a + (i ? T0("100%", "40px") : "") + (y0(e?.networkEditable) ? `<div class="flex flex-col gap-1.5">${I0("谁可以访问")}${T0("min(100%, 20em)", "36px")}</div>` + (y0(e?.lan) ? L0("局域网访问地址") : "") : "") + (y0(e?.port) ? L0("端口") : "")), y0(e?.port) ? O0("保存配置") : "", y0(e?.port) ? { status: "保存后 Peach 会重启，并跳转到新地址。" } : {}) : "") + j0("访问密码", A0(fNe(t)), t === "locked" ? "" : O0("保存配置")) + (t === "password" || t === "legacy" ? Z0() : "") + j0("Cloudflare 公网入口", A0((n ? T0("10.5em", "36px") : "") + r), O0("启动公网入口", n ? "secondary" : "primary") + (n ? O0("保存配置") : ""), { aside: E0() }) + j0("Peach 代理", N0("连接方式", "Peach 访问外网和采集来源时使用。", "ui-configuration-skeleton-select") + (y0(e?.proxyAddress) ? A0(L0("代理地址"), !0) : ""), O0("保存配置"));
+	return (i || y0(e?.port) ? j0("访问地址", A0(a + (i ? T0("100%", "40px") : "") + (y0(e?.networkEditable) ? `<div class="flex flex-col gap-1.5">${I0("谁可以访问")}${T0("min(100%, 20em)", "36px")}</div>` + (y0(e?.lan) ? L0("局域网访问地址") : "") : "") + (y0(e?.port) ? L0("端口") : "")), y0(e?.port) ? O0("保存配置") : "", y0(e?.port) ? { status: "保存后 Pear 会重启，并跳转到新地址。" } : {}) : "") + j0("访问密码", A0(fNe(t)), t === "locked" ? "" : O0("保存配置")) + (t === "password" || t === "legacy" ? Z0() : "") + j0("Cloudflare 公网入口", A0((n ? T0("10.5em", "36px") : "") + r), O0("启动公网入口", n ? "secondary" : "primary") + (n ? O0("保存配置") : ""), { aside: E0() }) + j0("Pear 代理", N0("连接方式", "Pear 访问外网和采集来源时使用。", "ui-configuration-skeleton-select") + (y0(e?.proxyAddress) ? A0(L0("代理地址"), !0) : ""), O0("保存配置"));
 }, mNe = [
 	"版本",
 	"操作系统",
@@ -73951,7 +73951,7 @@ var pNe = () => {
 	return j0("检查更新", H0(t) + (n ? A0(F0(C0("50%")).repeat(n), !0) : ""), O0("检查更新"), {
 		aside: E0("4em"),
 		status: C0("5em")
-	}) + j0("自动更新", N0("自动检查新版本") + N0("自动下载更新", "发现新版本后先下载，重启安装前会询问。") + N0("检查频率", y0(e?.autoUpdateHelp) ? C0("12em") : "", "ui-configuration-skeleton-select"), O0("保存配置")) + j0("开机自启", N0("开机后启动 Peach") + N0("只启动托盘，不打开网页", "开机后在后台运行，需要时从托盘打开页面。") + N0("在桌面创建快捷方式", y0(e?.desktopNote) ? C0("12em") : "") + (y0(e?.startupNote) ? A0(F0(C0("60%")), !0) : ""), O0("保存配置")) + j0("视频播放", N0("转码方式", "用于播放时的视频转码。", "ui-configuration-skeleton-select")) + j0("存储空间", H0(["数据目录", "所在磁盘"]) + (r ? Array.from({ length: r }, () => M0(C0("6em"), "", C0("4em"))).join("") : A0(F0("统计后显示各类数据的占用，并可清理缓存与旧备份。"), !0)) + (i ? A0(F0(C0("80%")).repeat(i), !0) : ""), O0("更改位置", "secondary") + O0(r ? "重新统计" : "统计占用")) + (c || l ? j0("数据上传", c + l) : "") + j0("运行信息", H0(a.length ? a : mNe)) + `<section aria-label="新手教程" class="w-full"><div class="flex w-full flex-col rounded-2xl bg-background-secondary-default pl-3">${M0("新手教程", "在所有设备上恢复右上角教程入口，保留已读进度", O0("重新打开", "secondary"))}</div></section>` + (s(e?.uninstall) ? j0("卸载 Peach", (y0(e?.uninstallHelp) ? A0(F0("卸载移除 Peach 程序本身，原始媒体文件保留。")) : "") + N0("完全卸载", "同时删除设置、本地数据库、观看记录、凭据和缓存") + A0(V0("数据目录"), !0), O0("卸载 Peach"), { status: C0("16em") }) : "");
+	}) + j0("自动更新", N0("自动检查新版本") + N0("自动下载更新", "发现新版本后先下载，重启安装前会询问。") + N0("检查频率", y0(e?.autoUpdateHelp) ? C0("12em") : "", "ui-configuration-skeleton-select"), O0("保存配置")) + j0("开机自启", N0("开机后启动 Pear") + N0("只启动托盘，不打开网页", "开机后在后台运行，需要时从托盘打开页面。") + N0("在桌面创建快捷方式", y0(e?.desktopNote) ? C0("12em") : "") + (y0(e?.startupNote) ? A0(F0(C0("60%")), !0) : ""), O0("保存配置")) + j0("视频播放", N0("转码方式", "用于播放时的视频转码。", "ui-configuration-skeleton-select")) + j0("存储空间", H0(["数据目录", "所在磁盘"]) + (r ? Array.from({ length: r }, () => M0(C0("6em"), "", C0("4em"))).join("") : A0(F0("统计后显示各类数据的占用，并可清理缓存与旧备份。"), !0)) + (i ? A0(F0(C0("80%")).repeat(i), !0) : ""), O0("更改位置", "secondary") + O0(r ? "重新统计" : "统计占用")) + (c || l ? j0("数据上传", c + l) : "") + j0("运行信息", H0(a.length ? a : mNe)) + `<section aria-label="新手教程" class="w-full"><div class="flex w-full flex-col rounded-2xl bg-background-secondary-default pl-3">${M0("新手教程", "在所有设备上恢复右上角教程入口，保留已读进度", O0("重新打开", "secondary"))}</div></section>` + (s(e?.uninstall) ? j0("卸载 Pear", (y0(e?.uninstallHelp) ? A0(F0("卸载移除 Pear 程序本身，原始媒体文件保留。")) : "") + N0("完全卸载", "同时删除设置、本地数据库、观看记录、凭据和缓存") + A0(V0("数据目录"), !0), O0("卸载 Pear"), { status: C0("16em") }) : "");
 };
 function gNe(e) {
 	switch (e) {
@@ -74217,7 +74217,7 @@ function ANe() {
     </div>`).join(""), n = Array.from({ length: 6 }, () => `<div class="${f2} h-6"></div>`).join(""), r = (e) => `<section class="${h2}"><h3 class="text-title-2-medium text-text-primary">${e}</h3><div class="${f2} h-40"></div></section>`;
 	return `<div class="peach-react"><div class="mx-auto flex w-full max-w-board flex-col gap-8">
     <div class="flex flex-col gap-5">
-      <div class="flex flex-wrap items-center justify-between gap-3">${e(["浏览器记录", "Peach 内部"])}
+      <div class="flex flex-wrap items-center justify-between gap-3">${e(["浏览器记录", "Pear 内部"])}
         <div class="flex flex-wrap items-center gap-2">${js("全部时间")}<span data-button-group data-split-button data-variant="primary">${ks({
 		glyph: "compass",
 		label: "读取浏览器历史",
@@ -76310,7 +76310,7 @@ function D4({ id: e, onOpened: t }) {
 				label: "网络播放地址",
 				value: o.url,
 				isReadOnly: !0
-			}), /* @__PURE__ */ (0, I.jsx)(TU, { children: "链接有效期为 6 小时。VR 播放器可使用网络播放地址；另一台设备需要能访问当前 Peach 地址。" })] }) : null
+			}), /* @__PURE__ */ (0, I.jsx)(TU, { children: "链接有效期为 6 小时。VR 播放器可使用网络播放地址；另一台设备需要能访问当前 Pear 地址。" })] }) : null
 		]
 	});
 }
@@ -77320,7 +77320,7 @@ function oFe({ id: e, actions: t, onStatus: n }) {
 	}), /* @__PURE__ */ (0, I.jsx)("button", {
 		type: "button",
 		"data-sync": e,
-		title: "核对该目录：磁盘上已删除的移入 Peach 回收站，带个人记录的标为已消失",
+		title: "核对该目录：磁盘上已删除的移入 Pear 回收站，带个人记录的标为已消失",
 		"aria-label": "同步删除",
 		...r === "sync" ? {
 			"aria-busy": !0,
@@ -79852,7 +79852,7 @@ var eLe = e6, tLe = (e) => e.filter((e) => Number.isFinite(Number(e.score)) && N
 function rLe(e) {
 	if (e.web_visits == null && !e.web_bookmarks) return Number(e.score || e.visits || 0).toLocaleString();
 	let t = [], n = Number(e.web_bookmarks || 0), r = Number(e.web_visits ?? e.visits ?? 0) - n;
-	return r > 0 && t.push(`浏览 ${r.toLocaleString()}`), n && t.push(`书签 ${n.toLocaleString()}`), e.peach_items && t.push(`Peach ${Number(e.peach_items).toLocaleString()}`), t.join(" · ");
+	return r > 0 && t.push(`浏览 ${r.toLocaleString()}`), n && t.push(`书签 ${n.toLocaleString()}`), e.peach_items && t.push(`Pear ${Number(e.peach_items).toLocaleString()}`), t.join(" · ");
 }
 function iLe(e) {
 	let t = e.map(nLe), n = Math.max(1, ...t);
@@ -80533,13 +80533,13 @@ async function Y6(e, t) {
 	if (r.status === "rejected") throw r.reason;
 	if (n.status === "rejected") throw n.reason;
 }
-var X6 = J6(() => import("./peach-app.jav-page-srtaKuxG.js")), Z6 = J6(() => import("./peach-app.stats-page-Domc7MK7.js")), Q6 = J6(() => import("./peach-app.taste-page-D8aVa0Ys.js")), $6 = J6(() => import("./peach-app.review-page-mxNMAWqs.js")), e8 = J6(() => import("./peach-app.data-cleanup-page-LH0w05c7.js")), t8 = J6(() => import("./peach-app.duplicates-page-BHkh7UmS.js")), n8 = J6(() => import("./peach-app.quality-goals-page-Deoy7rhD.js")), r8 = J6(() => import("./peach-app.scraping-page-D7UjTqN_.js")), i8 = J6(async () => {
-	let [{ ConfigurationPage: e }, { DiagnosticsPage: t }] = await Promise.all([import("./peach-app.configuration-page-CUSDBfwG.js"), import("./peach-app.diagnostics-page-CGRTA2_Z.js")]);
+var X6 = J6(() => import("./peach-app.jav-page-srtaKuxG.js")), Z6 = J6(() => import("./peach-app.stats-page-Domc7MK7.js")), Q6 = J6(() => import("./peach-app.taste-page-uXf1PPK0.js")), $6 = J6(() => import("./peach-app.review-page-mxNMAWqs.js")), e8 = J6(() => import("./peach-app.data-cleanup-page-BurcVkIi.js")), t8 = J6(() => import("./peach-app.duplicates-page-BHkh7UmS.js")), n8 = J6(() => import("./peach-app.quality-goals-page-Deoy7rhD.js")), r8 = J6(() => import("./peach-app.scraping-page-C1PWBpd1.js")), i8 = J6(async () => {
+	let [{ ConfigurationPage: e }, { DiagnosticsPage: t }] = await Promise.all([import("./peach-app.configuration-page-1Pceln87.js"), import("./peach-app.diagnostics-page-CGRTA2_Z.js")]);
 	return {
 		ConfigurationPage: e,
 		DiagnosticsPage: t
 	};
-}), a8 = J6(() => import("./peach-app.activity-page-B1BhVjNb.js")), o8 = J6(() => import("./peach-app.follow-manage-page-cZfgznua.js")), s8 = J6(() => import("./peach-app.playlists-page-DGcNbxyC.js"));
+}), a8 = J6(() => import("./peach-app.activity-page-B1BhVjNb.js")), o8 = J6(() => import("./peach-app.follow-manage-page-B5jO1dTc.js")), s8 = J6(() => import("./peach-app.playlists-page-DGcNbxyC.js"));
 function JLe(e, t, n) {
 	if (e === "duplicates") {
 		n("/duplicates");
@@ -81598,7 +81598,7 @@ function x5(e) {
 	!e || xp(e) || e.querySelector("[data-feed-id]") || (e.hidden = X.homeHasFeed !== !0, X.homeHasFeed === !0 && (e.setAttribute("aria-busy", "true"), e.querySelector(".feednewskeleton") || (e.innerHTML = g5.feedNewSkeletonHtml())));
 }
 function LRe(e, t) {
-	return !(e > 0) || !t.some((e) => !e.has_cover) ? "" : Bs(`${e} 部新作的封面连不上 DMM 图片主机，中国移动宽带常见。把 DMM / FANZA 的连接方式设成 Peach 代理，下一轮会自动重取。`, {
+	return !(e > 0) || !t.some((e) => !e.has_cover) ? "" : Bs(`${e} 部新作的封面连不上 DMM 图片主机，中国移动宽带常见。把 DMM / FANZA 的连接方式设成 Pear 代理，下一轮会自动重取。`, {
 		variant: "warning",
 		className: "feednetwork",
 		actionLabel: "配置连接方式",
@@ -81942,7 +81942,7 @@ function YRe() {
 	].filter(Boolean).join("，"), O5.sourceToolButtons = (e) => `
     <button type="button" data-reveal="${e}" title="在文件管理器里打开源文件所在目录"
       aria-label="定位源文件">${R("folder-open")}</button>
-    <button type="button" data-sync="${e}" title="核对该目录：磁盘上已删除的移入 Peach 回收站，带个人记录的标为已消失"
+    <button type="button" data-sync="${e}" title="核对该目录：磁盘上已删除的移入 Pear 回收站，带个人记录的标为已消失"
       aria-label="同步删除">${R("folder-sync")}</button>`;
 }
 function XRe() {
@@ -82595,7 +82595,7 @@ function wze() {
 		}))(mze())
 	}), o7.wantsDiscoveryBars = () => L("#catalogFilter").style.display !== "none", o7.entityShapesReady = null, o7.ENTITY_SHAPES_WAIT = 400, o7.syncPageTitle = (e) => {
 		let t = new URL(e, location.origin), n = decodeURIComponent(t.pathname), r = xRe(n, mu) || op(n)?.title;
-		document.title = r ? `${r} · Peach` : "Peach · 蜜桃", document.body.dataset.surface = t.pathname, IBe();
+		document.title = r ? `${r} · Pear` : "Pear", document.body.dataset.surface = t.pathname, IBe();
 	};
 }
 // src/sidebar-skeleton.ts
@@ -85719,4 +85719,4 @@ if (!nHe) throw Error("主界面宿主缺失");
 tHe(nHe);
 export { fL as $2ec61d1d4f780267$export$a8a3e93435678ff9, bL as $3a442827418ebe87$export$eb2fcfdbd7ba97d4, LR as $542a13ca2fa5b484$export$5b6b19405a83ff9d, xD as $72abaeab4d80592f$export$78efe591171d7d45, kz as $76d00c5a4edb230a$export$76ccd210b9029917, Ez as $76d00c5a4edb230a$export$816b5d811295e6bc, Mz as $76d00c5a4edb230a$export$b59bdbef9ce70de2, Pz as $76d00c5a4edb230a$export$f6f0c3fe4ec306ea, Tz as $76d00c5a4edb230a$export$f850895b287ef28e, Mhe as $b4f18e3395fe64d7$export$3d96ec278d3efce4, jhe as $b4f18e3395fe64d7$export$3e41faf802a29e71, Ohe as $b4f18e3395fe64d7$export$b2539bed5023c21c, Rz as $b4f18e3395fe64d7$export$e51a686c67fdaa2d, Fhe as $bd263d78e9bf3c56$export$f5c9f3c2c4054eec, cE as $ea3928288112382f$export$439d29a4e110a164, XR as $f2ff30fde7b014be$export$3ddf2d174ce01153, rz as $fe21c36db05242bb$export$a98f0dcb43a68a25, iz as $fe21c36db05242bb$export$d7b12c4107be0d61, dve as $l, Lj as ACCENTS, kje as AMANE_BRIDGE_CHECK_URL, t1 as AMANE_BRIDGE_KEY, Aje as AMANE_BRIDGE_REBUILD_URL, or as ApiError, RW as ArtSlot, W2 as BATCH_DELETE_TEXT, Y as Button, qz as ButtonLink, XV as Bx, e1 as CHECK_ALL_KEY, w$ as CLEANUP_ENTRY, C$ as CLEANUP_ENTRY_GRID, rp as CLEANUP_HASH_REDIRECTS, tp as CLEANUP_TOOLS, _n as CLOUD_LOCATIONS, g0 as CLOUD_PROXY_HELP, Gr as COLUMN_SORT, y1 as CONFIGURATION_KEY, vX as CONFIGURATION_URL, jje as COOKIE_TEXT_LIMIT, $$ as COVER_JOB_KEY, Al as COVER_STATE_TITLE, Ji as CREDENTIAL_STATE, J$ as CUSTOM_SOURCES_KEY, q$ as CUSTOM_SOURCES_URL, nK as CatalogViewToggle, BH as Checkbox, zH as CheckboxGlyph, Jz as ChevronSortDown, MW as Chip, qW as CloudDownloadDialog, SU as CollapseChevron, xU as CollapseRegion, _$ as CollectionSummary, Cye as CommandSteps, NQ as CoverQueue, hEe as DEFAULT_CATEGORY, ur as DEFAULT_SORT, XQ as DIAGNOSTICS_KEY, iDe as DIRECTORY_TEMPLATE_ERROR, eG as DISCOVERY_SORTS, BW as DOWNLOADS_KEY, zW as DOWNLOADS_URL, zY as DUPLICATES_KEY, LW as DataTableFooter, yY as DataTableFrame, IW as DataTableSort, OU as Disclosure, kbe as DownloadsPanel, $_e as E3, gEe as ENTITY_REVIEW_KINDS, m0 as ENTRY_LINKS_HELP, h0 as ENTRY_LINKS_HINT, HV as Ea, Rve as EmptyFocusButton, yH as EmptyState, EU as ErrorText, Ove as Eu, wye as ExternalLink, Br as FEEDS_KEY, UF as FEED_SCHEDULE_KEY, x$ as FIELDSET_FOOT, oLe as FLOW_LABEL_X, E6 as FLOW_VIEWBOX, Rr as FOLLOW_CHECK_KEY, Lr as FOLLOW_CREDENTIALS_KEY, a5 as FOLLOW_INITIAL_RANGE_OPTIONS, Ir as FOLLOW_MANAGE_KEY, QZ as FOLLOW_MANAGE_NAV, zr as FOLLOW_RESOLVE_KEY, HF as FOLLOW_SCHEDULE_KEY, Dye as Fact, Eye as FactList, DU as FieldLabel, F$ as Fieldset, P$ as FieldsetTitle, R_e as FilterGlass, _V as FilterGlassRows, gV as FilterIconButton, vV as FilterPill, Sye as Footer, qV as Gg, yV as GlassPill, eH as HN, TU as Help, sH as HintText, QIe as IDLE_POLL_MS, iEe as IDLE_REPAIR, pV as IconButton, QQ as IndexSearch, fH as Input, dH as InputBase, L$ as IssueRow, tM as JAV_LAYOUTS, l2 as JAV_RECOMMENDATION_GRID, BX as JUNK_KEY, pG as JavHeader, QTe as KEEP_LABELS, U_e as L1, Hr as LAYOUTS, p0 as LIBRARY_FOLDER_HELP, UH as LIBRARY_PROCESSING_KEY, dX as LINKS_KEY, fX as LINK_CHECK_KEY, BEe as LINK_KINDS, pX as LINK_PRUNE_KEY, tr as LOC, oH as Label, U$ as LibraryProcessingCard, NH as LibraryShortcuts, aU as LinkButton, pve as Lo, gU as LoadingDots, tve as M6, Efe as MEDIA_PROCESSING_KEY, GF as MEDIA_PROCESSING_URL, WY as MEDIA_REPAIR_KEY, UY as MEDIA_REPAIR_URL, vr as MEDIA_SOURCES_KEY, vs as MEDIA_SOURCE_ICONS, hn as MEDIA_SOURCE_OPTIONS, Wz as MENU_ITEM, Gz as MENU_ITEM_INTERACTIVE, Uz as MENU_POPOVER_SURFACE, hve as Ma, gB as MenuDialog, ZK as MixCard, pH as ModalFrame, yx as MotionConfigContext, iH as NR, I$ as NameLink, hH as Note, Pve as OA, bX as ORGANIZE_KEY, V2 as ORGANIZE_PARAMETER_HINT, B2 as ORGANIZE_SCOPE_HINT, z2 as ORGANIZE_TEXT, CX as ORPHAN_RECORDS_KEY, U2 as ORPHAN_RECORDS_TEXT, GV as OV, vH as ObjectOrderDialog, AV as P7, LX as PERFORMER_DELETE_KEY, Rbe as PHASES, yX as PICK_FOLDER_URL, E$ as PLAIN_STAT_STRIP, G$ as PLAYLISTS_KEY, KMe as POLICY_COLUMNS, JMe as POLICY_COVER_NOTE, qMe as POLICY_MATRIX, f0 as POLICY_SUMMARY, z$ as PathLine, nH as Pf, XAe as PlainStat, pU as ProcessingMode, vU as Progress, YY as QUALITY_GOALS_KEY, tH as RB, o2 as RELEASE_COLUMN_VISIBILITY_KEY, a2 as RELEASE_COLUMN_WIDTHS_KEY, lG as RELEASE_PAGE_SIZES, tG as RELEASE_SORTS, SNe as RELEASE_SORT_COLUMNS, O$ as REPAIR_CARD_TEXT, GY as REPAIR_LIBRARIES_KEY, OX as RESOURCE_APPLY_KEY, DX as RESOURCE_SCAN_KEY, H2 as RESOURCE_SYNC_TEXT, tje as RESULT_PANEL, nje as RESULT_SECTION, mEe as REVIEW_CATEGORIES, zX as REVIEW_COUNTS_KEY, _Ee as REVIEW_DECISION_LABELS, QY as REVIEW_KEY, $Y as REVIEW_LABELS, tX as REVIEW_QUEUES, nX as REVIEW_QUEUE_LABELS, jK as RetryNote, Mve as Rf, aH as Rk, yye as Rows, X$ as SCRAPING_CHECK_ALL_URL, Dje as SCRAPING_CHECK_URL, Z$ as SCRAPING_COVER_URL, Q$ as SCRAPING_KEY, Eje as SCRAPING_SETTINGS_URL, JU as SEGMENT, qU as SEGMENTED_TRACK, VF as SETTINGS_KEY, LF as SETTINGS_URL, dr as SORT_DEFAULT_DIR, lr as SORT_OPTIONS, vn as SOURCE_LABELS, Z3 as STATS_KEY, JAe as STAT_STRIP, YAe as STAT_STRIP_SIX, vye as Section, rje as SectionHeading, xye as SectionSkeleton, KU as SegmentedRadioGroup, Hye as SegmentedTabList, wK as Segments, NW as Select, Xz as Select$1, C1 as SelectField, Zz as SelectItem, EY as SelectionActions, aj as SelectionDock, DY as SelectionPopover, CU as SettingsCard, _ye as SettingsRow, wU as SettingsSectionLabel, TK as Shuffle, jye as SiteLabel, FW as SortDirectionIcon, EK as SortKeys, VB as SortableBoardTabs, MQ as SourceAvatar, MU as SourceLabel, kU as SourceMark, bye as Stack, ZAe as StatCard, R$ as StatusLabel, kve as Su, O4 as Switch, XB as TASKS_KEY, VIe as TASTE_REFRESH_KEY, HIe as TASTE_WINDOWS, WF as THUMBNAIL_JOBS_KEY, HX as TRASH_KEY, __e as TRIGGER_LABELS, cY as Table, OY as TableColumnControls, kY as TableColumnResizer, jY as TableSelectionHeader, f$ as TagManager, Tye as TaskCenterLink, yU as TaskProgress, lH as TextField, cH as TextFieldContext, UV as Un, Nve as Uz, YW as WANTS_KEY, W4 as WantMagnets, qg as WithPromise, PV as Wt, VV as Xc, rH as Xf, IV as Xl, FV as Xt, MV as _8, o as __commonJSMin, s as __exportAll, l as __toESM, $V as _p, jve as aB, wi as addAlias, Ci as addSource, ZW as addWant, cS as animate, B as apiGet, V as apiSend, Yj as appSettingsStore, CDe as applyConfirmText, IX as applyLeftovers, SDe as applyPlanText, TDe as applyText, $j as applyTheme, vy as asNumber, dDe as attachOrphan, si as authorAvatar, li as authorGroups, oi as authorInitial, ai as authorName, Xq as autoResetPageIndex, _o as avatarInner, r6 as bandRows, aDe as baseName, rEe as batchOperate, cde as beginPlayerGuidePreview, uj as boundedPreference, eEe as bulkCloudPreferences, gH as busyProps, Ave as cB, gFe as cachedMagnetStates, Vg as calcGeneratorVelocity, wEe as canApprove, _g as cancelFrame, gDe as candidateText, fW as cardClass, mM as cardRatio, gY as catalogListSkeletonCellHtml, BV as cc, Wi as checkEvidenceGap, Ui as checkFailures, Ni as checkFeeds, GEe as checkLine, Vi as checkReceipt, Hi as checkSummary, Nje as checkText, Gi as checkedText, RK as clickedBlank, y7 as closeDrawerAfterNav, GTe as cloudLocations, q0 as cloudProxySkeleton, VC as clsx, vve as cn, sv as collectMotionValues, gJ as columnVisibilityFeature, rY as column_getCanSort, $J as column_getSortFn, SEe as commonReviewSources, KW as composingKey, If as configurationSection, KIe as configureTasteBrowser, ul as confirmModal, m_e as controlTask, Mq as copyInstancePropertiesWithoutMemos, Ybe as coverArrived, qbe as coverFetching, Ml as coverFetchingHtml, jl as coverStateAction, co as coverUrl, sJ as createColumnHelper, vje as createPlaylist, Yi as credentialDone, U0 as credentialsSkeleton, NEe as currentReviewRow, J as cx, nve as d6, YV as dZ, AEe as decisionPayload, jEe as decisionReceipt, kEe as defaultChoice, DDe as deletePerformerVideos, bje as deletePlaylist, Z0 as devicesSkeleton, x as diagnosticHeaders, d0 as diagnosticsSkeleton, Xbe as discoveryArtwork, sG as discoveryKey, Wbe as discoveryScore, y9 as disposeStage, XTe as distinctName, zi as dropSources, Dve as du, tEe as duplicateVictims, iV as elapsedText, tn as entityDisplayName, go as entityFaceImg, Nn as entityPath, ei as errorHeadline, cr as errorMessage, z as esc, Yq as expandRowModel, CV as f1, bo as facePos, $r as feedIntervalText, a1 as fetchAmaneBridge, i1 as fetchCheckAllJob, gi as fetchCheckJob, b1 as fetchConfiguration, r1 as fetchCoverJob, oG as fetchCoverNow, hi as fetchCredentials, Y$ as fetchCustomSources, RX as fetchDeletePerformers, EDe as fetchDeletePlan, ZQ as fetchDiagnostics, cG as fetchDiscoveries, VY as fetchDuplicates, kfe as fetchFeedSchedule, Ai as fetchFeeds, mi as fetchFollow, Ofe as fetchFollowSchedule, WX as fetchJunkSummary, ZH as fetchLibraryProcessing, VEe as fetchLinkCheck, gX as fetchLinkPrune, hX as fetchLinkStats, Dfe as fetchMediaProcessing, KY as fetchMediaRepair, yr as fetchMediaSources, xX as fetchOrganize, ZEe as fetchOrganizeExample, wX as fetchOrphanRecords, ki as fetchPending, xje as fetchPlaylist, K$ as fetchPlaylists, XY as fetchQualityGoals, fG as fetchReleases, qY as fetchRepairLibraries, _i as fetchResolveJob, AX as fetchResourceApply, kX as fetchResourceScan, cX as fetchReview, UX as fetchReviewCounts, KF as fetchSettings, n1 as fetchSources, Q3 as fetchStats, vi as fetchSuggestions, $B as fetchTasks, C6 as fetchTaste, qIe as fetchTasteJob, Afe as fetchThumbnailJobs, GX as fetchTrashSummary, XW as fetchWants, bEe as filterReviewRows, $n as firstGrapheme, mq as flexRender, cLe as flowGraph, lLe as flowLabel, sIe as fmtCount, qn as fmtDur, Yn as fmtSize, u_e as foldByKind, D_e as foldRoutine, Fi as followFeedByName, Ii as followFeedEntity, Vr as followSuggestKey, k_e as followupDetail, l_e as followupTally, gg as frame, OV as g4, yJ as getDefaultPaginationState, pM as gridLayout, ci as groupByAuthor, E_e as groupFollowups, aX as groupReviewRows, bDe as hasChanges, jX as hasResourceRoots, tV as hasResultProblems, $Ie as historySpan, wV as i2, ZIe as importTasteExport, W0 as indexersSkeleton, Lg as interpolate, $W as invalidateWants, rV as isActive, Qr as isBroken, Kr as isLayout, vv as isMotionValue, eX as isReviewCategory, O_e as isRoutine, G0 as javBrowserSkeleton, d2 as javContentSkeleton, oM as javLayout, u2 as javTagSkeleton, MDe as junkBreakdown, qTe as keepGroup, Cje as keepPlaylist, ke as keepPreviousData, tee as keepSelected, $3 as known, H_e as l1, Y_e as l7, T_e as latestOfKind, Qn as leadingGraphemes, yIe as lengthRows, Sr as localTime, po as logoUrl, Pi as lookupFeedActor, kV as m7, JV as mM, En as mapLimit, Oi as markItem, i6 as max, _Ie as mediumRows, a6 as min, REe as mirrorText, sEe as missingToolText, HY as mixedCloudPreferences, cV as momentText, lS as motion, lv as motionValue, nn as nameFallback, Ue as notifyManager, rve as oe, sDe as organizeOutcome, D2 as overlayHost, qr as pageSizeOf, di as pageWindow, Ri as patchSource, G as peachHistory, G as peachHistory$1, OEe as pendingGenres, lIe as percentText, eDe as pickOrganizeFolder, T$ as plainStatClass, oDe as planSummary, e6 as playedFor, dIe as playedItemUrl, d_e as pollInterval, Zs as popCount, _je as posterUrl, Pge as previewLibraryColor, $Ee as previewOrganize, uEe as previewUrl, C_e as problemDestination, KH as processingActive, aV as progressText, jU as providerIcon, WEe as pruneText, NX as purgeCount, fDe as purgeOrphan, ZV as pv, Eve as qE, H as queryClient, TV as r2, aLe as radarRows, mIe as radialArc, hIe as radialBarSize, pIe as radialCeiling, fIe as radialSlices, AN as randomId, rLe as rankDetail, iLe as rankShares, n6 as reachedShare, oV as readableErrorHeadline, Gbe as recommendationScore, PEe as recordGenre, mDe as recordsText, wje as recreatePlaylist, hje as refreshPlaylists, Dl as relayoutCovers, s2 as releaseColumns, uG as releaseFilters, dG as releaseKey, Bi as reloadFollowManage, LEe as reloadReview, ZMe as rememberShape, nDe as rememberTemplates, Ti as removeAlias, Mi as removeFeed, Si as removeSource, XIe as removeTasteSource, QW as removeWants, Ei as renameAliasGroup, yje as renamePlaylist, Sje as reorderPlaylist, Se as replaceEqualDeep, xIe as replayRows, re as require_jsx_runtime, A as require_react, N as require_react_dom, Oq as require_with_selector, Vbe as resetWants, pr as resolveFollowSort, Wg as resolveStartTime, tye as restartEffectText, gje as resumeAssetId, yEe as reviewGroupingOptions, iX as reviewQueueData, rX as reviewQueueOf, jDe as reviewSummary, xEe as reviewWindow, EEe as rowEvidence, sX as rowFieldName, EJ as rowPaginationFeature, qJ as rowSelectionFeature, oY as rowSortingFeature, oX as rowSubject, DEe as rowTags, TEe as rowTitle, K_e as s5, Di as saveCredential, xDe as scanLine, Ffe as schedulePollInterval, Ube as searchNote, CEe as selectReviewRange, fi as selectionState, ji as setFeedEnabled, xi as setSourceEnabled, h_e as setTaskSpeed, Bf as settingsPath, IEe as settleReviewRows, YTe as sharedNamePrefix, zp as shellNavigate, Z8 as showToast, mB as showToast$1, zn as siteMarkUrl, Bq as skipFirstRun, HI as sortCx, Yr as sortLabel, yn as sourceDefaultCost, qi as sourceIconUrl, wDe as sourceMeta, Hs as spinnerHtml, Fg as spring, vB as spriteGlyph, yi as startCheck, HEe as startLinkCheck, UEe as startLinkPrune, tDe as startOrganize, bi as startResolve, vDe as startResourceApply, _De as startResourceScan, YIe as startTasteRefresh, qAe as statCardClass, y_e as statusLabel, oEe as statusLine, Zr as statusText, hM as storeJavLayout, MEe as submitDecision, lV as summaryItems, cJ as tableFeatures, Vq as tableMemo, ui as tableRows, S_e as taskIssues, w_e as taskSubject, w6 as tasteDate, tLe as tasteDimensions, eLe as tasteHours, S6 as tasteKey, WIe as tasteRefetchInterval, GIe as tasteTime, GB as textLang, i2 as tierPlaceholdersHtml, ph as time, lve as tl, pi as toggleGroup, T6 as topScores, bve as um, mve as uo, _H as useAction, qZ as useBackgroundJob, tK as useCatalogView, wW as useClientUpdates, Tm as useConstant, uV as useEntityNames, Em as useIsomorphicLayoutEffect, FB as useLibraryTints, Ft as useMutation, IB as useNavigationOrder, B$ as useOrderedLibraries, VH as useOverlayScrollbar, Pt as useQuery, ae as useQueryClient, Zx as useReducedMotion, Pfe as useRunSchedule, Mfe as useSaveFollowSchedule, qF as useSaveSettings, Ife as useSaveThumbnailMode, sY as useTable, SY as useTablePreferences, SV as useViewGlide, nEe as victimBytes, uve as vl, Hbe as wantName, uIe as watchNote, t6 as watchedShare, ive as we, Mc as wireHorizontalScroller, rDe as withOrganizeJob, Kbe as writeJavQuery, eve as z3 };
 
-//# debugId=8add4d7e-2d58-42ac-a88b-e5d432ef84eb
+//# debugId=a3a7c95b-fc3c-4345-9d33-529dbbe51797

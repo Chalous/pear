@@ -263,7 +263,7 @@ export function mountPlayerQualityControl(
   /* 播放速度面板照 YouTube delhi-modern（player 9470c977 的 base.js）：滑条两端取播放器
      支持的最低与最高倍速，步进 0.05，加减键各动 0.05 并按两位小数收敛，读数写成 1.00x。
      预设胶囊点了就地生效，面板不退回上一级。第五格 3.0 在上游是 Premium 专属，本机装的
-     Peach 没有会员分级这回事，那一格照上游留着，只是不画角标；滑条上限跟着抬到 3，
+     Pear 没有会员分级这回事，那一格照上游留着，只是不画角标；滑条上限跟着抬到 3，
      不然点 3.0 会被收敛回 2。 */
   const SPEED_MIN = .25, SPEED_MAX = 3, SPEED_STEP = .05, SPEED_PRESETS = [1, 1.25, 1.5, 2, 3];
   const speedLabel = (speed: number) => Number.isInteger(speed) ? speed.toFixed(1) : String(speed);

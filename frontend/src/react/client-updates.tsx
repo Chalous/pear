@@ -97,7 +97,7 @@ export function ClientUpdateBanner({ navigate }: { navigate(path: string): void 
   const version = job.state === 'ready' || ACTIVE.has(job.state) ? job.version || release.latest_version : release.latest_version;
   const identity = JSON.stringify(kind === 'refresh' ? [kind, runtime.version, runtime.build_id] : [kind, version]);
   if (identity === dismissed) return null;
-  const message = kind === 'refresh' ? 'Peach 已更新，刷新页面即可使用。'
+  const message = kind === 'refresh' ? 'Pear 已更新，刷新页面即可使用。'
     : kind === 'ready' ? '更新已准备好，可重启安装。'
       : kind === 'preparing' ? '正在准备更新。' : '有可用更新。';
   const openUpdates = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -109,7 +109,7 @@ export function ClientUpdateBanner({ navigate }: { navigate(path: string): void 
     <aside key={identity} className="ui-project-banner peach-react" role="status" data-client-update={kind}>
       <div><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info" /></svg>
         <p><span data-copy-key={`clientUpdates.${kind}.message`}>{message}</span>
-          {kind !== 'refresh' && version ? <span data-copy-ignore=""> Peach {version}</span> : null}</p></div>
+          {kind !== 'refresh' && version ? <span data-copy-ignore=""> Pear {version}</span> : null}</p></div>
       <div className="flex-wrap">
         {kind === 'refresh'
           ? <LinkButton variant="secondary" size="small" onClick={() => window.location.reload()}

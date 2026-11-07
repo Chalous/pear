@@ -68,7 +68,7 @@ export function GuideDirectory({ kind, query, setQuery, context, progress, loadi
   const search = query.trim().toLowerCase();
   const matches = GUIDE_CHAPTERS.filter(item => item.kind === kind && `${item.title} ${item.summary} ${item.steps.map(step => `${step.title} ${step.body} ${(step.details || []).flat().join(' ')}`).join(' ')}`.toLowerCase().includes(search));
   return <div className="flex flex-col gap-4">
-    <GuideBanner completed={completed} icon={kind === 'interface' ? RiCompass3Line : RiSettings3Line} title={kind === 'interface' ? '先认识 Peach' : '按习惯调整 Peach'} description={kind === 'interface' ? '先用 4 步认识常用入口，其余功能用到时再看。' : '先了解外观与导航，其余设置按需要查看。'}>
+    <GuideBanner completed={completed} icon={kind === 'interface' ? RiCompass3Line : RiSettings3Line} title={kind === 'interface' ? '先认识 Pear' : '按习惯调整 Pear'} description={kind === 'interface' ? '先用 4 步认识常用入口，其余功能用到时再看。' : '先了解外观与导航，其余设置按需要查看。'}>
       {completed ? <CompletedLabel /> : <span className="text-body-2-regular text-text-secondary">{quick.steps.length} 步 · 随时可以退出</span>}
       <Button variant={completed ? 'secondary' : 'primary'} disabled={loading} onClick={() => start(quick, resume)}><span data-copy-key={`guide.${kind}.${loading ? 'loading' : completed ? 'replay' : resume ? 'resume' : 'start'}`}>{loading ? '正在准备…' : completed ? '再看一遍' : kind === 'interface' ? resume ? '继续快速导览' : '开始快速导览' : resume ? '继续设置导览' : '了解常用设置'}</span></Button>
     </GuideBanner>

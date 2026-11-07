@@ -275,7 +275,7 @@ export function AliasManager({ groups, suggestions, sources = [], readOnly, toas
       <div className="flex flex-col gap-2">
         <FieldLabel>手动添加别名</FieldLabel>
         <div className="flex flex-wrap items-end gap-2">
-          <Input aria-label="统一名称" placeholder="在 Peach 中统一显示的名称" value={canonical}
+          <Input aria-label="统一名称" placeholder="在 Pear 中统一显示的名称" value={canonical}
             onChange={setCanonical} isDisabled={readOnly} className="w-56" />
           <Input aria-label="平台别名" placeholder="平台别名" value={alias}
             onChange={setAlias} isDisabled={readOnly} className="w-56" />

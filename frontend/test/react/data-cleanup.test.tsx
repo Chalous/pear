@@ -419,7 +419,7 @@ describe('链接管理', () => {
     await settle();
     const gone = host.querySelector('[aria-label="地址已失效"]')!;
     expect(gone.textContent).toContain('链接名称');
-    expect(gone.textContent).toContain('Peach 资料');
+    expect(gone.textContent).toContain('Pear 资料');
     expect(gone.querySelector('[data-link-identity]')?.getAttribute('href')).toBe('/performers/31');
     expect(gone.querySelector('[data-link-identity] img')?.getAttribute('src')).toContain('/entity-image?kind=performer&id=31');
     expect(gone.querySelector('[data-link-address] img')?.getAttribute('src')).toBe('/link-mark?id=1');

@@ -16,7 +16,7 @@ const measured: StorageState = {
   usage: {
     measured_at: 1_790_000_000, total_bytes: 6 * 2 ** 30, total_files: 300,
     categories: [
-      category('database', '数据库', 2 ** 30, 0, false, 'Peach 的全部资料都在这里'),
+      category('database', '数据库', 2 ** 30, 0, false, 'Pear 的全部资料都在这里'),
       category('backups', '数据库备份', 2 ** 30, 2 ** 29, true, '更早的无法再恢复'),
       category('playback', '播放缓存', 2 ** 30, 2 ** 30, true, '再次播放时重新转码'),
       category('previews', '预览图', 2 ** 30, 0, false, '重建要重新读取整部影片'),
@@ -120,7 +120,7 @@ it('容器部署不给更改位置，列出在宿主机上迁移的几步', asyn
     ...measured,
     relocation: {
       available: false, message: '容器的数据目录是宿主机上的数据卷', last: null,
-      steps: [{ text: '停止 Peach', command: 'docker compose down' }, { text: '再启动', command: 'docker compose up -d' }],
+      steps: [{ text: '停止 Pear', command: 'docker compose down' }, { text: '再启动', command: 'docker compose up -d' }],
     },
   };
   const host = await mount(<StorageSettings initial={docker} receipt={vi.fn()} />);
@@ -137,7 +137,7 @@ it('容量字段带 GiB 单位，保存整数上限及留空的不设限，并�
   const fetcher = fetchMock(200, storage);
   vi.stubGlobal('fetch', fetcher);
   const host = await mount(<StorageSettings initial={storage} receipt={vi.fn()} />);
-  const field = host.querySelector<HTMLInputElement>('input[aria-label="Peach 数据上限（GiB）"]');
+  const field = host.querySelector<HTMLInputElement>('input[aria-label="Pear 数据上限（GiB）"]');
   expect(field?.value).toBe('');
   expect([...host.querySelectorAll('[aria-hidden="true"]')].filter(node => node.textContent === 'GiB')).toHaveLength(4);
   expect(host.querySelector('[data-storage-result]')).not.toBeNull();
@@ -157,12 +157,12 @@ it('关闭容量保护隐藏限制并保存开关，重新开启保留原设置'
   vi.stubGlobal('fetch', fetcher);
   const host = await mount(<StorageSettings initial={storage} receipt={vi.fn()} />);
   await click(host.querySelector('[aria-label="启用容量保护"]'));
-  expect(host.querySelector('input[aria-label="Peach 数据上限（GiB）"]')).toBeNull();
+  expect(host.querySelector('input[aria-label="Pear 数据上限（GiB）"]')).toBeNull();
   await submit(host.querySelector('#storageBudgetSettings'));
   await settle();
   expect(sentBody(fetcher)).toEqual({ ...policy, enabled: false });
   await click(host.querySelector('[aria-label="启用容量保护"]'));
-  expect(host.querySelector<HTMLInputElement>('input[aria-label="Peach 数据上限（GiB）"]')?.value).toBe('80');
+  expect(host.querySelector<HTMLInputElement>('input[aria-label="Pear 数据上限（GiB）"]')?.value).toBe('80');
 });
 
 it('空目录自动读取 CloudDrive，填入表单后由保存写入设置', async () => {

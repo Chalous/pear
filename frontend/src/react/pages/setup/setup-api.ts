@@ -27,7 +27,7 @@ export interface SetupQuestion {
 export interface MountDependency { name: string; message: string; download_url: string; download_label: string }
 
 export interface SetupQuestions {
-  peach_proxy?: import('../../bundle').PeachProxyState;
+  peach_proxy?: import('../../bundle').PearProxyState;
   docker?: boolean;
   /** Docker 固定的数据目录（`/data`），不出题，只在确认页列出；其余部署为 `null`。 */
   data_root?: string | null;
@@ -100,7 +100,7 @@ async function request<T>(url: string, init: RequestInit, fallback: string): Pro
     });
   } catch (cause) {
     if (init.signal?.aborted) throw cause;
-    throw new SetupRequestError(0, '连接不到 Peach，请确认它仍在运行后重试');
+    throw new SetupRequestError(0, '连接不到 Pear，请确认它仍在运行后重试');
   }
   const body = await response.json().catch(() => null) as { error?: string; errors?: SetupErrors; docker?: boolean } | null;
   if (!response.ok) throw new SetupRequestError(response.status, body?.error || fallback, body?.errors, body?.docker === true);

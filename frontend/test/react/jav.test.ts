@@ -35,7 +35,7 @@ it('发现查询隔离排序缓存，并在同一资料任务上轮询、停止�
   } finally { vi.unstubAllGlobals() }
 });
 
-it('发现封面优先本机缓存，远程封面经 Peach 代理并保留原地大小图取景身份', () => {
+it('发现封面优先本机缓存，远程封面经 Pear 代理并保留原地大小图取景身份', () => {
   const item = { id: 1, code: 'ABC-001', has_cover: true, cover_url: 'https://pics.dmm.co.jp/digital/video/abc00001/abc00001pl.jpg' } as Discovery;
   const local = document.createElement('div');
   local.innerHTML = discoveryArtwork(item, 'big', 'cover');

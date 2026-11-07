@@ -154,7 +154,7 @@ loadingState.syncPageTitle = path=>{
   const url=new URL(path,location.origin);
   const pathname=decodeURIComponent(url.pathname);
   const label=mediaRouteLabel(pathname,presentedItem)||routeMetaOf(pathname)?.title;
-  document.title=label?`${label} · Peach`:'Peach · 蜜桃';
+  document.title=label?`${label} · Pear`:'Pear';
   document.body.dataset.surface=url.pathname;
   paintNav();
 };

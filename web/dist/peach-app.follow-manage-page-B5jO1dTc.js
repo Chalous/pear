@@ -1,7 +1,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "611abe0a-3d81-49e6-9320-e40a71893ab9", e._sentryDebugIdIdentifier = "sentry-dbid-611abe0a-3d81-49e6-9320-e40a71893ab9");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "80d4d60b-116b-46d0-b565-f1fbc8fd7dbd", e._sentryDebugIdIdentifier = "sentry-dbid-80d4d60b-116b-46d0-b565-f1fbc8fd7dbd");
 	} catch {}
 })();
 import { createPaginatedRowModel as e, createSortedRowModel as t, useTableSelection as n } from "./peach-app.use-table-selection-CnuGRvGn.js";
@@ -932,7 +932,7 @@ function Sn({ groups: e, suggestions: t, sources: r = [], readOnly: i, toast: u 
 					children: [
 						/* @__PURE__ */ (0, Q.jsx)(M, {
 							"aria-label": "统一名称",
-							placeholder: "在 Peach 中统一显示的名称",
+							placeholder: "在 Pear 中统一显示的名称",
 							value: z,
 							onChange: ae,
 							isDisabled: i,
@@ -2693,4 +2693,4 @@ function qn(e) {
 }
 export { qn as FollowManagePage };
 
-//# debugId=611abe0a-3d81-49e6-9320-e40a71893ab9
+//# debugId=80d4d60b-116b-46d0-b565-f1fbc8fd7dbd

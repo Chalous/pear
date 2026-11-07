@@ -90,7 +90,7 @@ function update(patch: Partial<View>): void {
   flushSync(notify);
 }
 
-/* Peach 配置入口按当前设备的配置权限放行。 */
+/* Pear 配置入口按当前设备的配置权限放行。 */
 async function checkMachine(current: SettingsPanelHost): Promise<void> {
   const epoch = view.epoch;
   const configurable = await current.configurable();
@@ -273,8 +273,8 @@ function SettingsNav({ tab, epoch, configurable, openConfiguration, onSelect }: 
       <NavigationOrderMenu order={order} />
       <div data-settings-service="" role="presentation">
         <button type="button" disabled={configurable !== true} onClick={openConfiguration}
-          title={configurable === false ? '请在运行 Peach 的设备上打开 Peach 配置' : undefined}>
-          <Icon name="folder-cog" />Peach 配置<Icon name="chevron-right" />
+          title={configurable === false ? '请在运行 Pear 的设备上打开 Pear 配置' : undefined}>
+          <Icon name="folder-cog" />Pear 配置<Icon name="chevron-right" />
         </button>
       </div>
     </div>
@@ -441,8 +441,8 @@ function decorateDirection(field: HTMLElement, ascending: boolean): void {
   if (label) label.textContent = ascending ? '升序' : '降序';
 }
 
-/* 「浏览与播放」分两段：作品列表（网格、排序、卡片与悬停）在前，播放在后。转码方式写的是运行 Peach
-   那台电脑的配置，在 Peach 配置「应用与维护 → 视频播放」，不在这里（ADR-0103）。 */
+/* 「浏览与播放」分两段：作品列表（网格、排序、卡片与悬停）在前，播放在后。转码方式写的是运行 Pear
+   那台电脑的配置，在 Pear 配置「应用与维护 → 视频播放」，不在这里（ADR-0103）。 */
 function BrowseGroup({ host: current, tab, epoch }: GroupProps) {
   const settings = current.store.value;
   const save = () => current.store.save();

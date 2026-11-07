@@ -5,7 +5,7 @@ export const NAVIGATION_GROUPS = {
     ['western_identity', '西方身份回配'], ['performer_avatars', '女优头像'], ['studio_logos', '厂牌 Logo'],
     ['fc2_markings', 'FC2 评论标记'], ['fc2_similarity', 'FC2 跨号相似'], ['video_endcards', '片尾/出处证据'],
   ] },
-  configuration: { label: 'Peach 配置', items: [
+  configuration: { label: 'Pear 配置', items: [
     ['library', '媒体库与入库'], ['sources', '来源与订阅'], ['downloads', '下载渠道'],
     ['network', '网络与访问'], ['maintenance', '应用与维护'], ['diagnostics', '系统诊断'],
   ] },

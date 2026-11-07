@@ -27,7 +27,7 @@ export const WRONG_PASSWORD = '访问密码不正确';
 export const WRONG_TOKEN = '访问口令不正确';
 
 const tokenHint = (docker: boolean) => (
-  <>在{docker ? '宿主机' : '运行 Peach 的环境中'}执行 <code className="wrap-anywhere">{docker ? 'docker compose exec peach peach token' : 'peach token'}</code> 查看。</>
+  <>在{docker ? '宿主机' : '运行 Pear 的环境中'}执行 <code className="wrap-anywhere">{docker ? 'docker compose exec peach peach token' : 'peach token'}</code> 查看。</>
 );
 
 export function LoginPage({ data }: { data: PageData }) {
@@ -39,7 +39,7 @@ function LoginForm({ data }: { data: PageData }) {
   const token = data.mode === 'legacy' || data.mode === 'denied';
   const [reason, setReason] = useState(data.error || (data.invalid === 'true' ? (token ? WRONG_TOKEN : WRONG_PASSWORD) : ''));
   return (
-    <AuthCard title="Peach">
+    <AuthCard title="Pear">
       {data.mode === 'denied' ? <Note tone="warning">{FIRST_ACCESS_DENIED}</Note> : null}
       <form method="post" action="/login" aria-labelledby="auth-card-title" className="flex flex-col gap-6">
         <Input id="login-token" label={token ? '访问口令' : '访问密码'} name="token" type="password" maxLength={256}

@@ -222,7 +222,7 @@ function MediaForm({ data, receipt }: ConfigurationGroupProps) {
       <Section guide="media" title="媒体库与目录">
         <Stack>
           <Note tone="success" title="配置已保存">
-            Peach 正在重新启动。稍后自动跳转，或点击<LinkButton href={saved.url} size="small">进入馆藏</LinkButton>。
+            Pear 正在重新启动。稍后自动跳转，或点击<LinkButton href={saved.url} size="small">进入馆藏</LinkButton>。
           </Note>
         </Stack>
       </Section>
@@ -341,7 +341,7 @@ function MediaForm({ data, receipt }: ConfigurationGroupProps) {
                         } }}>
                         {smbResults[index].directories.map(name => <SelectItem key={name} id={name}>{name}</SelectItem>)}
                       </Select> : null}
-                      <Help>地址填写 smb://服务器/共享/目录。按共享账号权限读写；整理和删除由对应操作触发，资料和预览保存在 Peach 数据目录。</Help>
+                      <Help>地址填写 smb://服务器/共享/目录。按共享账号权限读写；整理和删除由对应操作触发，资料和预览保存在 Pear 数据目录。</Help>
                     </div> : null}
                   </FolderRow>
                 ))}
@@ -369,7 +369,7 @@ function MediaForm({ data, receipt }: ConfigurationGroupProps) {
         <Checkbox isSelected={scanNow} onChange={setScanNow}>保存后扫描并补全资料</Checkbox>
         {failure ? <Note tone="error" title="没有保存">{failure}</Note> : null}
       </Stack>
-      <Footer status="保存后 Peach 会重新启动。">
+      <Footer status="保存后 Pear 会重新启动。">
         <Button type="submit" {...busyProps(action.busy === 'save')}>保存配置</Button>
       </Footer>
     </Section>

@@ -208,7 +208,7 @@ describe('设置面板与壳的接缝', () => {
     expect(field.value).toBe(success ? 'ja' : 'zh-CN');
     expect(failure).toHaveBeenCalledTimes(success ? 0 : 1);
   });
-  it('五个分区按使用场景组织，Peach 配置入口遵守设备权限', async () => {
+  it('五个分区按使用场景组织，Pear 配置入口遵守设备权限', async () => {
     const current = await setup();
     const openConfiguration = vi.fn();
     current.host.openConfiguration = openConfiguration;
@@ -226,7 +226,7 @@ describe('设置面板与壳的接缝', () => {
     const headings = (index: number) => [...panel.querySelectorAll(`#settings-group-${index} [data-settings-subheading]`)]
       .map((node) => node.textContent);
     expect([headings(1), headings(2)]).toEqual([['作品列表', '播放'], ['作品显示', '新作显示']]);
-    /* 转码方式是运行 Peach 那台电脑的服务配置，在 Peach 配置里，弹窗里没有这一行（ADR-0103）。 */
+    /* 转码方式是运行 Pear 那台电脑的服务配置，在 Pear 配置里，弹窗里没有这一行（ADR-0103）。 */
     expect(panel.querySelector('#playbackAccelerationSetting')).toBeNull();
     const entry = panel.querySelector<HTMLButtonElement>('[data-settings-service] button')!;
     expect(entry.disabled).toBe(true);
