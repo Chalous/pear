@@ -45,7 +45,7 @@ from itertools import chain
 from pathlib import Path, PureWindowsPath
 from filelock import FileLock
 
-from . import folder_rules, junk, record_rehome, subtitles, wants
+from . import comics, folder_rules, junk, record_rehome, subtitles, wants
 from .platform import is_windows_path, is_unmapped, resolve_location, resolve_root
 from .processing_control import checkpoint
 from .fsutil import atomic_write_text
@@ -682,6 +682,57 @@ def _commit_scan_records(connection, db, batch, registered, conflicts, identitie
     return inserted
 
 
+def _comic_pages_of(entries, *, videos, artwork_dir, ledger_dir, library_roots, onerror):
+    """直接含支持图片的目录是一本漫画：返回 `{文件名: (字节数, mtime 日期)}` 的页名单。
+
+    名单先按整个目录算一遍，断点续扫时光标前的页也不会从书里丢掉。附属图（正片旁边的
+    海报、`extrafanart/` 剧照）不算页；读不了的条目跳过并报一行，不拦整轮。
+    """
+    comic_pages: dict[str, tuple[int, str]] = {}
+    for entry in entries:
+        name = entry.name
+        if not comics.is_comic_page_name(name):
+            continue
+        if is_sidecar(name, videos, artwork_dir=artwork_dir,
+                      path=str(PureWindowsPath(ledger_dir, name)), library_roots=library_roots):
+            continue
+        try:
+            stat = entry.stat()
+        except OSError as error:
+            onerror(error)
+            continue
+        comic_pages[name] = (stat.st_size,
+                             time.strftime("%Y-%m-%d", time.localtime(stat.st_mtime)))
+    return comic_pages
+
+
+def _comic_asset_row(location, ledger_dir, comic_pages, now):
+    """一本漫画的目录记录行与进度计数：页在目录收尾时一次计齐。
+
+    中途被打断的扫描不会走到收尾，续扫从头计页，不重不漏。
+    返回 `(记录行或 None, 页数, 字节数)`。
+    """
+    if not comic_pages:
+        return None, 0, 0
+    row = (location, ledger_dir, comics.book_name(ledger_dir), "comic",
+           sum(size for size, _ in comic_pages.values()),
+           max(mtime for _, mtime in comic_pages.values()), now, now)
+    return row, len(comic_pages), sum(size for size, _ in comic_pages.values())
+
+
+def _sync_comic_directory(connection, location, ledger_dir, comic_pages):
+    """目录记录已提交后把页写进 `comic_page`。
+
+    查不到 ID 或同名多行（路径冲突待复核）都不动页清单，等用户先复核身份。
+    """
+    if not comic_pages:
+        return
+    owners = connection.execute("SELECT id FROM asset WHERE location=? AND path=?",
+                                (location, ledger_dir)).fetchall()
+    if len(owners) == 1:
+        comics.sync_pages(connection, int(owners[0][0]), comic_pages)
+
+
 def _scan_location(
     db_path: str | os.PathLike[str], location: str, root: str, *,
     declared_roots: Mapping[str, str], mounts: Mapping[str, str | Path] | None = None,
@@ -747,6 +798,7 @@ def _scan_location(
         for directory, entries in _walk(walk_root, pending, read_directory=read_directory, onerror=onerror):
             checkpoint('scan')
             relative = _relative_directory(directory, walk_root)
+            ledger_dir = str(ledger_root.joinpath(*relative))
             continuing = directory == previous.get('current_directory')
             here = dict(previous.get('here') or {}) if continuing else {}
             cursor = previous.get('cursor') if continuing else None
@@ -756,6 +808,13 @@ def _scan_location(
             # 自顶向下遍历，上一层总是先于这一层出来，这时已经知道它有没有视频。
             artwork_dir = (path_module.basename(directory).casefold() in ARTWORK_DIRS
                            and path_module.dirname(directory) in video_dirs)
+            # 直接含支持图片的目录是一本漫画：页聚合成一条 medium='comic' 的目录记录，
+            # 不逐张登记；次序按文件名自然序，页 ID 跨重扫不变（comics.py）。
+            comic_pages = _comic_pages_of(entries, videos=videos, artwork_dir=artwork_dir,
+                                          ledger_dir=ledger_dir, library_roots=library_roots,
+                                          onerror=onerror)
+            comic_row, page_files, page_bytes = _comic_asset_row(
+                location, ledger_dir, comic_pages, now)
             for entry in entries:
                 checkpoint('scan')
                 name = entry.name
@@ -765,6 +824,9 @@ def _scan_location(
                 if is_sidecar(name, videos, artwork_dir=artwork_dir,
                               path=ledger_path, library_roots=library_roots):
                     skipped += 1
+                    continue
+                if name in comic_pages:
+                    # 页不逐张登记：字节数已并进 comic_row，进度在目录收尾时一次报。
                     continue
                 if new_only and ledger_path.casefold() in registered:
                     here[name] = (None, None)
@@ -790,13 +852,19 @@ def _scan_location(
                     save_directory(directory, name, here)
                     report(f"  {time.time() - started:5.0f}s  {files:,} 文件  "
                            f"{total / 1024 ** 4:.2f} TB")
+            if comic_row is not None:
+                files += page_files
+                total += page_bytes
+                progress(files, total)
+                batch.append(comic_row)
             inserted_ids = _commit_scan_records(connection, db_path, batch, registered, conflicts,
                                                identities, observations)
             directory_tracks, directory_orphans = _record_directory_subtitles(
-                connection, location, ledger_root.joinpath(*relative), here, conflicts, now)
+                connection, location, ledger_dir, here, conflicts, now)
             connection.commit()
             discovered.update(inserted_ids)
             remember(db_path, inserted_ids)
+            _sync_comic_directory(connection, location, ledger_dir, comic_pages)
             tracks += directory_tracks
             orphans += directory_orphans
             save_directory()

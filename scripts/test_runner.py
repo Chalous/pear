@@ -323,6 +323,9 @@ AUTO_SCOPE_PREFIXES: tuple[tuple[str, str | tuple[str, ...]], ...] = (
     ("src/peach/mp4recover.py", "media"),
     # 批量修复是播放链路的任务，但住在 web 层，两个域都要跑到。
     ("src/peach/web_media_repair.py", ("media", "web")),
+    # 漫画聚合在扫描域落库、catalog 域读取（`web_router` 转发）。
+    ("src/peach/comics.py", "tooling"),
+    ("src/peach/web_comics.py", "catalog"),
     ("src/peach/desktop_startup.py", "tooling"),
     ("src/peach/desktop_uninstall.py", "tooling"),
     ("src/peach/peach_proxy.py", "tooling"),

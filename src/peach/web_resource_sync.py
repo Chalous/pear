@@ -85,7 +85,7 @@ def configured_resource_locations() -> tuple[str, ...]:
 
 @controlled
 def _scan_resource_directory(
-    item: tuple[Path, dict[str, list[int]]],
+    item: tuple[Path, dict[str, list[tuple[int, bool]]]],
 ) -> tuple[list[int], int]:
     from .task_control import checkpoint
     checkpoint()
@@ -99,8 +99,10 @@ def _scan_resource_directory(
                 key = entry.name.casefold()
                 if key not in expected:
                     continue
+                # 漫画那一行的 path 是书目录，目录在就是它在；其余行仍认文件。
+                directory_expected = any(is_dir for _asset_id, is_dir in expected[key])
                 try:
-                    if entry.is_file():
+                    if entry.is_file() or (directory_expected and entry.is_dir()):
                         present.add(key)
                 except OSError:
                     # The name was returned but its type could not be read.  Preserve the
@@ -108,11 +110,11 @@ def _scan_resource_directory(
                     present.add(key)
                     unreadable += len(expected[key])
     except FileNotFoundError:
-        return [asset_id for ids in expected.values() for asset_id in ids], 0
+        return [asset_id for ids in expected.values() for asset_id, _is_dir in ids], 0
     except OSError:
         return [], sum(len(ids) for ids in expected.values())
     return (
-        [asset_id for key, ids in expected.items() if key not in present for asset_id in ids],
+        [asset_id for key, ids in expected.items() if key not in present for asset_id, _is_dir in ids],
         unreadable,
     )
 
@@ -132,11 +134,13 @@ def _missing_resource_ids(
     case-insensitive Windows path semantics.  An unreadable directory is skipped rather than
     being mistaken for a directory that the user deleted; ``unreadable_dirs`` collects it.
     """
-    directories: dict[Path, dict[str, list[int]]] = {}
+    directories: dict[Path, dict[str, list[tuple[int, bool]]]] = {}
     for row in rows:
         path = translate_ledger_path(row["path"])
         expected = directories.setdefault(path.parent, {})
-        expected.setdefault(path.name.casefold(), []).append(int(row["id"]))
+        # 漫画的登记单位是目录（medium='comic'）；行上没有 medium 列的旧调用方按文件算。
+        expected.setdefault(path.name.casefold(), []).append(
+            (int(row["id"]), "medium" in row.keys() and row["medium"] == "comic"))
 
     directory_items = list(directories.items())
     if len(directory_items) <= 1:
@@ -178,7 +182,7 @@ def vanished_asset_rows(
     """
     with contract.read_connection() as connection:
         rows = connection.execute(
-            "SELECT id,path,snapshot_path,disposal FROM asset "
+            "SELECT id,path,snapshot_path,disposal,medium FROM asset "
             "WHERE path IS NOT NULL AND location=? AND COALESCE(disposal,'')<>? ORDER BY id",
             (location, VANISHED),
         ).fetchall()
@@ -801,7 +805,7 @@ def w_purge_missing(contract: ResourceSyncContract, body):
             return {"ok": False, "error": "source offline", "location": location}
         directory = path[: len(path) - len(name) - 1]
         rows = connection.execute(
-            f"SELECT id,path,name FROM asset WHERE location=? "
+            "SELECT id,path,name,medium FROM asset WHERE location=? "
             f"AND {dir_expr('')}=? AND disposal IS NULL",
             (location, directory),
         ).fetchall()

@@ -549,6 +549,43 @@ class PurgeMissingTests(unittest.TestCase):
             rows = rm_sync.vanished_asset_rows(self.contract, "115")
         self.assertEqual([int(row["id"]) for row in rows], [2, 3])
 
+    def _add_comic(self, asset_id=5, directory=LEDGER_DIR):
+        con = sqlite3.connect(self.db_path)
+        sep = chr(92)
+        con.execute("INSERT INTO asset(id,location,path,name,medium,size) VALUES(?, '115', ?, '某书', 'comic', 10)",
+                    (asset_id, directory + sep + "某书"))
+        con.execute("INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(?, '1.jpg', 1)", (asset_id,))
+        con.commit()
+        con.close()
+
+    def test_a_comic_book_stays_when_its_directory_is_still_there(self):
+        """漫画的登记单位是目录：目录在，名字即使不是文件，也不算文件失踪。"""
+        self._add_comic()
+        (self.mount / "creator/P/某书").mkdir()
+        result = self._run()
+        self.assertEqual(result["removed"], 2)
+        self.assertIn(5, self.ids())
+
+    def test_a_comic_book_whose_directory_is_gone_goes_to_trash_like_other_files(self):
+        self._add_comic()
+        result = self._run()
+        by_id = {item["id"]: item["disposal"] for item in result["items"]}
+        self.assertEqual(by_id[5], "trash")
+        self.assertIn(5, self.ids())
+
+    def test_purging_a_comic_cleans_its_page_rows(self):
+        """永久删除清引用表只写在 `personal_records.ASSET_REFERENCE_TABLES` 一处，漫画页在其中。"""
+        self._add_comic(directory=self.OTHER_DIR)
+        with self._synced():
+            with contextlib.closing(sqlite3.connect(self.db_path)) as connection, connection:
+                connection.row_factory = sqlite3.Row
+                row = connection.execute("SELECT * FROM asset WHERE id=5").fetchone()
+                web_batch.purge_assets(connection, [dict(row)], missing_only=True)
+        self.assertNotIn(5, self.ids())
+        with contextlib.closing(sqlite3.connect(self.db_path)) as connection:
+            left = connection.execute("SELECT COUNT(*) FROM comic_page WHERE asset_id=5").fetchone()[0]
+        self.assertEqual(left, 0)
+
 
 class ResourceSyncCleanupTests(unittest.TestCase):
     """一次检查、一次执行：失效记录、空文件夹与孤儿缓存一起清。失效记录带个人记录的标已消失，
