@@ -65,6 +65,9 @@ if (-not $Force -and ($targets | Where-Object { Test-Path -LiteralPath $_ })) {
 }
 
 @"
+[req]
+distinguished_name=dn
+[dn]
 [server]
 basicConstraints=critical,CA:FALSE
 keyUsage=critical,digitalSignature,keyEncipherment
@@ -76,7 +79,7 @@ authorityKeyIdentifier=keyid,issuer
 
 & $openssl genrsa -out $caKey 3072
 if ($LASTEXITCODE) { throw 'Failed to create local CA key.' }
-& $openssl req -x509 -new -sha256 -key $caKey -out $caCert -days 3650 `
+& $openssl req -x509 -new -sha256 -config $extensions -key $caKey -out $caCert -days 3650 `
     -subj '/CN=Peach Local CA/O=Peach' `
     -addext 'basicConstraints=critical,CA:TRUE,pathlen:0' `
     -addext 'keyUsage=critical,keyCertSign,cRLSign' `

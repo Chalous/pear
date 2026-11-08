@@ -99,8 +99,16 @@ class CertificateTests(unittest.TestCase):
 
     def test_reissue_writes_key_identifiers_for_strict_verification(self):
         """叶子证书携带密钥标识，满足严格链验证。"""
+        from cryptography import x509
         files = CertificateFiles.under((Path(self._tmp.name) / "strict").resolve())
-        create_local_ca(files)
+        config = Path(self._tmp.name) / "openssl.cnf"
+        config.write_text("[req]\ndistinguished_name = dn\nx509_extensions = ca\n[dn]\n"
+                          "[ca]\nbasicConstraints = critical,CA:TRUE,pathlen:2\n", encoding="utf-8")
+        with mock.patch.dict(os.environ, {"OPENSSL_CONF": str(config)}):
+            create_local_ca(files)
+        ca = x509.load_pem_x509_certificate(files.ca_cert.read_bytes())
+        self.assertEqual(ca.extensions.get_extension_for_class(x509.BasicConstraints).value,
+                         x509.BasicConstraints(ca=True, path_length=0))
         reissue(files, "peach.local", {"peach.local", "localhost"}, {"127.0.0.1"})
         text = subprocess.run(["openssl", "x509", "-in", str(files.cert), "-noout", "-text"],
                               check=True, capture_output=True, text=True, encoding="utf-8").stdout
@@ -110,25 +118,25 @@ class CertificateTests(unittest.TestCase):
 
     def test_a_certificate_without_key_identifier_triggers_reissue(self):
         """缺少颁发者密钥标识的存量叶子按现有 CA 自动补签。"""
+        from cryptography import x509
+        from cryptography.hazmat.primitives import hashes, serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
         work = Path(self._tmp.name).resolve()
         files = CertificateFiles.under(work / "legacy")
         create_local_ca(files)
-        version = subprocess.run(["openssl", "version"], check=True, capture_output=True,
-                                 text=True, encoding="utf-8").stdout
-        identifiers = "" if "LibreSSL" in version else (
-            "subjectKeyIdentifier = none\nauthorityKeyIdentifier = none\n")
-        (work / "leaf.cnf").write_text(
-            "[req]\ndistinguished_name = dn\nprompt = no\n[dn]\nCN = peach.local\n"
-            "[ext]\nsubjectAltName = DNS:peach.local,DNS:localhost,IP:127.0.0.1\n"
-            "basicConstraints = critical, CA:FALSE\nkeyUsage = critical,digitalSignature,keyEncipherment\n"
-            "extendedKeyUsage = serverAuth\n" + identifiers, encoding="utf-8")
-        subprocess.run(["openssl", "req", "-new", "-newkey", "rsa:2048", "-nodes",
-                        "-keyout", str(files.key), "-out", str(work / "leaf.csr"),
-                        "-config", str(work / "leaf.cnf")], check=True, capture_output=True)
-        subprocess.run(["openssl", "x509", "-req", "-in", str(work / "leaf.csr"),
-                        "-CA", str(files.ca_cert), "-CAkey", str(files.ca_key), "-CAcreateserial",
-                        "-out", str(files.cert), "-days", "397", "-extfile", str(work / "leaf.cnf"),
-                        "-extensions", "ext"], check=True, capture_output=True)
+        ca = x509.load_pem_x509_certificate(files.ca_cert.read_bytes())
+        ca_key = serialization.load_pem_private_key(files.ca_key.read_bytes(), password=None)
+        key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        now = datetime.now(timezone.utc)
+        leaf = (x509.CertificateBuilder()
+                .subject_name(x509.Name([x509.NameAttribute(x509.NameOID.COMMON_NAME, "peach.local")]))
+                .issuer_name(ca.subject).public_key(key.public_key()).serial_number(x509.random_serial_number())
+                .not_valid_before(now - timedelta(minutes=1)).not_valid_after(now + timedelta(days=CERT_DAYS))
+                .add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
+                .sign(ca_key, hashes.SHA256()))
+        files.key.write_bytes(key.private_bytes(serialization.Encoding.PEM,
+                              serialization.PrivateFormat.TraditionalOpenSSL, serialization.NoEncryption()))
+        files.cert.write_bytes(leaf.public_bytes(serialization.Encoding.PEM))
         text = subprocess.run(["openssl", "x509", "-in", str(files.cert), "-noout", "-text"],
                               check=True, capture_output=True, text=True, encoding="utf-8").stdout
         self.assertNotIn("Authority Key Identifier", text)
