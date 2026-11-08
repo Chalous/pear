@@ -81,12 +81,14 @@ async function openFollowItem(browser: Browser): Promise<Visit> {
 const lightbox = (page: Page) => page.locator('dialog[data-photo-lightbox][open]');
 const labelled = (box: Locator, label: string) => box.locator(`[aria-label="${label}"]`).first();
 
-/** 馆藏首页那本合成漫画：点卡片直开阅读器，页图由 `/comic-image` 发夹具里的真文件。 */
-async function openComicBook(browser: Browser, viewport = DESKTOP): Promise<Visit> {
+/** 馆藏首页那本合成漫画：点卡片直开阅读器，页图由 `/comic-image` 发夹具里的真文件。
+ *  回值带上这部漫画的 asset ID（卡片上就有），标记历史的断言按它查账。 */
+async function openComicBook(browser: Browser, viewport = DESKTOP): Promise<Visit & { comicId: number }> {
   const opened = await visit(browser, '/', viewport);
   const { page } = opened;
   const card = page.locator('[data-media-card]', { hasText: '合成漫画样本' }).first();
   await card.waitFor({ timeout: 15_000 });
+  const comicId = Number(await card.getAttribute('data-id'));
   await card.click();
   const box = lightbox(page);
   await box.waitFor();
@@ -95,7 +97,7 @@ async function openComicBook(browser: Browser, viewport = DESKTOP): Promise<Visi
     return !!img && (img as HTMLImageElement).naturalWidth > 0;
   }, undefined, { timeout: 10_000 });
   await settle(page);
-  return opened;
+  return Object.assign(opened, { comicId });
 }
 
 /** 缩略图条里当前那一格的序号，以及它的中线离条的中线多远。 */
@@ -287,7 +289,7 @@ describe('图片灯箱', () => {
 
   it('漫画双页档：两页显示框跟单页同高，缩放药丸整行居中排在页码下一行', { timeout: 90_000 }, async () => {
     const opened = await openComicBook(browser);
-    const { page } = opened;
+    const { page, comicId } = opened;
     try {
       const box = lightbox(page);
       const pageHeight = (scope: string) => box
@@ -308,11 +310,32 @@ describe('图片灯箱', () => {
 
       const rects = await box.evaluate((node) => {
         const rect = (selector: string) => node.querySelector(selector)!.getBoundingClientRect();
-        return { zoom: rect('[data-photo-zoom]'), bar: rect('[data-photo-bar]'), count: rect('[data-photo-count]') };
+        return { tools: rect('[data-photo-tools]'), bar: rect('[data-photo-bar]'), count: rect('[data-photo-count]') };
       });
-      assert.ok(Math.abs(rects.zoom.left + rects.zoom.width / 2
-        - (rects.bar.left + rects.bar.width / 2)) <= 1, '缩放药丸没有水平居中');
-      assert.ok(rects.zoom.top >= rects.count.bottom - 1, '缩放药丸应排在页码下一行');
+      assert.ok(Math.abs(rects.tools.left + rects.tools.width / 2
+        - (rects.bar.left + rects.bar.width / 2)) <= 1, '标记与缩放整组没有水平居中');
+      assert.ok(rects.tools.top >= rects.count.bottom - 1, '标记与缩放应排在页码下一行');
+
+      // 当场标记：点喜欢落一条事件、心形点亮；再点一下是取消，账上留撤销痕。
+      const likeButton = labelled(box, '喜欢当前页');
+      await likeButton.click();
+      await page.waitForFunction(() => document.querySelector('[data-mark-btn="like"]')?.getAttribute('aria-pressed') === 'true',
+        undefined, { timeout: 5_000 });
+      const marked = await page.evaluate(
+        async (id: number) => fetch(`/api/comic-events?id=${id}`).then((r) => r.json()), comicId);
+      assert.equal(marked.events?.length, 1, '标记应当落账');
+      assert.equal(marked.events[0].kind, 'like');
+      assert.equal(marked.events[0].undone_at, null);
+      assert.equal(await page.evaluate(() => (document.querySelector('[data-mark-undo]') as HTMLButtonElement).disabled), false,
+        '标记之后撤销键应当点亮');
+      await likeButton.click();
+      await page.waitForFunction(() => document.querySelector('[data-mark-btn="like"]')?.getAttribute('aria-pressed') === 'false',
+        undefined, { timeout: 5_000 });
+      const undone = await page.evaluate(
+        async (id: number) => fetch(`/api/comic-events?id=${id}`).then((r) => r.json()), comicId);
+      assert.notEqual(undone.events[0].undone_at, null, '取消应当在账上留痕');
+      assert.equal(await page.evaluate(() => (document.querySelector('[data-mark-undo]') as HTMLButtonElement).disabled), true,
+        '取消之后没有可撤的，撤销键应当熄灭');
       await labelled(box, '关闭').click();
       await box.waitFor({ state: 'detached' });
       assert.deepEqual(opened.problems, []);

@@ -78,12 +78,28 @@ def sync_pages(connection, asset_id: int, pages: dict[str, tuple[int, str]]) -> 
                 "INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(?,?,?)",
                 (asset_id, name, ordinal))
     present = {name.casefold() for name in pages}
-    anchored = {int(row[0]) for row in connection.execute(
-        "SELECT page_id FROM comic_progress WHERE asset_id=?", (asset_id,))}
+    anchored = anchored_page_ids(connection, asset_id)
     for key, (page_id, _spelling) in existing.items():
         if key not in present and page_id not in anchored:
             connection.execute("DELETE FROM comic_page WHERE id=?", (page_id,))
     connection.commit()
+
+
+def anchored_page_ids(connection, asset_id: int) -> set[int]:
+    """仍被个人记录引用的页：阅读进度加上有效与已撤销的反馈事件。
+
+    事件行留着作历史（撤销不删行），被任一事件指过的页也就都留住；文件回来后
+    按 casefold 接回同一 ID，历史详情的回跳不失效。
+    """
+    anchored = {int(row[0]) for row in connection.execute(
+        "SELECT page_id FROM comic_progress WHERE asset_id=?", (asset_id,))}
+    anchored.update(int(row[0]) for row in connection.execute(
+        "SELECT first_page_id FROM comic_event WHERE asset_id=? AND first_page_id IS NOT NULL",
+        (asset_id,)))
+    anchored.update(int(row[0]) for row in connection.execute(
+        "SELECT last_page_id FROM comic_event WHERE asset_id=? AND last_page_id IS NOT NULL",
+        (asset_id,)))
+    return anchored
 
 
 def progress_page(connection, asset_id: int) -> int | None:
@@ -110,6 +126,73 @@ def save_progress(connection, asset_id: int, page_id: int, viewed_at: int) -> bo
         (asset_id, page_id, viewed_at))
     connection.commit()
     return True
+
+
+def event_page_ids(connection, asset_id: int, first_page_id: int | None, last_page_id: int | None):
+    """把事件范围规整成「两端页 ID」或整本的 `(None, None)`；两端不属于同一本、
+    次序颠倒或只有一端时返回 None，调用方拒绝这条事件。"""
+
+    def belongs(page_id: int) -> bool:
+        return connection.execute(
+            "SELECT 1 FROM comic_page WHERE id=? AND asset_id=?", (page_id, asset_id),
+        ).fetchone() is not None
+
+    if (first_page_id is None) != (last_page_id is None):
+        return None
+    if first_page_id is None:
+        return None, None
+    if not belongs(first_page_id) or not belongs(last_page_id):
+        return None
+    ordinals = {int(row["id"]): int(row["ordinal"]) for row in page_rows(connection, asset_id)}
+    if ordinals.get(first_page_id, 0) > ordinals.get(last_page_id, 0):
+        return None
+    return first_page_id, last_page_id
+
+
+def record_event(connection, asset_id: int, event_id: str, kind: str, page_ids: tuple[int | None, int | None],
+                 reason: str | None, session_id: str | None, occurred_at: int) -> bool:
+    """插入一条反馈事件并提交；同 ID 重发不重复记账也不重复计数。
+
+    高潮事件在同一事务里给 `asset.o_count` 加一：卡片角标、排序与口味统计读的是
+    这一列，基数（漫画事件之前就有的值）原样保留。
+    """
+    inserted = connection.execute(
+        "INSERT OR IGNORE INTO comic_event(id,asset_id,kind,first_page_id,last_page_id,"
+        "reason,session_id,occurred_at) VALUES(?,?,?,?,?,?,?,?)",
+        (event_id, asset_id, kind, page_ids[0], page_ids[1], reason, session_id, occurred_at),
+    ).rowcount
+    if inserted and kind == "o":
+        connection.execute(
+            "UPDATE asset SET o_count=COALESCE(o_count,0)+1 WHERE id=?", (asset_id,))
+    connection.commit()
+    return bool(inserted)
+
+
+def undo_event(connection, event_id: str, undone_at: int) -> bool:
+    """把事件标成已撤销并提交；已撤销过的再撤销不动合计。返回这次是否真的撤销了。"""
+    row = connection.execute(
+        "SELECT asset_id,kind,undone_at FROM comic_event WHERE id=?", (event_id,)).fetchone()
+    if row is None or row["undone_at"] is not None:
+        return False
+    connection.execute("UPDATE comic_event SET undone_at=? WHERE id=?", (undone_at, event_id))
+    if row["kind"] == "o":
+        connection.execute(
+            "UPDATE asset SET o_count=MAX(COALESCE(o_count,0)-1,0) WHERE id=?",
+            (int(row["asset_id"]),))
+    connection.commit()
+    return True
+
+
+def event_rows(connection, asset_id: int) -> list:
+    """一本的反馈事件，新发生的在前；范围里带上页序号，历史详情据此回跳。"""
+    return list(connection.execute(
+        "SELECT e.id,e.kind,e.reason,e.occurred_at,e.undone_at,"
+        "f.id AS first_page_id,f.ordinal AS first_ordinal,"
+        "l.id AS last_page_id,l.ordinal AS last_ordinal "
+        "FROM comic_event e "
+        "LEFT JOIN comic_page f ON f.id=e.first_page_id "
+        "LEFT JOIN comic_page l ON l.id=e.last_page_id "
+        "WHERE e.asset_id=? ORDER BY e.occurred_at DESC, e.id", (asset_id,)))
 
 
 def comic_asset(connection, asset_id: int):

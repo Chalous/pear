@@ -114,8 +114,8 @@ function Detail(props: ItemDetailProps & { item: DetailItem; queue: DetailQueue 
   const continuePart = () => {
     if (next && queue) actions.openQueueItem({ kind: queue.kind, seedId: queue.seedId, autoplay: true }, next.id);
   };
-  /* 漫画一本：媒体格里是首图当封面，侧栏只有标题、页数与「开始阅读」。播放器、外部播放
-     与补预览那些视频控件都不出；页级反馈是第 3 轮的事。 */
+  /* 漫画一本：媒体格里是首图当封面，侧栏有标题、页数、「开始阅读」与标记历史。播放器、
+     外部播放与补预览那些视频控件都不出。 */
   if (String(item.medium) === 'comic') {
     return <ComicDetail item={item} actions={actions} helpers={helpers} />;
   }
@@ -137,23 +137,46 @@ function Detail(props: ItemDetailProps & { item: DetailItem; queue: DetailQueue 
 
 /* ── 漫画 ── */
 
-/** 漫画详情：媒体格里是首图当封面，侧栏只有标题、页数与「开始阅读」。
- *  播放器、外部播放与补预览那些视频控件都不出；页级反馈是第 3 轮的事。 */
+/** `/api/comic-events` 的回包口径（`web_comics.py`）；范围带页序号，历史详情据此回跳。 */
+interface ComicEventRow {
+  id: string; kind: 'like' | 'o'; reason: string | null; occurred_at: number;
+  undone_at: number | null;
+  first: { id: number; ordinal: number } | null;
+  last: { id: number; ordinal: number } | null;
+}
+
+/** 一条标记落在哪：整本、一页或一个页段。 */
+const comicRangeText = (event: ComicEventRow): string => {
+  if (!event.first || !event.last) return '整本';
+  return event.first.id === event.last.id
+    ? `第 ${event.first.ordinal} 页` : `第 ${event.first.ordinal}–${event.last.ordinal} 页`;
+};
+
+/** 漫画详情：媒体格里是首图当封面，侧栏有标题、页数、「开始阅读」与标记历史。
+ *  播放器、外部播放与补预览那些视频控件都不出。标记历史点一条回到那一页。 */
 function ComicDetail({ item, actions, helpers }: {
   item: DetailItem; actions: ItemDetailActions; helpers: ItemDetailHelpers;
 }) {
   const [busy, setBusy] = useState(false);
   const pages = Number(item.comic_pages ?? 0);
-  const read = async () => {
+  const marks = useQuery({
+    queryKey: ['comic-events', item.id],
+    queryFn: () => apiGet<{ id: number; error?: string; events?: ComicEventRow[] }>(
+      `/api/comic-events?id=${item.id}`),
+    enabled: pages > 0,
+  });
+  const open = async (pageId?: number) => {
     if (busy) return;
     setBusy(true);
     try {
       /* 与卡片直开同一条口径：取不到页清单给一句回执，不打断当前页。 */
-      await openComicReader(item.id, { toast: actions.toast, failure: actions.failure });
+      await openComicReader(item.id, { toast: actions.toast, failure: actions.failure },
+        pageId != null ? { pageId } : undefined);
     } finally {
       setBusy(false);
     }
   };
+  const events = marks.data && !marks.data.error ? marks.data.events ?? [] : [];
   return (
     <div data-stage-grid="" data-item-detail="">
       <div data-stage-media="" data-item-media="none" data-comic-cover="">
@@ -169,10 +192,31 @@ function ComicDetail({ item, actions, helpers }: {
             <span data-spec-item=""><Glyph name="hard-drive" /><span>{sizeText(item.size)}</span></span>
           </div>
           <div data-stage-actions="" data-comic-read="">
-            <button type="button" data-comic-read-btn="" disabled={busy || pages === 0} onClick={() => void read()}>
+            <button type="button" data-comic-read-btn="" disabled={busy || pages === 0} onClick={() => void open()}>
               {busy ? spinnerHtml('正在打开') : <><Glyph name="chevron-right" /><span>开始阅读</span></>}
             </button>
           </div>
+          {events.length > 0 ? (
+            <div data-comic-marks="">
+              <div data-comic-marks-head="">标记</div>
+              <ul data-comic-marks-list="">
+                {events.map((event) => (
+                  <li key={event.id}>
+                    <button type="button" data-comic-mark="" data-kind={event.kind}
+                      data-undone={event.undone_at != null ? '' : undefined}
+                      title={event.undone_at != null ? '已撤销' : '回到这一页'}
+                      onClick={() => void open(event.first?.id ?? event.last?.id ?? undefined)}>
+                      <span data-mark-kind="">{event.kind === 'o' ? '高潮' : '喜欢'}</span>
+                      <span data-mark-range="">{comicRangeText(event)}</span>
+                      {event.reason ? <span data-mark-reason="">{event.reason}</span> : null}
+                      <span data-mark-time="">{new Date(event.occurred_at).toLocaleString()}</span>
+                      {event.undone_at != null ? <span data-mark-undone="">已撤销</span> : null}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

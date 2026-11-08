@@ -22,7 +22,7 @@ from .web_activity import (
     w_watch_later,
 )
 from .web_batch import q_ads, q_duplicates, w_batch, w_empty_trash
-from .web_comics import q_comic_pages, w_comic_progress
+from .web_comics import q_comic_events, q_comic_pages, w_comic_event, w_comic_event_undo, w_comic_progress
 from .web_performer_delete import q_performer_delete_candidates, q_performer_delete_plan, w_performer_delete
 from .web_tags import q_tag_management, w_tag_management, w_tag_preview
 from .taste_history import history_source_count
@@ -397,6 +397,7 @@ GET_HANDLERS = {
     "/api/items": q_items,
     "/api/item": _get_item,
     "/api/comic-pages": q_comic_pages,
+    "/api/comic-events": q_comic_events,
     "/api/parts": q_parts,
     "/api/editions": q_editions,
     "/api/entity": q_entity,
@@ -469,6 +470,8 @@ POST_HANDLERS = {
     "/api/activity": w_activity,
     "/api/play": w_play,
     "/api/comic-progress": w_comic_progress,
+    "/api/comic-event": w_comic_event,
+    "/api/comic-event-undo": w_comic_event_undo,
     "/api/feedback": w_feedback,
     "/api/watch-later": w_watch_later,
     "/api/custom-metadata": w_custom_metadata,
