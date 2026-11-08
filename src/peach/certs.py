@@ -186,12 +186,15 @@ def create_local_ca(files: CertificateFiles, days: int = CA_DAYS) -> Path:
     files.ca_cert.parent.mkdir(parents=True, exist_ok=True)
     _openssl("genrsa", "-out", str(files.ca_key), "3072")
     files.ca_key.chmod(0o600)
-    _openssl("req", "-x509", "-new", "-sha256", "-key", str(files.ca_key),
-             "-out", str(files.ca_cert), "-days", str(days),
-             "-subj", "/CN=Peach Local CA/O=Peach",
-             "-addext", "basicConstraints=critical,CA:TRUE,pathlen:0",
-             "-addext", "keyUsage=critical,keyCertSign,cRLSign",
-             "-addext", "subjectKeyIdentifier=hash")
+    with tempfile.TemporaryDirectory() as raw:
+        config = Path(raw) / "ca.cnf"
+        config.write_text("[req]\ndistinguished_name = dn\n[dn]\n", encoding="utf-8")
+        _openssl("req", "-x509", "-new", "-sha256", "-config", str(config), "-key", str(files.ca_key),
+                 "-out", str(files.ca_cert), "-days", str(days),
+                 "-subj", "/CN=Peach Local CA/O=Peach",
+                 "-addext", "basicConstraints=critical,CA:TRUE,pathlen:0",
+                 "-addext", "keyUsage=critical,keyCertSign,cRLSign",
+                 "-addext", "subjectKeyIdentifier=hash")
     LOGGER.info("已生成本机 CA：%s", files.ca_cert)
     return files.ca_cert
 

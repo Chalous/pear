@@ -134,7 +134,7 @@ describe('共享提示的文字与锚点', () => {
           button.style.cssText = 'position:fixed;left:120px;top:240px;z-index:9999;width:32px;height:32px';
           button.innerHTML = '<svg width="16" height="16"><path d="M4 2v12l10-6Z"/></svg>';
           document.body.append(button);
-          const core = (globalThis as any).PeachCopyEditorCore;
+          const core = (globalThis as any).PearCopyEditorCore;
           const tools = core.createTools({ onToggle() {}, onExport() {}, onExit() {} });
           core.create({
             highlight: tools.highlight,

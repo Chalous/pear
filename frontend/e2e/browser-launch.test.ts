@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { it } from 'node:test';
 import { chromium, type Browser } from 'playwright-core';
-import { launch, requiredEnv } from './harness.ts';
+import { emulateTransparency, launch, requiredEnv } from './harness.ts';
 
 async function disabledFeatures(browser: Browser): Promise<Set<string>> {
   const session = await browser.newBrowserCDPSession();
@@ -27,4 +27,23 @@ it('回环网络规避只用于 Windows，且保留当前 Playwright 的全部�
   const browser = await launch();
   try { assert.deepEqual(await disabledFeatures(browser), expected); }
   finally { await browser.close(); }
+});
+
+it('透明度模拟保留配色与动效偏好，并可切换减少透明度', async () => {
+  const browser = await launch();
+  try {
+    const context = await browser.newContext({ colorScheme: 'dark', reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    const preferences = () => page.evaluate(() => ({
+      transparency: matchMedia('(prefers-reduced-transparency:reduce)').matches,
+      motion: matchMedia('(prefers-reduced-motion:reduce)').matches,
+      dark: matchMedia('(prefers-color-scheme:dark)').matches,
+    }));
+    await emulateTransparency(page);
+    assert.deepEqual(await preferences(), { transparency: false, motion: true, dark: true });
+    await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
+    assert.deepEqual(await preferences(), { transparency: false, motion: false, dark: false });
+    await emulateTransparency(page, 'reduce');
+    assert.deepEqual(await preferences(), { transparency: true, motion: false, dark: false });
+  } finally { await browser.close(); }
 });

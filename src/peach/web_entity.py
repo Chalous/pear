@@ -102,9 +102,9 @@ def _missing_entity_result(connection, kind: str, name: str, entity_id: int | No
 
 #: 资料页与索引页数作品的口径：视频，且没有标「已消失」（ADR-0087）。回收站里的照旧算；
 #: 代表作的取图不套这一条。
-COUNTED_VIDEO = (
-    "a.medium='video' AND COALESCE(a.disposal,'')<>'vanished' AND NOT peach_is_local_extra(a.name,a.path)"
-)
+COUNTED_ASSET = "COALESCE(a.disposal,'')<>'vanished' AND NOT peach_is_local_extra(a.name,a.path)"
+COUNTED_VIDEO = "a.medium='video' AND " + COUNTED_ASSET
+COUNTED_CATALOG = "a.medium IN ('video','comic') AND " + COUNTED_ASSET
 
 
 def scope_predicate(kind: str, column: str, subject: str = "?") -> str:
@@ -824,7 +824,7 @@ def _index_rows(contract: WebContract, kind, q, limit, offset, category):
         else:
             sql = ("SELECT e.id entity_id,e.canonical_name k, count(DISTINCT " + video_work_key(contract, c) + ") n "
                    "FROM asset_entity ae JOIN entity e ON e.id=ae.entity_id "
-                   "JOIN asset a ON a.id=ae.asset_id WHERE " + COUNTED_VIDEO + " AND e.kind='tag' "
+                   "JOIN asset a ON a.id=ae.asset_id WHERE " + COUNTED_CATALOG + " AND e.kind='tag' "
                    f"AND e.canonical_name NOT IN ({','.join('?' for _ in LENGTH_TAGS)}) "
                    "AND " + tag_is_not_a_performer_name("e.normalized_name") + " "
                    "AND " + tag_not_hidden("ae.asset_id", "e.normalized_name") + " ")

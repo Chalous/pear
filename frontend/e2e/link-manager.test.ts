@@ -37,7 +37,7 @@ describe('链接检查身份与断链动效', () => {
           assert.equal(await table.locator('[data-link-identity] img').count(), 1);
           assert.equal(await table.locator('[data-link-address] img').count(), 1);
           assert.equal(await table.locator('[data-link-name] img').count(), 0);
-          assert.ok((await table.innerText()).includes('Peach 资料'));
+          assert.ok((await table.innerText()).includes('Pear 资料'));
           assert.ok((await table.innerText()).includes('链接名称'));
           await verifyColumnContentWidth(table, 'url', '[data-link-address]');
           await verifyColumnContentWidth(table, 'note', '[data-link-result]');

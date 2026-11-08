@@ -253,6 +253,10 @@ describe('作品详情岛', () => {
     try {
       const page = opened.page;
       await page.emulateMedia({reducedMotion:'no-preference'});
+      await page.waitForFunction(() => {
+        const layer = document.querySelector('.top .search [data-glass-drift] span');
+        return layer && getComputedStyle(layer).animationName !== 'none';
+      });
       await page.route(/\/api\/item\?/, async route => {
         await new Promise(resolve => setTimeout(resolve, 400));
         await route.fallback();
@@ -267,21 +271,24 @@ describe('作品详情岛', () => {
         }; requestAnimationFrame(sample);
       });
       const listed = opened.stub.reads.get('/api/items') || 0;
-      const backgroundPlayState=()=>page.locator('.top .search').first().evaluate(
-        node=>getComputedStyle(node).animationPlayState);
+      const backgroundPlayState=()=>page.locator('.top .search [data-glass-drift] span').evaluateAll(
+        nodes=>nodes.map(node=>({name:getComputedStyle(node).animationName,state:getComputedStyle(node).animationPlayState})));
       const initialPlayState=await backgroundPlayState();
+      assert.ok(initialPlayState.length > 0 && initialPlayState.every(animation=>animation.name!=='none' && animation.state==='running'),
+        `搜索框背景有正在运行的动画：${JSON.stringify(initialPlayState)}`);
       await page.locator(`#grid [data-media-card][data-id="${ITEM.plain}"] [data-media-title]`).first().click();
       await pathIs(page, `/assets/${ITEM.plain}`);
       await page.locator(DETAIL_READY).waitFor();
       const heights = await page.evaluate(() => (window as unknown as { coldCatalogHeights: number[] }).coldCatalogHeights);
       assert.ok(heights.length > 5 && Math.max(...heights) - Math.min(...heights) < 1, JSON.stringify(heights));
-      assert.ok((await backgroundPlayState()).split(',').every(state=>state.trim()==='paused'));
+      assert.deepEqual(await backgroundPlayState(),initialPlayState.map(animation=>({...animation,state:'paused'})),
+        '详情打开时搜索框背景动画全部暂停');
       assert.equal(await page.evaluate(() => document.activeElement?.id), 'closeStage', '内容到了焦点不在关闭键上');
       await page.locator('#closeStage').click();
       await pathIs(page, '/');
       await page.locator('#stage[open]').waitFor({ state: 'detached', timeout: 10_000 }).catch(() => {});
       assert.equal(await page.locator('#stage[open]').count(), 0);
-      assert.equal(await backgroundPlayState(),initialPlayState,'关闭详情恢复背景动画状态');
+      assert.deepEqual(await backgroundPlayState(),initialPlayState,'关闭详情恢复背景动画状态');
       await page.locator(`#grid [data-media-card][data-id="${ITEM.plain}"]`).first().waitFor();
       assert.equal(opened.stub.reads.get('/api/items') || 0, listed, '关掉详情回列表重取了一遍');
       assert.deepEqual(withoutPlayer(opened.problems), []);

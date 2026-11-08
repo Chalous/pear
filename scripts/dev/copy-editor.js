@@ -1,7 +1,7 @@
 /* Peach 应用的原位改字适配器。 */
 (() => {
   const source = document.body.dataset.peachCopyMode === 'source', key = 'peach.copy-edits.v1';
-  const core = globalThis.PeachCopyEditorCore;
+  const core = globalThis.PearCopyEditorCore;
   let edits = {}, active = true, saving = false, editor;
   try { edits = JSON.parse(localStorage.getItem(key) || '{}'); } catch {}
   const originals = new WeakMap();

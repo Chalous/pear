@@ -5,7 +5,7 @@ import { after, before, describe, it } from 'node:test';
 import type { Browser, Page } from 'playwright-core';
 
 import { DETAIL, openFollowFeed } from './follow-fixture.ts';
-import { launch, VIEWPORTS } from './harness.ts';
+import { launch, requiredEnv, VIEWPORTS } from './harness.ts';
 import { ITEM, openItemPage } from './item-fixture.ts';
 
 const VIDEO = '#stage video.vjs-tech';
@@ -23,9 +23,8 @@ describe('视频退出续播', () => {
 
   before(async () => {
     browser = await launch();
-    const origin = process.env.PEACH_E2E_ORIGIN!;
-    const result = await (await fetch(new URL('/api/items?medium=video&limit=1', origin))).json();
-    clip = new URL(`/stream?id=${result.items[0].id}`, origin).toString();
+    const origin = requiredEnv('PEACH_E2E_ORIGIN');
+    clip = new URL(`/stream?id=${requiredEnv('PEACH_E2E_ITEM')}`, origin).toString();
   });
   after(async () => { await browser.close() });
 

@@ -7,7 +7,7 @@ import { launch, layout, settle, VIEWPORTS, visit } from './harness.ts';
    跟着媒体库里有没有网盘）照本机上次记下的结构画，新开的浏览器里没有记录，按最小结构画。 */
 const sections = [
   ['library', '媒体库与入库', '媒体库与目录'], ['subscriptions', '来源与订阅', '作品资料站点'],
-  ['downloads', '下载渠道', '浏览器添加 JAV'], ['network', '网络与访问', 'Peach 代理'],
+  ['downloads', '下载渠道', '浏览器添加 JAV'], ['network', '网络与访问', 'Pear 代理'],
   ['maintenance', '应用与维护', '开机自启'], ['diagnostics', '系统诊断', '库健康'],
 ] as const;
 

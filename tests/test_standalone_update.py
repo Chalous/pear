@@ -20,6 +20,7 @@ from peach import release_signing, settings_file, standalone_update as update
 from peach import update_packages
 from scripts.package_windows_release import package as package_release
 from scripts.smoke_split_update import verify as verify_split
+from support.conditions import missing_prerequisite
 from support.ledger import fresh_ledger
 
 
@@ -687,6 +688,13 @@ class StandaloneUpdateTests(unittest.TestCase):
     def test_supported_older_clients_can_install_this_release(self):
         """旧版本标签里的更新代码原样读这一版的发布条目与更新包（ADR-0120）。"""
         from scripts import update_compat
+        try:
+            update_compat.client_tags(update_compat.ROOT, "1.0.0")
+            older = update_compat.client_tags(update_compat.ROOT, "1.0.0", oldest="0.47.3")
+        except ValueError as exc:
+            missing_prerequisite(f"旧客户端兼容验收缺发布标签：{exc}")
+        if "v0.47.3" not in older:
+            missing_prerequisite("旧客户端兼容验收缺 v0.47.3 发布标签")
         source, output, manifest, target, archive, release = self.release_fixture()
         self.assertEqual(update_compat.verify(output, "1.0.0"), {})
         rows = [update_compat.release_row(output, "1.0.0")]

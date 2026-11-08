@@ -11,7 +11,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { chromium, type Browser, type BrowserContext, type Locator, type Page } from 'playwright-core';
+import { chromium, type Browser, type BrowserContext, type CDPSession, type Locator, type Page } from 'playwright-core';
 
 export interface Viewport {
   name: string;
@@ -43,6 +43,18 @@ export function requiredEnv(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`${name} 未设置：用 \`tests/test_web_e2e.py\` 起服务后再跑`);
   return value;
+}
+
+const transparencySessions = new WeakMap<Page, CDPSession>();
+
+/** 材质检查显式选择透明度偏好；独立协议会话保留 Playwright 的动效与配色模拟。 */
+export async function emulateTransparency(page: Page, value: 'no-preference' | 'reduce' = 'no-preference'): Promise<void> {
+  let session = transparencySessions.get(page);
+  if (!session) {
+    session = await page.context().newCDPSession(page);
+    transparencySessions.set(page, session);
+  }
+  await session.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-transparency', value }] });
 }
 
 export async function launch(): Promise<Browser> {
@@ -156,10 +168,10 @@ export async function expectBody(page: Page, where: string, body: readonly Locat
   }
 }
 
-/** Peach 配置页的主体：标题与默认的媒体库分区。 */
+/** Pear 配置页的主体：标题与默认的媒体库分区。 */
 export function configurationBody(page: Page): Locator[] {
   return [
-    page.locator('#main').getByRole('heading', { name: 'Peach 配置', exact: true }),
+    page.locator('#main').getByRole('heading', { name: 'Pear 配置', exact: true }),
     page.locator('#stats').getByRole('tab', { name: '媒体库与入库' }),
   ];
 }
@@ -178,6 +190,7 @@ export async function visit(browser: Browser, path: string, viewport: Viewport,
     localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false }));
   });
   const page = await context.newPage();
+  await emulateTransparency(page);
   const problems: string[] = [];
   page.on('pageerror', (error) => problems.push(`pageerror ${error.message}`));
   page.on('console', (message) => {

@@ -38,7 +38,8 @@ describe('馆藏卡片与列表', () => {
         await page.locator('[data-catalog-table] [data-catalog-row]').first().waitFor();
         await settle(page, '#grid');
         const count = await page.locator('#grid [data-catalog-row]').count();
-        assert.ok(count > 0);
+        assert.ok(count > 10 && count <= 20, '演示库覆盖两页列表');
+        const remaining = count - 10;
         assert.equal(await page.locator('#grid [data-mix-card]').count(), 0);
         const geometry = await page.locator('#grid [data-catalog-row]').first().evaluate(node => {
           const row = node.getBoundingClientRect();
@@ -68,12 +69,12 @@ describe('馆藏卡片与列表', () => {
         await page.getByRole('option', { name: '每页 10 部', exact: true }).click();
         await page.waitForFunction(() => document.querySelectorAll('[data-catalog-row]').length === 10);
         await page.getByRole('button', { name: '下一页', exact: true }).click();
-        await page.waitForFunction(() => document.querySelectorAll('[data-catalog-row]').length === 2);
-        await page.locator('#grid [data-list-open]').first().click();
+        await page.waitForFunction(expected => document.querySelectorAll('[data-catalog-row]').length === expected, remaining);
+        await page.locator('#grid [data-catalog-row][data-guide-video] [data-list-open]').first().click();
         await page.waitForURL(/\/(?:assets|works)\//);
         await page.goBack();
         await page.locator('[data-catalog-table] [data-catalog-row]').first().waitFor();
-        await page.waitForFunction(() => document.querySelectorAll('[data-catalog-row]').length === 2);
+        await page.waitForFunction(expected => document.querySelectorAll('[data-catalog-row]').length === expected, remaining);
         assert.equal(await page.getByRole('button', { name: '第 2 页', exact: true }).getAttribute('aria-current'), 'page');
         await choose('卡片');
         await page.locator('[data-catalog-view-mode="cards"] [data-media-card]').first().waitFor();

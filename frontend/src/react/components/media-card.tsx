@@ -248,8 +248,6 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
     }
     /* 悬停的「打开详情」始终进详情浮层；漫画的点卡默认直接进阅读器。 */
     if (target.closest('[data-open-detail]')) { onOpen(item, el); return }
-    if (String(item.medium) === 'comic' && actions.openComic) { actions.openComic(item); return }
-    if (target.closest('[data-open]')) { onOpen(item, el); return }
     const entity = target.closest<HTMLElement>('[data-entity-kind]');
     if (entity && el.contains(entity)) {
       actions.openEntity(entity.dataset.entityKind || '', entity.dataset.entityName || '');
@@ -259,6 +257,7 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
     if (unowned && el.contains(unowned)) { actions.openUnowned(); return }
     const tag = target.closest<HTMLElement>('[data-tag]');
     if (tag && el.contains(tag)) { actions.toggleTag(tag.dataset.tag || ''); return }
+    if (String(item.medium) === 'comic' && actions.openComic) { actions.openComic(item); return }
     onOpen(item, el);
   };
 
@@ -317,7 +316,8 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
 
   return (
     <article ref={attach} data-media-card="" data-id={item.id} data-variant={variant}
-      data-guide-video={item.location !== 'online' && !String(item.name || '').toLowerCase().endsWith('.iso') ? '' : undefined}
+      data-guide-video={(item.medium || 'video') === 'video' && item.location !== 'online'
+        && !String(item.name || '').toLowerCase().endsWith('.iso') ? '' : undefined}
       data-watch-later={later ? '' : undefined} data-library={library}
       data-jav-item={item.is_jav ? '' : undefined}
       data-part-seed={parts ? parts.seed_id : undefined} data-stacked={stacked ? '' : undefined}

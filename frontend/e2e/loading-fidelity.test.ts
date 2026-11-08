@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 import type { Browser } from 'playwright-core';
-import { launch, requiredEnv, VIEWPORTS } from './harness.ts';
+import { emulateTransparency, launch, requiredEnv, VIEWPORTS } from './harness.ts';
 
 describe('页面等待态的结构', () => {
   let browser: Browser;
@@ -38,6 +38,7 @@ describe('页面等待态的结构', () => {
       try {
         await context.addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false })));
         const page = await context.newPage();
+        await emulateTransparency(page);
         await page.route(/\/api\/(?:items|facets)\?/, async route => { await held; await route.continue() });
         await page.goto(requiredEnv('PEACH_E2E_ORIGIN') + '/', { waitUntil: 'load' });
         const frame = page.locator('[data-catalog-frame]');
