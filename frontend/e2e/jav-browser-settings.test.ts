@@ -36,7 +36,7 @@ describe('浏览器添加 JAV 设置', () => {
         });
         await page.reload();
         const region = page.getByRole('region', { name: '浏览器添加 JAV', exact: true });
-        const install = region.getByRole('link', { name: '安装 Peach 用户脚本' });
+        const install = region.getByRole('link', { name: '安装 Pear 用户脚本' });
         await install.waitFor();
         const channel = region.locator('button[aria-haspopup="listbox"]');
         const installBox = await region.locator('[data-userscript-status]').boundingBox();
@@ -104,9 +104,9 @@ describe('浏览器添加 JAV 设置', () => {
         const copied = await page.evaluate(() => (window as Window & { pairingClipboard: string[] }).pairingClipboard);
         assert.equal(copied.length, 1);
         assert.deepEqual(JSON.parse(copied[0]!), { peach_pairing: 1, base: new URL(page.url()).origin, token: 'test-issued-token-1' });
-        assert.equal(await region.getByRole('link', { name: '安装 Peach 用户脚本' }).getAttribute('href'),
+        assert.equal(await region.getByRole('link', { name: '安装 Pear 用户脚本' }).getAttribute('href'),
           USERSCRIPT.install_url);
-        assert.equal(await region.getByLabel('Peach 地址', { exact: true }).inputValue(), new URL(page.url()).origin);
+        assert.equal(await region.getByLabel('Pear 地址', { exact: true }).inputValue(), new URL(page.url()).origin);
         await region.getByRole('button', { name: '更新渠道与令牌', exact: true }).click();
         await page.waitForFunction(() => document.querySelector<HTMLInputElement>(
           'input[type="password"][value="test-issued-token-2"]') !== null);
@@ -146,7 +146,7 @@ describe('浏览器添加 JAV 设置', () => {
       await connection.getByText('已连接', { exact: true }).waitFor();
       assert.equal(await connection.getAttribute('data-connection-tone'), 'success');
       await region.getByText(`用户脚本 v${RELEASE.version}`, { exact: true }).waitFor();
-      assert.equal(await region.getByRole('link', { name: '安装 Peach 用户脚本' }).count(), 0);
+      assert.equal(await region.getByRole('link', { name: '安装 Pear 用户脚本' }).count(), 0);
       assert.equal(await region.getByLabel('浏览器添加专用令牌', { exact: true }).count(), 0);
       installed = false;
       await region.getByRole('button', { name: '重新检测', exact: true }).click();
@@ -155,7 +155,7 @@ describe('浏览器添加 JAV 设置', () => {
       await page.evaluate(() => window.postMessage({ type: 'peach-userscript:ready', protocol: 1,
         version: '9.0.0', paired: true, nonce: crypto.randomUUID() }, location.origin));
       assert.equal(await connection.getByText('未检测到', { exact: true }).count(), 1);
-      assert.equal(await region.getByRole('link', { name: '安装 Peach 用户脚本' }).count(), 1);
+      assert.equal(await region.getByRole('link', { name: '安装 Pear 用户脚本' }).count(), 1);
       assert.ok((await region.innerText()).includes('允许用户脚本'));
       assert.equal(await region.getByRole('link', { name: 'Tampermonkey 权限设置说明' }).getAttribute('href'),
         'https://www.tampermonkey.net/faq.php#Q209');

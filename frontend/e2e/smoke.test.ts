@@ -216,7 +216,7 @@ describe('路由冒烟', () => {
     });
     try {
       await expectBody(opened.page, '/stats', [statsInventoryTab(opened.page)]);
-      await opened.page.waitForFunction(() => document.title === '统计 · Peach');
+      await opened.page.waitForFunction(() => document.title === '统计 · Pear');
       assert.ok(reads > 0, '通知基线没有读取');
       const response = await opened.page.request.get(`${requiredEnv('PEACH_E2E_ORIGIN')}/api/item?id=${id}`);
       const item = await response.json();
@@ -228,13 +228,13 @@ describe('路由冒烟', () => {
       const stage = opened.page.getByRole('dialog', { name: '作品详情', exact: true });
       await stage.locator('[data-item-detail] [data-item-title]').waitFor({ state: 'visible' });
       assert.equal(new URL(opened.page.url()).pathname, `/assets/${id}`);
-      await opened.page.waitForFunction(expected => document.title === expected, `${label} · Peach`);
+      await opened.page.waitForFunction(expected => document.title === expected, `${label} · Pear`);
       await opened.page.goBack();
       await statsInventoryTab(opened.page).waitFor({ state: 'visible' });
-      await opened.page.waitForFunction(() => document.title === '统计 · Peach');
+      await opened.page.waitForFunction(() => document.title === '统计 · Pear');
       await opened.page.goForward();
       await stage.locator('[data-item-detail] [data-item-title]').waitFor({ state: 'visible' });
-      await opened.page.waitForFunction(expected => document.title === expected, `${label} · Peach`);
+      await opened.page.waitForFunction(expected => document.title === expected, `${label} · Pear`);
     } finally { await opened.close() }
   });
 
