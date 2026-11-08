@@ -21,7 +21,7 @@ describe('原位改字', () => {
         await page.setContent('<meta charset="utf-8"><body><p>预览说明</p></body>');
         await page.addScriptTag({ content: await readFile(new URL('../src/copy-editor-core.js', import.meta.url), 'utf8') });
         await page.evaluate(() => {
-          const tools = (globalThis as any).PeachCopyEditorCore.createTools({
+          const tools = (globalThis as any).PearCopyEditorCore.createTools({
             onToggle(active: boolean) { document.body.dataset.active = String(active); },
             onExport() { document.body.dataset.exported = 'true'; },
             onExit() { document.body.dataset.exited = 'true'; },
@@ -117,7 +117,7 @@ describe('原位改字', () => {
           root.innerHTML = '<style>dialog{inset:auto 16px 16px auto;margin:0;width:180px;height:200px;overflow:hidden;transform:translateY(0)}</style><dialog><div class="body"><p>设置内容</p></div></dialog>';
           root.querySelector('dialog')!.showModal();
           const bodyHeight = root.querySelector('.body')!.getBoundingClientRect().height;
-          (globalThis as any).copyTools = (globalThis as any).PeachCopyEditorCore.createTools({
+          (globalThis as any).copyTools = (globalThis as any).PearCopyEditorCore.createTools({
             styles, onToggle(active: boolean) { document.body.dataset.active = String(active); },
           });
           return bodyHeight;
@@ -159,7 +159,7 @@ describe('原位改字', () => {
         const page = await context.newPage();
         await page.setContent('<meta charset="utf-8"><style>[data-copy-highlight]{pointer-events:none}[data-copy-input]{padding:2px 6px;border:0;background:#141518;color:white}</style><header style="position:fixed;top:8px;left:20px;font:13px/20.8px sans-serif"><a id="link" href="#download">下载最新版 →</a></header><button id="button" style="margin:90px 20px">操作名称</button>');
         await page.addScriptTag({ content: await readFile(new URL('../src/copy-editor-core.js', import.meta.url), 'utf8') });
-        await page.evaluate(() => (globalThis as any).PeachCopyEditorCore.create({save(_edit: unknown, text: string) {
+        await page.evaluate(() => (globalThis as any).PearCopyEditorCore.create({save(_edit: unknown, text: string) {
           if (text === '保存失败') throw Error('临时失败');
           return {};
         }}));
@@ -189,7 +189,7 @@ describe('原位改字', () => {
         await page.setContent('<meta charset="utf-8"><style>[data-copy-highlight]{pointer-events:none}</style><p id="copy" style="margin:80px 20px">配置保存在 <code>/data</code>，媒体在 <code>/media</code>。</p>');
         await page.addScriptTag({ content: await readFile(new URL('../src/copy-editor-core.js', import.meta.url), 'utf8') });
         await page.evaluate(() => {
-          const core = (globalThis as any).PeachCopyEditorCore;
+          const core = (globalThis as any).PearCopyEditorCore;
           core.create({ resolve(node: Text) {
             const element = node.parentElement!.closest('#copy');
             if (!element) return null;
