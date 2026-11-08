@@ -235,13 +235,69 @@
 .peach-react [data-photo-lightbox][data-has-strip] [data-photo-bar] {
   bottom: 98px;
 }
-/* 漫画档工具条多一枚「双页」，三列排不下四个孩子，缩放药丸原本自动换行落到左列、
-   悬在中缝偏左：显式排到第二行整行居中，页码在上、缩放在下，都以中缝对齐。
-   AV 灯箱没有「双页」这一枚（无 `data-spread-allowed`），缩放仍贴右。 */
-.peach-react [data-photo-bar][data-spread-allowed] [data-photo-zoom] {
+/* 标记与缩放共用一只工具组：AV 灯箱只有缩放，贴右（第 1 行第 3 列自动落位）；
+   漫画档整组换行到第二行、以中缝居中——页码在上、标记与缩放在下，都与中缝对齐。
+   最窄的窗口放不下两枚药丸时组内折行，不把底栏撑出视口。 */
+.peach-react [data-photo-tools] {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-self: end;
+}
+.peach-react [data-photo-bar][data-spread-allowed] [data-photo-tools] {
   grid-column: 1 / -1;
   grid-row: 2;
   justify-self: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+  row-gap: 6px;
+}
+/* 标记药丸：与缩放药丸同一副面。撤销键只在最近一次标记后点亮（disabled 出场）。 */
+.peach-react [data-photo-marks] {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px;
+  border-radius: var(--pill-radius);
+  background: rgba(0, 0, 0, .6);
+  color: rgba(255, 255, 255, .82);
+  backdrop-filter: blur(16px);
+}
+.peach-react [data-photo-marks] button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.peach-react [data-photo-marks] button:disabled {
+  opacity: .38;
+  cursor: default;
+}
+.peach-react [data-photo-marks] button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, .22);
+}
+.peach-react [data-photo-marks] button svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+/* 按压态就是反馈：这一页标过，喜欢变红心、高潮变橙焰；黑底上不跟主题。 */
+.peach-react [data-photo-marks] button[aria-pressed="true"][data-mark-btn="like"] svg {
+  fill: #ff4d6a;
+  stroke: #ff4d6a;
+}
+.peach-react [data-photo-marks] button[aria-pressed="true"][data-mark-btn="o"] svg {
+  fill: #ffa94d;
+  stroke: #ffa94d;
 }
 .peach-react [data-photo-bar] > * {
   pointer-events: auto;

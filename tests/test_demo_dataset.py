@@ -147,13 +147,16 @@ class DemoDatasetTests(unittest.TestCase):
             connection.row_factory = sqlite3.Row
             videos = connection.execute("SELECT count(*) FROM asset WHERE medium='video'").fetchone()[0]
             images = connection.execute("SELECT count(*) FROM asset WHERE medium='image'").fetchone()[0]
+            pages = connection.execute("SELECT count(*) FROM comic_page").fetchone()[0]
             made_ids = [row["id"] for row in connection.execute(
                 "SELECT id FROM asset WHERE medium='video' AND (code IS NULL OR code='') "
                 "AND name LIKE '%.mp4' AND path NOT LIKE '%未整理%'")]
         self.assertEqual(videos, len(items))
         # 番号作品旁的 `-poster.jpg` 是附属文件，扫描不登记，封面照样从磁盘读（上面的 covers）。
         listed = [item for item in items if item.poster and not item.poster.endswith("-poster.jpg")]
-        self.assertEqual(images, sum(len(item.gallery) for item in items) + len(listed))
+        # 直接含图的目录是一本漫画（scan.py 的漫画分支）：演示树的图集与散图聚成漫画页，
+        # 不再逐张登记成 medium='image'。张数守恒：图要么成页，要么自己是图片资产。
+        self.assertEqual(images + pages, sum(len(item.gallery) for item in items) + len(listed))
         for asset_id in made_ids:
             self.assertTrue((self.root / "generated" / "posters" / f"{asset_id}_4.jpg").is_file())
         rows = read_rows(self.root / "generated" / "library-metadata-field-candidates.csv")

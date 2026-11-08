@@ -4520,6 +4520,112 @@ class ComicWebTests(unittest.TestCase):
         self.assertEqual(unknown, {'error': 'not found'})
         self.assertNotIn('resume', payload)
 
+    def test_event_marks_once_counts_o_and_dedupes_retries(self):
+        """同一次点击的网络重发只记一条：重发回 counted: False，o_count 不再涨。"""
+        with route_client(self.app) as client:
+            first = client.post('/api/comic-event', json={
+                'event': '6f1c2f26-9c46-4a2d-9a58-6ff21e0f4b01', 'asset': 1, 'kind': 'o',
+                'first_page': 1, 'last_page': 1, 'occurred_at': 1000, 'session': 's-1'}).json()
+            retry = client.post('/api/comic-event', json={
+                'event': '6f1c2f26-9c46-4a2d-9a58-6ff21e0f4b01', 'asset': 1, 'kind': 'o',
+                'first_page': 1, 'last_page': 1, 'occurred_at': 1000, 'session': 's-1'}).json()
+            item = client.get('/api/item?id=1').json()
+        self.assertEqual(first, {'ok': True, 'counted': True, 'o_count': 1})
+        self.assertEqual(retry, {'ok': True, 'counted': False, 'o_count': 1})
+        self.assertEqual(item['o_count'], 1)
+
+    def test_event_like_whole_book_carries_reason_into_history(self):
+        """整本喜欢：两端都空；理由进历史详情，回跳时按整本处理。"""
+        with route_client(self.app) as client:
+            marked = client.post('/api/comic-event', json={
+                'event': '5a7d8b10-0000-4000-8000-000000000002', 'asset': 1, 'kind': 'like',
+                'occurred_at': 2000, 'reason': '画风喜欢'}).json()
+            payload = client.get('/api/comic-events?id=1').json()
+        self.assertEqual(marked['ok'], True)
+        self.assertEqual(marked['o_count'], 0)
+        event = payload['events'][0]
+        self.assertEqual((event['kind'], event['first'], event['last'], event['reason']),
+                         ('like', None, None, '画风喜欢'))
+        self.assertIsNone(event['undone_at'])
+
+    def test_event_undo_drops_count_once_and_flags_history(self):
+        """撤销指向同一事件 ID：合计减一次、再撤不再减；历史保留行并标撤销时刻。"""
+        with route_client(self.app) as client:
+            client.post('/api/comic-event', json={
+                'event': '5a7d8b10-0000-4000-8000-000000000003', 'asset': 1, 'kind': 'o',
+                'first_page': 2, 'last_page': 2, 'occurred_at': 1000})
+            undone = client.post('/api/comic-event-undo',
+                                 json={'event': '5a7d8b10-0000-4000-8000-000000000003'}).json()
+            again = client.post('/api/comic-event-undo',
+                                json={'event': '5a7d8b10-0000-4000-8000-000000000003'}).json()
+            payload = client.get('/api/comic-events?id=1').json()
+            item = client.get('/api/item?id=1').json()
+        self.assertEqual((undone['ok'], undone['undone'], undone['o_count']), (True, True, 0))
+        self.assertEqual((again['ok'], again['undone'], again['o_count']), (True, False, 0))
+        self.assertEqual(item['o_count'], 0)
+        self.assertIsNotNone(payload['events'][0]['undone_at'])
+        self.assertEqual(payload['events'][0]['last']['ordinal'], 2)
+
+    def test_event_rejects_cross_book_one_sided_and_reversed_ranges(self):
+        """两端页必须属于同一本且次序不倒；只给一端、倒序、外来页都拒成 invalid。"""
+        ghost_book = self.root / "elsewhere"
+        ghost_book.mkdir()
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("INSERT INTO asset(id,location,path,name,medium,size) VALUES(2,?,?,?,?,?)",
+                               ('local', str(ghost_book), ghost_book.name, 'comic', 0))
+            connection.execute("INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(2,'1.jpg',1)")
+        with route_client(self.app) as client:
+            cases = [
+                {'first_page': 1, 'last_page': 3},   # 另一本的页
+                {'first_page': 2, 'last_page': 1},   # 次序颠倒
+                {'first_page': 1},                   # 只给一端
+                {'last_page': 1},                    # 只给另一端
+            ]
+            for extra in cases:
+                body = {'event': '5a7d8b10-0000-4000-8000-000000000004', 'asset': 1,
+                        'kind': 'like', 'occurred_at': 1000, **extra}
+                self.assertEqual(client.post('/api/comic-event', json=body).json(),
+                                 {'error': 'invalid'}, f'应当拒绝：{extra}')
+            events = client.get('/api/comic-events?id=1').json()['events']
+        self.assertEqual(events, [])
+
+    def test_event_rejects_bad_bodies_and_unknown_books(self):
+        with route_client(self.app) as client:
+            bad = client.post('/api/comic-event', json={
+                'event': '', 'asset': 1, 'kind': 'like', 'occurred_at': 1000}).json()
+            bad_kind = client.post('/api/comic-event', json={
+                'event': '5a7d8b10-0000-4000-8000-000000000005', 'asset': 1, 'kind': 'hug',
+                'occurred_at': 1000}).json()
+            long_reason = client.post('/api/comic-event', json={
+                'event': '5a7d8b10-0000-4000-8000-000000000006', 'asset': 1, 'kind': 'like',
+                'occurred_at': 1000, 'reason': 'x' * 2001}).json()
+            unknown = client.post('/api/comic-event', json={
+                'event': '5a7d8b10-0000-4000-8000-000000000007', 'asset': 99, 'kind': 'like',
+                'occurred_at': 1000}).json()
+            unknown_undo = client.post('/api/comic-event-undo', json={'event': 'no-such-event'}).json()
+        self.assertEqual(bad, {'error': 'invalid'})
+        self.assertEqual(bad_kind, {'error': 'invalid'})
+        self.assertEqual(long_reason, {'error': 'invalid'})
+        self.assertEqual(unknown, {'error': 'not found'})
+        self.assertEqual(unknown_undo, {'error': 'not found'})
+
+    def test_events_stay_readable_while_directory_is_offline(self):
+        """记录属于账本：目录临时离线，历史详情照样能看。"""
+        ghost = self.root / "history-offline"
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("INSERT INTO asset(id,location,path,name,medium,size) VALUES(2,?,?,?,?,?)",
+                               ('local', str(ghost), ghost.name, 'comic', 0))
+            connection.execute("INSERT INTO comic_page(asset_id,relative_path,ordinal) VALUES(2,'1.jpg',1)")
+            connection.execute(
+                "INSERT INTO comic_event(id,asset_id,kind,first_page_id,last_page_id,occurred_at) "
+                "VALUES('5a7d8b10-0000-4000-8000-000000000008',2,'like',3,3,1000)")
+        with route_client(self.app) as client:
+            pages = client.get('/api/comic-pages?id=2').json()
+            events = client.get('/api/comic-events?id=2').json()
+        self.assertEqual(pages['error'], 'offline')
+        self.assertEqual(len(events['events']), 1)
+        self.assertEqual(events['events'][0]['first']['id'], 3)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -40,10 +40,12 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-/** 最近一次开灯箱交给阅读器的钩子：翻页回报与关闭回执。 */
+/** 最近一次开灯箱交给阅读器的钩子：翻页回报、关闭回执与当场标记。 */
 const hooks = () => lightbox.openPhotoLightbox.mock.calls.at(-1)![3] as {
   onPageChange(index: number): void;
   onClose(): void;
+  marks: { mark(kind: 'like' | 'o'): Promise<boolean>; undo(): Promise<boolean>;
+           snapshot(index: number): { like: boolean; o: boolean; canUndo: boolean } };
 };
 const sent = () => api.apiSend.mock.calls.map((call) => call[1] as { asset: number; page: number; viewed_at: number });
 
@@ -155,5 +157,104 @@ describe('落账', () => {
     const stamps = sent().map((body) => body.viewed_at);
     expect(stamps).toHaveLength(2);
     expect(stamps[1]).toBeGreaterThan(stamps[0]);
+  });
+});
+
+describe('当场标记', () => {
+  it('标记落在正在读的那一页（双页即左页）：事件 ID 与会话现生成，台账点亮按钮', async () => {
+    localStorage.setItem('peach.lightbox-spread.v1', '1');
+    try {
+      api.apiGet.mockImplementation((path: string) => path.startsWith('/api/comic-events')
+        ? Promise.resolve({ id: 1, events: [] })
+        : Promise.resolve({ id: 1, pages: PAGES, resume: { index: 1 } }));
+      await openComicReader(1, notify);
+      const marks = hooks().marks;
+      expect(marks.snapshot(1)).toEqual({ like: false, o: false, canUndo: false });
+      hooks().onPageChange(1); // 双页正在读第 1–2 页，标记算左页。
+      api.apiSend.mockResolvedValue({ ok: true, counted: true, o_count: 1 });
+      expect(await marks.mark('o')).toBe(true);
+      const [sentPath, body] = api.apiSend.mock.calls.at(-1)!;
+      expect(sentPath).toBe('/api/comic-event');
+      expect(body).toMatchObject({
+        asset: 1, kind: 'o', first_page: 12, last_page: 12,
+        occurred_at: expect.any(Number), session: expect.any(String),
+      });
+      expect((body as { event: string }).event).toEqual(expect.any(String));
+      expect(marks.snapshot(1)).toEqual({ like: false, o: true, canUndo: true });
+    } finally {
+      localStorage.removeItem('peach.lightbox-spread.v1');
+    }
+  });
+
+  it('往次的有效标记开局接进台账：那一页按钮直接亮着', async () => {
+    api.apiGet.mockImplementation((path: string) => path.startsWith('/api/comic-events')
+      ? Promise.resolve({ id: 1, events: [
+          { id: 'e-old', kind: 'like', undone_at: null, first: { id: 12, ordinal: 2 }, last: { id: 12, ordinal: 2 } },
+          { id: 'e-gone', kind: 'o', undone_at: 900, first: { id: 13, ordinal: 3 }, last: { id: 13, ordinal: 3 } },
+          { id: 'e-whole', kind: 'like', undone_at: null, first: null, last: null },
+        ] })
+      : Promise.resolve({ id: 1, pages: PAGES }));
+    await openComicReader(1, notify);
+    const marks = hooks().marks;
+    expect(marks.snapshot(1)).toEqual({ like: true, o: false, canUndo: false });
+    expect(marks.snapshot(2)).toEqual({ like: false, o: false, canUndo: false });
+  });
+
+  it('已标的页再点一下是取消：往撤销口发同一个事件 ID，台账熄灭', async () => {
+    api.apiGet.mockImplementation((path: string) => path.startsWith('/api/comic-events')
+      ? Promise.resolve({ id: 1, events: [
+          { id: 'e-old', kind: 'like', undone_at: null, first: { id: 12, ordinal: 2 }, last: { id: 12, ordinal: 2 } },
+        ] })
+      : Promise.resolve({ id: 1, pages: PAGES }));
+    await openComicReader(1, notify);
+    const marks = hooks().marks;
+    hooks().onPageChange(1); // 翻到台账里已标的那一页（第 2 页）。
+    api.apiSend.mockResolvedValue({ ok: true, undone: true, o_count: 0 });
+    expect(await marks.mark('like')).toBe(true);
+    const [sentPath, body] = api.apiSend.mock.calls.at(-1)!;
+    expect(sentPath).toBe('/api/comic-event-undo');
+    expect(body).toEqual({ event: 'e-old' });
+    expect(marks.snapshot(1).like).toBe(false);
+  });
+
+  it('撤销键撤本轮最近标的那条，并从台账熄灭；没有可撤的就落空', async () => {
+    api.apiGet.mockImplementation((path: string) => path.startsWith('/api/comic-events')
+      ? Promise.resolve({ id: 1, events: [] })
+      : Promise.resolve({ id: 1, pages: PAGES }));
+    await openComicReader(1, notify);
+    const marks = hooks().marks;
+    expect(await marks.undo()).toBe(false);
+    api.apiSend.mockResolvedValue({ ok: true, counted: true });
+    await marks.mark('like');
+    api.apiSend.mockClear();
+    api.apiSend.mockResolvedValue({ ok: true, undone: true, o_count: 0 });
+    expect(await marks.undo()).toBe(true);
+    const [sentPath, body] = api.apiSend.mock.calls.at(-1)!;
+    expect(sentPath).toBe('/api/comic-event-undo');
+    expect((body as { event: string }).event).toEqual(expect.any(String));
+    expect(marks.snapshot(0)).toEqual({ like: false, o: false, canUndo: false });
+  });
+
+  it('服务端拒了台账不动；请求抛错同样标不上', async () => {
+    api.apiGet.mockImplementation((path: string) => path.startsWith('/api/comic-events')
+      ? Promise.resolve({ id: 1, events: [] })
+      : Promise.resolve({ id: 1, pages: PAGES }));
+    await openComicReader(1, notify);
+    const marks = hooks().marks;
+    api.apiSend.mockResolvedValue({ error: 'invalid' });
+    expect(await marks.mark('like')).toBe(false);
+    expect(marks.snapshot(0).like).toBe(false);
+    api.apiSend.mockRejectedValue(new Error('network down'));
+    expect(await marks.mark('like')).toBe(false);
+    expect(marks.snapshot(0).like).toBe(false);
+  });
+
+  it('历史回跳：给定页 ID 开局就落在那一页，续读位让位', async () => {
+    api.apiGet.mockImplementation((path: string) => path.startsWith('/api/comic-events')
+      ? Promise.resolve({ id: 1, events: [] })
+      : Promise.resolve({ id: 1, pages: PAGES, resume: { index: 0 } }));
+    await openComicReader(1, notify, { pageId: 13 });
+    expect(lightbox.openPhotoLightbox).toHaveBeenLastCalledWith(
+      2, expect.anything(), undefined, expect.anything());
   });
 });

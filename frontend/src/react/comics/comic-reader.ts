@@ -1,9 +1,13 @@
-/* 漫画阅读器的开启：一份页清单、一处错误口径、一条阅读进度。卡片直开与详情的「开始阅读」共用。
+/* 漫画阅读器的开启：一份页清单、一处错误口径、一条阅读进度、当场标记与撤销。
+ * 卡片直开与详情的「开始阅读」共用，详情的历史回跳经 `start.pageId` 指定开局页。
  * 页 URL 由服务端按页 ID 下发，磁盘路径不进浏览器；目录离线给一句能执行的提示，
  * 不打断当前页。灯箱即阅读器：适宽、翻页、页码、双页与按需加载都是现成的。
  * 进度按页 ID 记账（重扫保留页 ID，进度跨重扫有效）：真的翻到一页才防抖落账，
- * 关灯箱、藏起标签页时把没落的那次立刻补上。 */
+ * 关灯箱、藏起标签页时把没落的那次立刻补上。标记落在正在读的那一页（双页是左页），
+ * 事件 ID 客户端生成，网络重发到服务端也只记一条；已标的页再点一下就是取消，
+ * 按钮的亮灭读会话内的标记台账，开局时从账上把往次的有效标记接过来。 */
 import { apiGet, apiSend } from '../../api';
+import { randomId } from '../../core/random-id';
 import { openPhotoLightbox, spreadStart } from '../photo-lightbox/photo-lightbox-dialog';
 
 /** `/api/comic-pages` 的回包；`error` 与 `message` 是服务端口径（`web_comics.py`）。
@@ -16,13 +20,52 @@ export interface ComicPages {
   resume?: { index: number };
 }
 
+/** `/api/comic-event` 的回包口径（`web_comics.py`）；`counted` 为假即重发被去重。 */
+interface EventReply {
+  error?: string;
+  ok?: boolean;
+  counted?: boolean;
+  undone?: boolean;
+  o_count?: number;
+}
+
+/** `/api/comic-events` 的一条：单页标记按页 ID 进台账，整本与页段不进按钮状态。 */
+interface EventRow {
+  id: string; kind: 'like' | 'o'; undone_at: number | null;
+  first: { id: number; ordinal: number } | null;
+  last: { id: number; ordinal: number } | null;
+}
+
 /** 快速翻页时不一页一落账：停下来这一拍才发，账上留的就是最后那页。 */
 const SAVE_DEBOUNCE_MS = 800;
 
-/** 一次打开的阅读会话：翻到的页先押在这里，防抖落账，关灯箱或藏起标签页补发。 */
+/** 会话内的页标记台账：页 ID → 各类型的有效事件 ID。开局从账上接来（只接单页的），
+ *  之后跟着标记与取消走；灯箱按钮的亮灭直接读它。 */
+type PageMarks = { like?: string; o?: string };
+
+async function loadMarks(assetId: number): Promise<Map<number, PageMarks>> {
+  const map = new Map<number, PageMarks>();
+  try {
+    const data = await apiGet<{ error?: string; events?: EventRow[] }>(`/api/comic-events?id=${assetId}`);
+    for (const event of data.events ?? []) {
+      // 清单新发生的在前：同页同类型的旧事件被后一条覆盖，台账里留的总是最新的有效事件。
+      if (event.undone_at != null || !event.first || !event.last || event.first.id !== event.last.id) continue;
+      const entry = map.get(event.first.id) ?? {};
+      entry[event.kind] = event.id;
+      map.set(event.first.id, entry);
+    }
+  } catch {
+    /* 台账接不上就当没有：按钮只是不亮，标记照常落账。 */
+  }
+  return map;
+}
+
+/** 一次打开的阅读会话：翻到的页先押在这里，防抖落账，关灯箱或藏起标签页补发。
+ *  `sessionId` 给这轮标记事件归组；`lastEvent` 是本轮最近标的那条，点亮撤销键。 */
 let session: {
   assetId: number; pageIds: number[]; timer: number | undefined;
   pending: number | null; reported: number;
+  sessionId: string; lastEvent: string | null; marks: Map<number, PageMarks>;
 } | null = null;
 let lastStamp = 0;
 
@@ -51,6 +94,67 @@ function flushSave(): void {
   });
 }
 
+/** 当场标记正在读的这一页（双页是左页）。已标的页再点一下是取消：往撤销口发同一个
+ *  事件 ID。返回这次落没落账，灯箱据此点亮按钮；失败回 false，不打断阅读。 */
+async function markEvent(kind: 'like' | 'o'): Promise<boolean> {
+  const current = session;
+  if (!current || current.reported < 0 || current.reported >= current.pageIds.length) return false;
+  const pageId = current.pageIds[current.reported];
+  const existing = current.marks.get(pageId)?.[kind];
+  if (existing) {
+    try {
+      const reply = await apiSend<EventReply>('/api/comic-event-undo', { event: existing });
+      if (!reply || reply.error || reply.ok !== true) return false;
+    } catch {
+      return false;
+    }
+    const entry = current.marks.get(pageId);
+    if (entry) delete entry[kind];
+    if (current.lastEvent === existing) current.lastEvent = null;
+    return true;
+  }
+  const eventId = randomId();
+  try {
+    const reply = await apiSend<EventReply>('/api/comic-event', {
+      event: eventId, asset: current.assetId, kind,
+      first_page: pageId, last_page: pageId,
+      occurred_at: Date.now(), session: current.sessionId,
+    });
+    if (!reply || reply.error || reply.ok !== true) return false;
+  } catch {
+    return false; // 尽力而为的伴手账，同进度一样不因落不下打断阅读。
+  }
+  current.marks.set(pageId, { ...current.marks.get(pageId), [kind]: eventId });
+  current.lastEvent = eventId;
+  return true;
+}
+
+/** 撤销本轮最近标的那一条（没有就落空）。服务端对重复撤销幂等。 */
+async function undoLastEvent(): Promise<boolean> {
+  const current = session;
+  if (!current || !current.lastEvent) return false;
+  const eventId = current.lastEvent;
+  try {
+    const reply = await apiSend<EventReply>('/api/comic-event-undo', { event: eventId });
+    if (!reply || reply.error || reply.ok !== true) return false;
+  } catch {
+    return false;
+  }
+  for (const entry of current.marks.values()) {
+    if (entry.like === eventId) delete entry.like;
+    if (entry.o === eventId) delete entry.o;
+  }
+  current.lastEvent = null;
+  return true;
+}
+
+/** 灯箱按钮的状态：这一页（下标）有没有有效标记、本轮还有没有可撤的。 */
+function marksSnapshot(index: number): { like: boolean; o: boolean; canUndo: boolean } {
+  const current = session;
+  const entry = current ? current.marks.get(current.pageIds[index] ?? NaN) : undefined;
+  return { like: Boolean(entry?.like), o: Boolean(entry?.o), canUndo: Boolean(current?.lastEvent) };
+}
+
 function onVisibility(): void {
   if (document.visibilityState === 'hidden') flushSave();
 }
@@ -65,9 +169,10 @@ function endSession(): void {
 export async function openComicReader(assetId: number, notify: {
   toast(message: string): void;
   failure(action: string, error: unknown): void;
-}): Promise<void> {
+}, start?: { pageId?: number }): Promise<void> {
   try {
-    const data = await apiGet<ComicPages>(`/api/comic-pages?id=${assetId}`);
+    // 标记台账与页清单一起取：台账接不上只影响按钮亮灭，不挡阅读。
+    const [data, marks] = await Promise.all([apiGet<ComicPages>(`/api/comic-pages?id=${assetId}`), loadMarks(assetId)]);
     if (data.error) {
       notify.toast(data.message || '页清单还没有建立，先在来源目录上扫一遍');
       return;
@@ -78,20 +183,27 @@ export async function openComicReader(assetId: number, notify: {
       return;
     }
     endSession(); // 上一本还没走完的会话先结账：押着的保存补发，监听摘掉。
-    const start = data.resume && data.resume.index >= 0 && data.resume.index < pages.length
+    // 历史回跳指定了页就落在那一页；否则按服务端给的续读位，没读过从第一页起。
+    const jumped = start?.pageId != null
+      ? pages.findIndex((page) => page.id === start.pageId) : -1;
+    const resumed = data.resume && data.resume.index >= 0 && data.resume.index < pages.length
       ? data.resume.index : 0;
+    const opening = jumped >= 0 ? jumped : resumed;
     session = {
       assetId, pageIds: pages.map((page) => page.id),
-      timer: undefined, pending: null,
+      timer: undefined, pending: null, sessionId: randomId(), lastEvent: null, marks,
       // 「已看过」对齐到开局真正显示的那一页：双页时真机 Swiper 初始化就会对左页报一次
       // slideChange，不对齐的话，光是把书重开一遍就会把进度挪到跨页的左页上。
-      reported: spreadStart(start),
+      reported: spreadStart(opening),
     };
     window.addEventListener('pagehide', flushSave);
     document.addEventListener('visibilitychange', onVisibility);
-    await openPhotoLightbox(start, pages.map((page, index) => ({
+    await openPhotoLightbox(opening, pages.map((page, index) => ({
       src: page.url, thumb: page.url, name: `第 ${index + 1} 页`,
-    })), undefined, { spreadAllowed: true, onPageChange: scheduleSave, onClose: endSession });
+    })), undefined, {
+      spreadAllowed: true, onPageChange: scheduleSave, onClose: endSession,
+      marks: { mark: markEvent, undo: undoLastEvent, snapshot: marksSnapshot },
+    });
   } catch (error) {
     notify.failure('打开阅读器', error);
   }

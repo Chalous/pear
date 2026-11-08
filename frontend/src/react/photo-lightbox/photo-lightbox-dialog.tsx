@@ -38,11 +38,20 @@ const storedSpread = (): boolean => {
 export const spreadStart = (index: number): number =>
   storedSpread() ? index - (index % 2) : index;
 
+/** 当场标记的钩子：`mark` 落账或取消（已标的页再点一下是取消），`undo` 撤本轮最近
+ *  一条；`snapshot` 按下标给按钮状态。记账口径在漫画阅读器（`comic-reader.ts`），
+ *  灯箱只管按钮的亮灭与按压态。 */
+export interface LightboxMarks {
+  mark(kind: 'like' | 'o'): Promise<boolean>;
+  undo(): Promise<boolean>;
+  snapshot(index: number): { like: boolean; o: boolean; canUndo: boolean };
+}
+
 /** 当前灯箱的规格。Swiper 的每屏张数建时定死，切双页/单页要按这份整棵重挂。 */
 let current: {
   slides: LightboxSlide[]; index: number; Swiper: SwiperConstructor; host: LightboxHost | null;
   spreadAllowed: boolean; spread: boolean;
-  onPageChange?: (index: number) => void; onClose?: () => void;
+  onPageChange?: (index: number) => void; onClose?: () => void; marks?: LightboxMarks;
 } | null = null;
 
 function renderLightbox(): void {
@@ -52,7 +61,7 @@ function renderLightbox(): void {
   flushSync(() => at.render(
     <PhotoLightbox key={`lightbox-${++generation}`} slides={spec.slides} index={spec.index}
       Swiper={spec.Swiper} host={spec.host} spreadAllowed={spec.spreadAllowed} spread={spec.spread}
-      onSpread={toggleSpread} onPage={spec.onPageChange} />));
+      onSpread={toggleSpread} onPage={spec.onPageChange} marks={spec.marks} />));
 }
 
 function toggleSpread(next: boolean, page: number): void {
@@ -80,10 +89,11 @@ function lightboxRoot(): Root {
 /** 从第 `index` 张开始看 `slides`。Swiper 取不到时退到新标签页里打开那一张大图。
  *  `spreadAllowed` 给出「双页」开关（漫画阅读用）：一屏两页，翻一次走两页。
  *  `onPageChange` 在真的翻到哪一张时回报下标（漫画阅读进度用）；`onClose` 只在
- *  真正关掉时回一次——切双页/单页整棵重挂不算关。 */
+ *  真正关掉时回一次——切双页/单页整棵重挂不算关。`marks` 给出当场标记的钩子
+ *  （漫画阅读用）：底部多一枚标记药丸，撤销键在最近一次标记后点亮。 */
 export async function openPhotoLightbox(index: number, slides: LightboxSlide[], actions?: LightboxHost,
     options?: { spreadAllowed?: boolean; onPageChange?: (index: number) => void;
-                onClose?: () => void }): Promise<void> {
+                onClose?: () => void; marks?: LightboxMarks }): Promise<void> {
   if (!slides.length || index < 0 || index >= slides.length) return;
   let Swiper: SwiperConstructor;
   try {
@@ -95,7 +105,7 @@ export async function openPhotoLightbox(index: number, slides: LightboxSlide[], 
   current = {
     slides, index, Swiper, host: actions ?? null,
     spreadAllowed: options?.spreadAllowed === true, spread: storedSpread(),
-    onPageChange: options?.onPageChange, onClose: options?.onClose,
+    onPageChange: options?.onPageChange, onClose: options?.onClose, marks: options?.marks,
   };
   renderLightbox();
 }
@@ -112,13 +122,38 @@ interface Detail {
   isOpen(): boolean;
 }
 
-function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, spread, onSpread, onPage }: {
+function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, spread, onSpread, onPage, marks }: {
   slides: LightboxSlide[]; index: number; Swiper: SwiperConstructor; host: LightboxHost | null;
   spreadAllowed: boolean; spread: boolean;
   onSpread(next: boolean, page: number): void;
   onPage?: (index: number) => void;
+  marks?: LightboxMarks;
 }) {
   const many = slides.length > 1;
+  /* 当场标记：按钮状态从阅读器的台账按下标现读，动作完成后手动补一次渲染
+     （台账在灯箱外，React 看不见它变）。发的时候防手抖连点。 */
+  const [, bumpMarks] = useState(0);
+  const marksBusy = useRef(false);
+  const mark = async (kind: 'like' | 'o') => {
+    if (!marks || marksBusy.current) return;
+    marksBusy.current = true;
+    try {
+      await marks.mark(kind);
+      bumpMarks((seen) => seen + 1);
+    } finally {
+      marksBusy.current = false;
+    }
+  };
+  const undoLast = async () => {
+    if (!marks || marksBusy.current) return;
+    marksBusy.current = true;
+    try {
+      await marks.undo();
+      bumpMarks((seen) => seen + 1);
+    } finally {
+      marksBusy.current = false;
+    }
+  };
   const detailId = useId();
   const box = useRef<HTMLDialogElement>(null);
   const mainEl = useRef<HTMLDivElement>(null);
@@ -136,6 +171,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
   // 不然从奇数页恢复双页时，画布在偶数页、页码却还在奇数页。
   const start = spread ? index - (index % 2) : index;
   const [active, setActive] = useState(start);
+  const markState = marks?.snapshot(active) ?? { like: false, o: false, canUndo: false };
   const [percent, setPercent] = useState(100);
   /* 大图的自然尺寸，到了才知道：面板上的分辨率读它。取不到原图的那几张换成缩略图。 */
   const [natural, setNatural] = useState<Record<number, [number, number]>>({});
@@ -315,7 +351,21 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         {spreadAllowed ? <button type="button" data-photo-spread="" aria-pressed={spread}
           title={spread ? '切回单页' : '双页并排'} aria-label={spread ? '切回单页' : '切到双页'}
           onClick={() => onSpread(!spread, active)}>{spread ? '单页' : '双页'}</button> : null}
-        <div data-photo-zoom="">
+        {/* 标记药丸只在给了钩子时画（漫画阅读）：单击落一条事件、已标再点即取消
+            （按压态点亮），撤销键撤本轮最近一次。与缩放药丸一起在第二行整组居中。 */}
+        <div data-photo-tools="">
+          {marks ? <div data-photo-marks="" role="group" aria-label="页标记">
+            <button type="button" data-mark-btn="like" aria-label="喜欢当前页" title="喜欢当前页"
+              aria-pressed={markState.like} onClick={() => void mark('like')}
+              dangerouslySetInnerHTML={{ __html: icon('heart') }} />
+            <button type="button" data-mark-btn="o" aria-label="标记高潮" title="标记高潮"
+              aria-pressed={markState.o} onClick={() => void mark('o')}
+              dangerouslySetInnerHTML={{ __html: icon('flame') }} />
+            <button type="button" data-mark-undo="" aria-label="撤销标记" title="撤销标记"
+              disabled={!markState.canUndo} onClick={() => void undoLast()}
+              dangerouslySetInnerHTML={{ __html: icon('rotate-ccw') }} />
+          </div> : null}
+          <div data-photo-zoom="">
           <button type="button" data-zoom-step="-1" aria-label="缩小"
             onClick={() => apply(percent - PHOTO_ZOOM_STEP)} dangerouslySetInnerHTML={{ __html: icon('zoom-out') }} />
           <input ref={range} type="range" min={PHOTO_ZOOM_MIN} max={PHOTO_ZOOM_MAX} step="1" value={percent}
@@ -327,6 +377,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
             onClick={() => apply('fit')} dangerouslySetInnerHTML={{ __html: icon('maximize') }} />
           <button type="button" data-photo-scale="original" aria-label="原大小" title="原大小"
             onClick={() => apply(100)}>1:1</button>
+          </div>
         </div>
       </div>
       {/* 图片详情只展示安全元数据，定位只把 asset id 交给服务端：绝不能为了显示路径把 ledger

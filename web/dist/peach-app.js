@@ -2,7 +2,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "027021cf-1406-474f-a320-3dee6516d2eb", e._sentryDebugIdIdentifier = "sentry-dbid-027021cf-1406-474f-a320-3dee6516d2eb");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "82de0fa6-df82-425e-a88a-62060bc43fbb", e._sentryDebugIdIdentifier = "sentry-dbid-82de0fa6-df82-425e-a88a-62060bc43fbb");
 	} catch {}
 })();
 var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescriptor, r = Object.getOwnPropertyNames, i = Object.getPrototypeOf, a = Object.prototype.hasOwnProperty, o = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e = null), t.exports), s = (e, n) => {
@@ -55725,7 +55725,7 @@ var Axe = class extends F.Component {
 		return this.state.failed ? null : this.props.children;
 	}
 }, jxe = (0, F.memo)(function({ entry: e, actions: t, go: n }) {
-	return k8(e.path) ? (0, Lt.createPortal)(iRe(e.path, e.props, t, n), e.host, String(e.revision)) : null;
+	return k8(e.path) ? (0, Lt.createPortal)(lRe(e.path, e.props, t, n), e.host, String(e.revision)) : null;
 });
 function Mxe({ children: e }) {
 	let t = sf();
@@ -55739,7 +55739,7 @@ function Mxe({ children: e }) {
 					path: e,
 					element: t.element
 				}, e)),
-				Object.entries(eRe).map(([e, t]) => /* @__PURE__ */ (0, I.jsx)(Af, {
+				Object.entries(aRe).map(([e, t]) => /* @__PURE__ */ (0, I.jsx)(Af, {
 					path: e,
 					element: t.element
 				}, e)),
@@ -55759,7 +55759,7 @@ function Mxe({ children: e }) {
 					path: e,
 					element: S8["/"].element
 				}, e)),
-				Object.entries(tRe).map(([e, t]) => /* @__PURE__ */ (0, I.jsx)(Af, {
+				Object.entries(oRe).map(([e, t]) => /* @__PURE__ */ (0, I.jsx)(Af, {
 					path: e,
 					element: t.element
 				}, e)),
@@ -64451,7 +64451,8 @@ function zZ() {
 		spreadAllowed: e.spreadAllowed,
 		spread: e.spread,
 		onSpread: COe,
-		onPage: e.onPageChange
+		onPage: e.onPageChange,
+		marks: e.marks
 	}, `lightbox-${++bOe}`)));
 }
 function COe(e, t) {
@@ -64483,29 +64484,52 @@ async function BZ(e, t, n, r) {
 		spreadAllowed: r?.spreadAllowed === !0,
 		spread: LZ(),
 		onPageChange: r?.onPageChange,
-		onClose: r?.onClose
+		onClose: r?.onClose,
+		marks: r?.marks
 	}, zZ();
 }
 function VZ() {
 	RZ?.onClose?.(), PZ && (0, Lt.flushSync)(() => PZ.render(null));
 }
-function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread: a, onSpread: o, onPage: s }) {
-	let c = e.length > 1, l = (0, F.useId)(), u = (0, F.useRef)(null), d = (0, F.useRef)(null), f = (0, F.useRef)(null), p = (0, F.useRef)(null), m = (0, F.useRef)(null), h = (0, F.useRef)(null), g = (0, F.useRef)(null), _ = (0, F.useRef)(null), v = (0, F.useRef)(null), y = (0, F.useRef)(null), b = (0, F.useRef)(null), x = (0, F.useRef)(null), S = a ? t - t % 2 : t, [C, w] = (0, F.useState)(S), [T, E] = (0, F.useState)(100), [D, O] = (0, F.useState)({}), [k, A] = (0, F.useState)(() => /* @__PURE__ */ new Set()), [j, M] = (0, F.useState)(() => /* @__PURE__ */ new Set()), [ee, N] = (0, F.useState)(!1), [te, P] = (0, F.useState)({
-		at: S,
+function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread: a, onSpread: o, onPage: s, marks: c }) {
+	let l = e.length > 1, [, u] = (0, F.useState)(0), d = (0, F.useRef)(!1), f = async (e) => {
+		if (c && !d.current) {
+			d.current = !0;
+			try {
+				await c.mark(e), u((e) => e + 1);
+			} finally {
+				d.current = !1;
+			}
+		}
+	}, p = async () => {
+		if (c && !d.current) {
+			d.current = !0;
+			try {
+				await c.undo(), u((e) => e + 1);
+			} finally {
+				d.current = !1;
+			}
+		}
+	}, m = (0, F.useId)(), h = (0, F.useRef)(null), g = (0, F.useRef)(null), _ = (0, F.useRef)(null), v = (0, F.useRef)(null), y = (0, F.useRef)(null), b = (0, F.useRef)(null), x = (0, F.useRef)(null), S = (0, F.useRef)(null), C = (0, F.useRef)(null), w = (0, F.useRef)(null), T = (0, F.useRef)(null), E = (0, F.useRef)(null), D = a ? t - t % 2 : t, [O, k] = (0, F.useState)(D), A = c?.snapshot(O) ?? {
+		like: !1,
+		o: !1,
+		canUndo: !1
+	}, [j, M] = (0, F.useState)(100), [ee, N] = (0, F.useState)({}), [te, P] = (0, F.useState)(() => /* @__PURE__ */ new Set()), [ne, re] = (0, F.useState)(() => /* @__PURE__ */ new Set()), [ie, ae] = (0, F.useState)(!1), [oe, se] = (0, F.useState)({
+		at: D,
 		text: ""
 	});
 	(0, F.useLayoutEffect)(() => {
-		let t = u.current;
+		let t = h.current;
 		t.showModal(), document.body.classList.add("photolight-open");
-		let r = new n(f.current, {
+		let r = new n(_.current, {
 			slidesPerView: "auto",
 			spaceBetween: 8,
 			freeMode: !0,
 			watchSlidesProgress: !0,
 			centeredSlides: !0,
 			slideToClickedSlide: !0
-		}), i = (e, t = 200) => r.slideTo(e, t), o = new n(d.current, {
-			initialSlide: S,
+		}), i = (e, t = 200) => r.slideTo(e, t), o = new n(g.current, {
+			initialSlide: D,
 			slidesPerView: a ? 2 : 1,
 			slidesPerGroup: a ? 2 : 1,
 			zoom: {
@@ -64520,84 +64544,84 @@ function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread
 			},
 			thumbs: { swiper: r },
 			pagination: {
-				el: p.current,
+				el: v.current,
 				clickable: !0,
 				dynamicBullets: !0,
 				dynamicMainBullets: 3,
 				renderBullet: (t, n) => `<button type="button" class="${n}" aria-label="${a ? `查看第 ${t * 2 + 1}-${Math.min(t * 2 + 2, e.length)} 张图片` : `查看第 ${t + 1} 张图片`}"></button>`
 			},
 			navigation: {
-				prevEl: m.current,
-				nextEl: h.current
+				prevEl: y.current,
+				nextEl: b.current
 			},
 			on: { slideChange() {
-				w(this.activeIndex), i(this.activeIndex), s?.(this.activeIndex);
+				k(this.activeIndex), i(this.activeIndex), s?.(this.activeIndex);
 			} }
 		});
-		x.current = o, i(S, 0), y.current = _Oe(t, o, E);
-		let c = ol(t, g.current, _.current), l = (e = !1) => {
-			c.hide(), g.current?.setAttribute("aria-expanded", "false"), e && g.current && document.contains(g.current) && g.current.focus();
+		E.current = o, i(D, 0), w.current = _Oe(t, o, M);
+		let c = ol(t, x.current, S.current), l = (e = !1) => {
+			c.hide(), x.current?.setAttribute("aria-expanded", "false"), e && x.current && document.contains(x.current) && x.current.focus();
 		};
-		b.current = {
+		T.current = {
 			dismiss: l,
 			dismissOutside: (e) => {
 				let t = e instanceof Node ? e : null;
-				return !c.isOpen() || g.current.contains(t) || _.current.contains(t) ? !1 : (l(), !0);
+				return !c.isOpen() || x.current.contains(t) || S.current.contains(t) ? !1 : (l(), !0);
 			},
 			isOpen: c.isOpen
 		};
-		let v = new ResizeObserver(() => {
-			o.update(), r.update(), y.current?.resize();
+		let u = new ResizeObserver(() => {
+			o.update(), r.update(), w.current?.resize();
 		});
-		v.observe(t);
-		let C = (e) => {
-			e.key === "Escape" && (e.preventDefault(), e.stopImmediatePropagation(), b.current?.isOpen() ? b.current.dismiss(!0) : VZ());
+		u.observe(t);
+		let d = (e) => {
+			e.key === "Escape" && (e.preventDefault(), e.stopImmediatePropagation(), T.current?.isOpen() ? T.current.dismiss(!0) : VZ());
 		};
-		return document.addEventListener("keydown", C, !0), () => {
-			document.removeEventListener("keydown", C, !0), l(), v.disconnect(), o.destroy(!0, !0), r.destroy(!0, !0), x.current = null, y.current = null, b.current = null, t.close(), document.body.classList.remove("photolight-open");
+		return document.addEventListener("keydown", d, !0), () => {
+			document.removeEventListener("keydown", d, !0), l(), u.disconnect(), o.destroy(!0, !0), r.destroy(!0, !0), E.current = null, w.current = null, T.current = null, t.close(), document.body.classList.remove("photolight-open");
 		};
 	}, []), (0, F.useLayoutEffect)(() => {
-		v.current && DZ(v.current);
-	}, [T]);
-	let ne = e[C], re = /* @__PURE__ */ new Set([
-		C - 1,
-		C,
-		C + 1
-	]), ie = ne.asset ?? null, ae = async (e) => {
-		if (!ie || !r || e.getAttribute("aria-busy") === "true") return;
-		let t = C;
-		Qc(e), N(!0), P({
+		C.current && DZ(C.current);
+	}, [j]);
+	let ce = e[O], le = /* @__PURE__ */ new Set([
+		O - 1,
+		O,
+		O + 1
+	]), ue = ce.asset ?? null, de = async (e) => {
+		if (!ue || !r || e.getAttribute("aria-busy") === "true") return;
+		let t = O;
+		Qc(e), ae(!0), se({
 			at: t,
 			text: ""
 		});
 		try {
-			P({
+			se({
 				at: t,
-				text: await r.revealSource(ie.id)
+				text: await r.revealSource(ue.id)
 			});
 		} finally {
-			Qc(e, !1), N(!1);
+			Qc(e, !1), ae(!1);
 		}
-	}, oe = (e, t) => {
-		t.naturalWidth && t.naturalHeight && !D[e] && O((n) => ({
+	}, fe = (e, t) => {
+		t.naturalWidth && t.naturalHeight && !ee[e] && N((n) => ({
 			...n,
 			[e]: [t.naturalWidth, t.naturalHeight]
-		})), y.current?.loaded(t);
-	}, se = (t) => {
-		k.has(t) || !e[t].thumb || e[t].thumb === e[t].src ? M((e) => new Set(e).add(t)) : A((e) => new Set(e).add(t));
-	}, ce = (e) => y.current?.apply(e);
+		})), w.current?.loaded(t);
+	}, pe = (t) => {
+		te.has(t) || !e[t].thumb || e[t].thumb === e[t].src ? re((e) => new Set(e).add(t)) : P((e) => new Set(e).add(t));
+	}, me = (e) => w.current?.apply(e);
 	return /* @__PURE__ */ (0, I.jsxs)("dialog", {
-		ref: u,
+		ref: h,
 		"aria-label": "图片浏览",
 		"data-photo-lightbox": "",
 		"data-spread": a ? "" : void 0,
-		"data-has-strip": c ? "" : void 0,
+		"data-has-strip": l ? "" : void 0,
 		onCancel: (e) => {
 			e.preventDefault(), VZ();
 		},
 		onClick: (e) => {
 			let t = e.target;
-			b.current?.dismissOutside(t) || (t === u.current || t.classList.contains("swiper-zoom-container")) && VZ();
+			T.current?.dismissOutside(t) || (t === h.current || t.classList.contains("swiper-zoom-container")) && VZ();
 		},
 		children: [
 			/* @__PURE__ */ (0, I.jsx)("button", {
@@ -64608,7 +64632,7 @@ function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread
 				dangerouslySetInnerHTML: { __html: R("x") }
 			}),
 			/* @__PURE__ */ (0, I.jsxs)("div", {
-				ref: d,
+				ref: g,
 				className: "swiper",
 				"data-photo-main": "",
 				role: "region",
@@ -64621,29 +64645,29 @@ function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread
 							className: "swiper-slide",
 							children: /* @__PURE__ */ (0, I.jsx)("div", {
 								className: "swiper-zoom-container",
-								children: j.has(t) ? /* @__PURE__ */ (0, I.jsx)("span", {
+								children: ne.has(t) ? /* @__PURE__ */ (0, I.jsx)("span", {
 									"data-photo-missing": "",
 									children: "图片取不到"
 								}) : /* @__PURE__ */ (0, I.jsx)("img", {
-									src: k.has(t) ? e.thumb : e.src,
+									src: te.has(t) ? e.thumb : e.src,
 									alt: e.name ?? "",
-									loading: re.has(t) ? "eager" : "lazy",
+									loading: le.has(t) ? "eager" : "lazy",
 									referrerPolicy: "no-referrer",
-									onLoad: (e) => oe(t, e.currentTarget),
-									onError: () => se(t)
+									onLoad: (e) => fe(t, e.currentTarget),
+									onError: () => pe(t)
 								})
 							})
 						}, t))
 					}),
 					/* @__PURE__ */ (0, I.jsx)("button", {
-						ref: m,
+						ref: y,
 						type: "button",
 						"data-photo-nav": "back",
 						"aria-label": "上一张",
 						dangerouslySetInnerHTML: { __html: R("chevron-left") }
 					}),
 					/* @__PURE__ */ (0, I.jsx)("button", {
-						ref: h,
+						ref: b,
 						type: "button",
 						"data-photo-nav": "fwd",
 						"aria-label": "下一张",
@@ -64656,11 +64680,11 @@ function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread
 				"data-spread-allowed": i ? "" : void 0,
 				children: [
 					/* @__PURE__ */ (0, I.jsx)("button", {
-						ref: g,
+						ref: x,
 						type: "button",
 						"data-photo-detail-toggle": "",
 						"aria-expanded": "false",
-						"aria-controls": l,
+						"aria-controls": m,
 						"aria-haspopup": "dialog",
 						"aria-label": "图片详情",
 						title: "图片详情",
@@ -64669,9 +64693,9 @@ function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread
 					/* @__PURE__ */ (0, I.jsxs)("div", { children: [/* @__PURE__ */ (0, I.jsx)("div", {
 						"data-photo-count": "",
 						"aria-live": "polite",
-						children: a && C + 1 < e.length ? `${C + 1}–${C + 2} / ${e.length}` : `${C + 1} / ${e.length}`
-					}), c ? /* @__PURE__ */ (0, I.jsx)("div", {
-						ref: p,
+						children: a && O + 1 < e.length ? `${O + 1}–${O + 2} / ${e.length}` : `${O + 1} / ${e.length}`
+					}), l ? /* @__PURE__ */ (0, I.jsx)("div", {
+						ref: v,
 						"data-photo-pagination": "",
 						"aria-label": "选择图片"
 					}) : null] }),
@@ -64681,105 +64705,141 @@ function TOe({ slides: e, index: t, Swiper: n, host: r, spreadAllowed: i, spread
 						"aria-pressed": a,
 						title: a ? "切回单页" : "双页并排",
 						"aria-label": a ? "切回单页" : "切到双页",
-						onClick: () => o(!a, C),
+						onClick: () => o(!a, O),
 						children: a ? "单页" : "双页"
 					}) : null,
 					/* @__PURE__ */ (0, I.jsxs)("div", {
-						"data-photo-zoom": "",
-						children: [
-							/* @__PURE__ */ (0, I.jsx)("button", {
-								type: "button",
-								"data-zoom-step": "-1",
-								"aria-label": "缩小",
-								onClick: () => ce(T - 10),
-								dangerouslySetInnerHTML: { __html: R("zoom-out") }
-							}),
-							/* @__PURE__ */ (0, I.jsx)("input", {
-								ref: v,
-								type: "range",
-								min: 10,
-								max: 400,
-								step: "1",
-								value: T,
-								"aria-label": "缩放",
-								onChange: (e) => ce(Number(e.currentTarget.value))
-							}),
-							/* @__PURE__ */ (0, I.jsx)("button", {
-								type: "button",
-								"data-zoom-step": "1",
-								"aria-label": "放大",
-								onClick: () => ce(T + 10),
-								dangerouslySetInnerHTML: { __html: R("zoom-in") }
-							}),
-							/* @__PURE__ */ (0, I.jsx)("b", {
-								"data-photo-zoom-readout": "",
-								children: `${T}%`
-							}),
-							/* @__PURE__ */ (0, I.jsx)("button", {
-								type: "button",
-								"data-photo-scale": "fit",
-								"aria-label": "适应窗口",
-								title: "适应窗口",
-								onClick: () => ce("fit"),
-								dangerouslySetInnerHTML: { __html: R("maximize") }
-							}),
-							/* @__PURE__ */ (0, I.jsx)("button", {
-								type: "button",
-								"data-photo-scale": "original",
-								"aria-label": "原大小",
-								title: "原大小",
-								onClick: () => ce(100),
-								children: "1:1"
-							})
-						]
+						"data-photo-tools": "",
+						children: [c ? /* @__PURE__ */ (0, I.jsxs)("div", {
+							"data-photo-marks": "",
+							role: "group",
+							"aria-label": "页标记",
+							children: [
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-mark-btn": "like",
+									"aria-label": "喜欢当前页",
+									title: "喜欢当前页",
+									"aria-pressed": A.like,
+									onClick: () => void f("like"),
+									dangerouslySetInnerHTML: { __html: R("heart") }
+								}),
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-mark-btn": "o",
+									"aria-label": "标记高潮",
+									title: "标记高潮",
+									"aria-pressed": A.o,
+									onClick: () => void f("o"),
+									dangerouslySetInnerHTML: { __html: R("flame") }
+								}),
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-mark-undo": "",
+									"aria-label": "撤销标记",
+									title: "撤销标记",
+									disabled: !A.canUndo,
+									onClick: () => void p(),
+									dangerouslySetInnerHTML: { __html: R("rotate-ccw") }
+								})
+							]
+						}) : null, /* @__PURE__ */ (0, I.jsxs)("div", {
+							"data-photo-zoom": "",
+							children: [
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-zoom-step": "-1",
+									"aria-label": "缩小",
+									onClick: () => me(j - 10),
+									dangerouslySetInnerHTML: { __html: R("zoom-out") }
+								}),
+								/* @__PURE__ */ (0, I.jsx)("input", {
+									ref: C,
+									type: "range",
+									min: 10,
+									max: 400,
+									step: "1",
+									value: j,
+									"aria-label": "缩放",
+									onChange: (e) => me(Number(e.currentTarget.value))
+								}),
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-zoom-step": "1",
+									"aria-label": "放大",
+									onClick: () => me(j + 10),
+									dangerouslySetInnerHTML: { __html: R("zoom-in") }
+								}),
+								/* @__PURE__ */ (0, I.jsx)("b", {
+									"data-photo-zoom-readout": "",
+									children: `${j}%`
+								}),
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-photo-scale": "fit",
+									"aria-label": "适应窗口",
+									title: "适应窗口",
+									onClick: () => me("fit"),
+									dangerouslySetInnerHTML: { __html: R("maximize") }
+								}),
+								/* @__PURE__ */ (0, I.jsx)("button", {
+									type: "button",
+									"data-photo-scale": "original",
+									"aria-label": "原大小",
+									title: "原大小",
+									onClick: () => me(100),
+									children: "1:1"
+								})
+							]
+						})]
 					})
 				]
 			}),
 			/* @__PURE__ */ (0, I.jsxs)("section", {
-				ref: _,
-				id: l,
+				ref: S,
+				id: m,
 				"data-photo-detail": "",
 				role: "dialog",
 				"aria-modal": "false",
-				"aria-labelledby": `${l}-title`,
+				"aria-labelledby": `${m}-title`,
 				hidden: !0,
 				children: [
 					/* @__PURE__ */ (0, I.jsxs)("div", {
 						"data-photo-detail-copy": "",
 						children: [/* @__PURE__ */ (0, I.jsx)("h2", {
-							id: `${l}-title`,
+							id: `${m}-title`,
 							"data-middle-truncate": "",
 							tabIndex: -1,
-							children: vOe(ne)
-						}, C), /* @__PURE__ */ (0, I.jsx)("span", {
+							children: vOe(ce)
+						}, O), /* @__PURE__ */ (0, I.jsx)("span", {
 							"data-photo-detail-meta": "",
-							children: yOe(ne, D[C])
+							children: yOe(ce, ee[O])
 						})]
 					}),
 					/* @__PURE__ */ (0, I.jsx)("button", {
 						type: "button",
 						"data-photo-reveal": "",
-						hidden: !ie || !r,
-						onClick: (e) => void ae(e.currentTarget),
-						dangerouslySetInnerHTML: { __html: (ee ? Hs("正在定位") : R("folder-open")) + "<span>在资源管理器中显示</span>" }
+						hidden: !ue || !r,
+						onClick: (e) => void de(e.currentTarget),
+						dangerouslySetInnerHTML: { __html: (ie ? Hs("正在定位") : R("folder-open")) + "<span>在资源管理器中显示</span>" }
 					}),
 					/* @__PURE__ */ (0, I.jsx)("span", {
 						"data-photo-status": "",
 						"aria-live": "polite",
-						children: te.at === C ? te.text : ""
+						children: oe.at === O ? oe.text : ""
 					})
 				]
 			}),
 			/* @__PURE__ */ (0, I.jsx)("div", {
-				ref: f,
+				ref: _,
 				className: "swiper",
 				"data-photo-strip": "",
 				children: /* @__PURE__ */ (0, I.jsx)("div", {
 					className: "swiper-wrapper",
 					children: e.map((e, t) => /* @__PURE__ */ (0, I.jsx)("div", {
 						className: "swiper-slide",
-						onClick: () => x.current?.slideTo(t),
-						children: Math.abs(t - C) <= xOe ? /* @__PURE__ */ (0, I.jsx)("img", {
+						onClick: () => E.current?.slideTo(t),
+						children: Math.abs(t - O) <= xOe ? /* @__PURE__ */ (0, I.jsx)("img", {
 							src: e.thumb,
 							alt: "",
 							loading: "lazy",
@@ -76235,8 +76295,21 @@ function GPe(e, t) {
 	return e.items.some((e) => !n.has(e.id)) ? e.page + 1 : void 0;
 }
 // src/react/comics/comic-reader.ts
-var KPe = /* @__PURE__ */ s({ openComicReader: () => k4 }), qPe = 800, w4 = null, T4 = 0;
-function JPe(e) {
+var KPe = /* @__PURE__ */ s({ openComicReader: () => k4 }), qPe = 800;
+async function JPe(e) {
+	let t = /* @__PURE__ */ new Map();
+	try {
+		let n = await B(`/api/comic-events?id=${e}`);
+		for (let e of n.events ?? []) {
+			if (e.undone_at != null || !e.first || !e.last || e.first.id !== e.last.id) continue;
+			let n = t.get(e.first.id) ?? {};
+			n[e.kind] = e.id, t.set(e.first.id, n);
+		}
+	} catch {}
+	return t;
+}
+var w4 = null, T4 = 0;
+function YPe(e) {
 	let t = w4;
 	!t || e < 0 || e >= t.pageIds.length || e !== t.reported && (t.reported = e, t.pending = e, window.clearTimeout(t.timer), t.timer = window.setTimeout(E4, qPe));
 }
@@ -76252,40 +76325,103 @@ function E4() {
 		viewed_at: i
 	}).catch(() => {});
 }
+async function XPe(e) {
+	let t = w4;
+	if (!t || t.reported < 0 || t.reported >= t.pageIds.length) return !1;
+	let n = t.pageIds[t.reported], r = t.marks.get(n)?.[e];
+	if (r) {
+		try {
+			let e = await V("/api/comic-event-undo", { event: r });
+			if (!e || e.error || e.ok !== !0) return !1;
+		} catch {
+			return !1;
+		}
+		let i = t.marks.get(n);
+		return i && delete i[e], t.lastEvent === r && (t.lastEvent = null), !0;
+	}
+	let i = DN();
+	try {
+		let r = await V("/api/comic-event", {
+			event: i,
+			asset: t.assetId,
+			kind: e,
+			first_page: n,
+			last_page: n,
+			occurred_at: Date.now(),
+			session: t.sessionId
+		});
+		if (!r || r.error || r.ok !== !0) return !1;
+	} catch {
+		return !1;
+	}
+	return t.marks.set(n, {
+		...t.marks.get(n),
+		[e]: i
+	}), t.lastEvent = i, !0;
+}
+async function ZPe() {
+	let e = w4;
+	if (!e || !e.lastEvent) return !1;
+	let t = e.lastEvent;
+	try {
+		let e = await V("/api/comic-event-undo", { event: t });
+		if (!e || e.error || e.ok !== !0) return !1;
+	} catch {
+		return !1;
+	}
+	for (let n of e.marks.values()) n.like === t && delete n.like, n.o === t && delete n.o;
+	return e.lastEvent = null, !0;
+}
+function QPe(e) {
+	let t = w4, n = t ? t.marks.get(t.pageIds[e] ?? NaN) : void 0;
+	return {
+		like: !!n?.like,
+		o: !!n?.o,
+		canUndo: !!t?.lastEvent
+	};
+}
 function D4() {
 	document.visibilityState === "hidden" && E4();
 }
 function O4() {
 	E4(), window.removeEventListener("pagehide", E4), document.removeEventListener("visibilitychange", D4), w4 = null;
 }
-async function k4(e, t) {
+async function k4(e, t, n) {
 	try {
-		let n = await B(`/api/comic-pages?id=${e}`);
-		if (n.error) {
-			t.toast(n.message || "页清单还没有建立，先在来源目录上扫一遍");
+		let [r, i] = await Promise.all([B(`/api/comic-pages?id=${e}`), JPe(e)]);
+		if (r.error) {
+			t.toast(r.message || "页清单还没有建立，先在来源目录上扫一遍");
 			return;
 		}
-		let r = n.pages ?? [];
-		if (!r.length) {
+		let a = r.pages ?? [];
+		if (!a.length) {
 			t.toast("这本书还没有可读的页，先在来源目录上扫一遍");
 			return;
 		}
 		O4();
-		let i = n.resume && n.resume.index >= 0 && n.resume.index < r.length ? n.resume.index : 0;
+		let o = n?.pageId == null ? -1 : a.findIndex((e) => e.id === n.pageId), s = r.resume && r.resume.index >= 0 && r.resume.index < a.length ? r.resume.index : 0, c = o >= 0 ? o : s;
 		w4 = {
 			assetId: e,
-			pageIds: r.map((e) => e.id),
+			pageIds: a.map((e) => e.id),
 			timer: void 0,
 			pending: null,
-			reported: SOe(i)
-		}, window.addEventListener("pagehide", E4), document.addEventListener("visibilitychange", D4), await BZ(i, r.map((e, t) => ({
+			sessionId: DN(),
+			lastEvent: null,
+			marks: i,
+			reported: SOe(c)
+		}, window.addEventListener("pagehide", E4), document.addEventListener("visibilitychange", D4), await BZ(c, a.map((e, t) => ({
 			src: e.url,
 			thumb: e.url,
 			name: `第 ${t + 1} 页`
 		})), void 0, {
 			spreadAllowed: !0,
-			onPageChange: JPe,
-			onClose: O4
+			onPageChange: YPe,
+			onClose: O4,
+			marks: {
+				mark: XPe,
+				undo: ZPe,
+				snapshot: QPe
+			}
 		});
 	} catch (e) {
 		t.failure("打开阅读器", e);
@@ -76293,7 +76429,7 @@ async function k4(e, t) {
 }
 // src/react/item-detail/external-playback.tsx
 var A4 = "peach.playback-target.v1", j4 = [["m3u", "M3U 播放列表"], ["url", "网络播放地址 / VR"]];
-function YPe() {
+function $Pe() {
 	try {
 		return localStorage.getItem(A4) || `local:${localStorage.getItem("peach.local-player.v1") || "default"}`;
 	} catch {
@@ -76301,7 +76437,7 @@ function YPe() {
 	}
 }
 function M4({ id: e, onOpened: t }) {
-	let [n, r] = (0, F.useState)(null), [i, a] = (0, F.useState)(YPe), [o, s] = (0, F.useState)(null), [c, l] = (0, F.useState)(""), [u, d] = (0, F.useState)(0), f = mH();
+	let [n, r] = (0, F.useState)(null), [i, a] = (0, F.useState)($Pe), [o, s] = (0, F.useState)(null), [c, l] = (0, F.useState)(""), [u, d] = (0, F.useState)(0), f = mH();
 	(0, F.useEffect)(() => {
 		let e = new AbortController();
 		return B("/api/local-players", e.signal).then((t) => {
@@ -76371,7 +76507,7 @@ function M4({ id: e, onOpened: t }) {
 	});
 }
 // src/react/boardui/components/base/switch/switch.tsx
-var XPe = zI({
+var eFe = zI({
 	sm: {
 		track: "h-4 w-7",
 		trackRadius: {
@@ -76433,8 +76569,8 @@ var XPe = zI({
 		}
 	}
 });
-function ZPe({ state: e, size: t = "md", shape: n = "pill" }) {
-	let r = XPe[t];
+function tFe({ state: e, size: t = "md", shape: n = "pill" }) {
+	let r = eFe[t];
 	return /* @__PURE__ */ (0, I.jsx)("span", {
 		"aria-hidden": !0,
 		className: J("relative shrink-0 transition-colors duration-200 ease", r.track, r.trackRadius[n], e.isSelected ? J("bg-linear-to-b from-accent-500 to-accent-600", r.onShadow) : "bg-background-tertiary-default", e.isDisabled && "opacity-50", e.isFocusVisible && "ring-2 ring-border-focus-ring ring-offset-2"),
@@ -76449,7 +76585,7 @@ function N4({ className: e, children: t, size: n = "md", shape: r = "pill", ref:
 		ref: i,
 		...a,
 		className: (t) => J("group inline-flex items-center gap-2 select-none", t.isDisabled ? "cursor-not-allowed" : "cursor-pointer", typeof e == "function" ? e(t) : e),
-		children: (e) => /* @__PURE__ */ (0, I.jsxs)(I.Fragment, { children: [/* @__PURE__ */ (0, I.jsx)(ZPe, {
+		children: (e) => /* @__PURE__ */ (0, I.jsxs)(I.Fragment, { children: [/* @__PURE__ */ (0, I.jsx)(tFe, {
 			state: e,
 			size: n,
 			shape: r
@@ -76460,7 +76596,7 @@ function N4({ className: e, children: t, size: n = "md", shape: r = "pill", ref:
 	});
 }
 // src/react/cover-crop/cover-crop.ts
-var QPe = "/api/cover-crop", $Pe = (e, t) => V(QPe, {
+var nFe = "/api/cover-crop", rFe = (e, t) => V(nFe, {
 	code: e,
 	box: t
 });
@@ -76478,7 +76614,7 @@ function P4({ className: e }) {
 		children: /* @__PURE__ */ (0, I.jsx)("use", { href: "#i-crop" })
 	});
 }
-function eFe({ code: e, coverUrl: t, box: n, onSaved: r }) {
+function iFe({ code: e, coverUrl: t, box: n, onSaved: r }) {
 	let [i, a] = (0, F.useState)(!1);
 	return /* @__PURE__ */ (0, I.jsxs)(I.Fragment, { children: [/* @__PURE__ */ (0, I.jsx)("button", {
 		type: "button",
@@ -76494,7 +76630,7 @@ function eFe({ code: e, coverUrl: t, box: n, onSaved: r }) {
 		onOpenChange: a,
 		width: "cover-crop",
 		label: "裁剪封面",
-		children: /* @__PURE__ */ (0, I.jsx)(tFe, {
+		children: /* @__PURE__ */ (0, I.jsx)(aFe, {
 			code: e,
 			coverUrl: t,
 			box: n,
@@ -76503,9 +76639,9 @@ function eFe({ code: e, coverUrl: t, box: n, onSaved: r }) {
 		})
 	})] });
 }
-function tFe({ code: e, coverUrl: t, box: n, onSaved: r, close: i }) {
+function aFe({ code: e, coverUrl: t, box: n, onSaved: r, close: i }) {
 	let [a, o] = (0, F.useState)(null), [s, c] = (0, F.useState)(null), [l, u] = (0, F.useState)(!0), d = RH(), f = Ft({
-		mutationFn: (t) => $Pe(e, t),
+		mutationFn: (t) => rFe(e, t),
 		onSuccess: (e) => {
 			i(), r(e.poster_box);
 		}
@@ -76607,7 +76743,7 @@ var F4 = ({ name: e }) => /* @__PURE__ */ (0, I.jsx)("span", {
 	className: "contents",
 	dangerouslySetInnerHTML: { __html: e }
 }), L4 = (e) => Number(e) > 0 ? Yn(Number(e)) : "大小未知";
-function nFe(e) {
+function oFe(e) {
 	let { queue: t, actions: n } = e, r = Pt({
 		queryKey: t ? cP(t) : ["item-queue", "none"],
 		queryFn: ({ signal: n }) => _P(t, e.helpers, n),
@@ -76637,7 +76773,7 @@ function nFe(e) {
 			})
 		});
 	}
-	return /* @__PURE__ */ (0, I.jsx)(rFe, {
+	return /* @__PURE__ */ (0, I.jsx)(sFe, {
 		...e,
 		item: jde(o.data, i),
 		queue: i
@@ -76652,8 +76788,8 @@ var R4 = ({ onClose: e }) => /* @__PURE__ */ (0, I.jsx)("button", {
 	onClick: e,
 	dangerouslySetInnerHTML: { __html: R("x") }
 });
-function rFe(e) {
-	let { item: t, queue: n, actions: r, helpers: i } = e, a = vFe(t, r, i.tagLabel), o = (0, F.useRef)(t);
+function sFe(e) {
+	let { item: t, queue: n, actions: r, helpers: i } = e, a = CFe(t, r, i.tagLabel), o = (0, F.useRef)(t);
 	(0, F.useLayoutEffect)(() => {
 		r.present(o.current, n);
 	}, [r]), (0, F.useEffect)(() => {
@@ -76664,7 +76800,7 @@ function rFe(e) {
 		}).catch(() => {});
 	}, []);
 	let s = BN() ? "" : Vde(t, i.sourceOffline(String(t.root_id || t.location || ""))), c = xP(n, t.id);
-	return String(t.medium) === "comic" ? /* @__PURE__ */ (0, I.jsx)(iFe, {
+	return String(t.medium) === "comic" ? /* @__PURE__ */ (0, I.jsx)(lFe, {
 		item: t,
 		actions: r,
 		helpers: i
@@ -76672,7 +76808,7 @@ function rFe(e) {
 		"data-stage-grid": "",
 		"data-with-queue": n ? "" : void 0,
 		"data-item-detail": "",
-		children: [/* @__PURE__ */ (0, I.jsx)(aFe, {
+		children: [/* @__PURE__ */ (0, I.jsx)(uFe, {
 			item: t,
 			gate: s,
 			helpers: i,
@@ -76685,7 +76821,7 @@ function rFe(e) {
 					autoplay: !0
 				}, c.id);
 			}
-		}), /* @__PURE__ */ (0, I.jsx)(uFe, {
+		}), /* @__PURE__ */ (0, I.jsx)(hFe, {
 			item: t,
 			queue: n,
 			write: a,
@@ -76694,13 +76830,13 @@ function rFe(e) {
 		})]
 	}), /* @__PURE__ */ (0, I.jsx)(a4, {
 		queueCards: n?.kind === "parts" || n?.kind === "editions" ? n.items.length : void 0,
-		queue: n ? /* @__PURE__ */ (0, I.jsx)(sFe, {
+		queue: n ? /* @__PURE__ */ (0, I.jsx)(fFe, {
 			queue: n,
 			itemId: t.id,
 			helpers: i,
 			actions: r
 		}) : null,
-		children: e.relatedLimit > 0 && (!n || n.kind === "parts" || n.kind === "editions") ? /* @__PURE__ */ (0, I.jsx)(_Fe, {
+		children: e.relatedLimit > 0 && (!n || n.kind === "parts" || n.kind === "editions") ? /* @__PURE__ */ (0, I.jsx)(SFe, {
 			...e,
 			item: n ? {
 				...t,
@@ -76709,20 +76845,25 @@ function rFe(e) {
 		}) : null
 	})] });
 }
-function iFe({ item: e, actions: t, helpers: n }) {
-	let [r, i] = (0, F.useState)(!1), a = Number(e.comic_pages ?? 0), o = async () => {
+var cFe = (e) => !e.first || !e.last ? "整本" : e.first.id === e.last.id ? `第 ${e.first.ordinal} 页` : `第 ${e.first.ordinal}–${e.last.ordinal} 页`;
+function lFe({ item: e, actions: t, helpers: n }) {
+	let [r, i] = (0, F.useState)(!1), a = Number(e.comic_pages ?? 0), o = Pt({
+		queryKey: ["comic-events", e.id],
+		queryFn: () => B(`/api/comic-events?id=${e.id}`),
+		enabled: a > 0
+	}), s = async (n) => {
 		if (!r) {
 			i(!0);
 			try {
 				await k4(e.id, {
 					toast: t.toast,
 					failure: t.failure
-				});
+				}, n == null ? void 0 : { pageId: n });
 			} finally {
 				i(!1);
 			}
 		}
-	};
+	}, c = o.data && !o.data.error ? o.data.events ?? [] : [];
 	return /* @__PURE__ */ (0, I.jsxs)("div", {
 		"data-stage-grid": "",
 		"data-item-detail": "",
@@ -76768,16 +76909,55 @@ function iFe({ item: e, actions: t, helpers: n }) {
 							type: "button",
 							"data-comic-read-btn": "",
 							disabled: r || a === 0,
-							onClick: () => void o(),
+							onClick: () => void s(),
 							children: r ? Hs("正在打开") : /* @__PURE__ */ (0, I.jsxs)(I.Fragment, { children: [/* @__PURE__ */ (0, I.jsx)(F4, { name: "chevron-right" }), /* @__PURE__ */ (0, I.jsx)("span", { children: "开始阅读" })] })
 						})
-					})
+					}),
+					c.length > 0 ? /* @__PURE__ */ (0, I.jsxs)("div", {
+						"data-comic-marks": "",
+						children: [/* @__PURE__ */ (0, I.jsx)("div", {
+							"data-comic-marks-head": "",
+							children: "标记"
+						}), /* @__PURE__ */ (0, I.jsx)("ul", {
+							"data-comic-marks-list": "",
+							children: c.map((e) => /* @__PURE__ */ (0, I.jsx)("li", { children: /* @__PURE__ */ (0, I.jsxs)("button", {
+								type: "button",
+								"data-comic-mark": "",
+								"data-kind": e.kind,
+								"data-undone": e.undone_at == null ? void 0 : "",
+								title: e.undone_at == null ? "回到这一页" : "已撤销",
+								onClick: () => void s(e.first?.id ?? e.last?.id ?? void 0),
+								children: [
+									/* @__PURE__ */ (0, I.jsx)("span", {
+										"data-mark-kind": "",
+										children: e.kind === "o" ? "高潮" : "喜欢"
+									}),
+									/* @__PURE__ */ (0, I.jsx)("span", {
+										"data-mark-range": "",
+										children: cFe(e)
+									}),
+									e.reason ? /* @__PURE__ */ (0, I.jsx)("span", {
+										"data-mark-reason": "",
+										children: e.reason
+									}) : null,
+									/* @__PURE__ */ (0, I.jsx)("span", {
+										"data-mark-time": "",
+										children: new Date(e.occurred_at).toLocaleString()
+									}),
+									e.undone_at == null ? null : /* @__PURE__ */ (0, I.jsx)("span", {
+										"data-mark-undone": "",
+										children: "已撤销"
+									})
+								]
+							}) }, e.id))
+						})]
+					}) : null
 				]
 			})
 		})]
 	});
 }
-function aFe({ item: e, gate: t, helpers: n, actions: r, autoplay: i, onEnded: a }) {
+function uFe({ item: e, gate: t, helpers: n, actions: r, autoplay: i, onEnded: a }) {
 	let [o, s] = (0, F.useState)(t ? "" : "auto"), c = (0, F.useRef)(null), [l, u] = (0, F.useState)(-2), d = (0, F.useRef)(!1), f = Pt({
 		queryKey: x4(e.code || ""),
 		queryFn: ({ signal: t }) => {
@@ -76876,7 +77056,7 @@ function aFe({ item: e, gate: t, helpers: n, actions: r, autoplay: i, onEnded: a
 					children: "立即重试"
 				})
 			}) : null,
-			t === "offline" ? /* @__PURE__ */ (0, I.jsx)(oFe, {
+			t === "offline" ? /* @__PURE__ */ (0, I.jsx)(dFe, {
 				item: e,
 				badge: y,
 				helpers: n,
@@ -76917,7 +77097,7 @@ function aFe({ item: e, gate: t, helpers: n, actions: r, autoplay: i, onEnded: a
 		]
 	});
 }
-function oFe({ item: e, badge: t, helpers: n, actions: r }) {
+function dFe({ item: e, badge: t, helpers: n, actions: r }) {
 	let [i, a] = (0, F.useState)(!1), [o, s] = (0, F.useState)(!1), c = async () => {
 		a(!0);
 		let t = await r.checkSource(e.location || "").catch(() => !1);
@@ -76942,8 +77122,8 @@ function oFe({ item: e, badge: t, helpers: n, actions: r }) {
 		]
 	});
 }
-function sFe({ queue: e, itemId: t, helpers: n, actions: r }) {
-	let i = Lde(e), a = (0, F.useRef)(null), o = lFe(e, t, r), s = (0, F.useRef)(o);
+function fFe({ queue: e, itemId: t, helpers: n, actions: r }) {
+	let i = Lde(e), a = (0, F.useRef)(null), o = mFe(e, t, r), s = (0, F.useRef)(o);
 	s.current = o;
 	let c = (0, F.useCallback)((t) => {
 		a.current = t, t && (n.wireDrag(t), e.kind === "playlist" && n.wireDragReorder(t, {
@@ -76951,7 +77131,7 @@ function sFe({ queue: e, itemId: t, helpers: n, actions: r }) {
 			attribute: "data-queue-row",
 			onMove: (e, t, n) => s.current.move(+e, +t, n)
 		}));
-	}, [n, e.kind]), l = cFe(e, r), u = e.kind === "mix" ? /* @__PURE__ */ (0, I.jsx)("button", {
+	}, [n, e.kind]), l = pFe(e, r), u = e.kind === "mix" ? /* @__PURE__ */ (0, I.jsx)("button", {
 		type: "button",
 		"data-save-mix": "",
 		title: "保存为播放列表",
@@ -77028,7 +77208,7 @@ function sFe({ queue: e, itemId: t, helpers: n, actions: r }) {
 		})
 	});
 }
-function cFe(e, t) {
+function pFe(e, t) {
 	let n = Ft({ mutationFn: (t) => V(lP, {
 		action: "create",
 		name: t,
@@ -77042,7 +77222,7 @@ function cFe(e, t) {
 		save: (e) => n.mutateAsync(e)
 	});
 }
-function lFe(e, t, n) {
+function mFe(e, t, n) {
 	let r = cP({
 		kind: "playlist",
 		playlistId: e.playlistId
@@ -77105,7 +77285,7 @@ function lFe(e, t, n) {
 		}
 	};
 }
-function uFe({ item: e, queue: t, write: n, helpers: r, actions: i }) {
+function hFe({ item: e, queue: t, write: n, helpers: r, actions: i }) {
 	let a = e.location === "online", o = n.busyAttrs, [s, c] = (0, F.useState)(!1);
 	return /* @__PURE__ */ (0, I.jsx)("div", {
 		"data-stage-side": "",
@@ -77125,7 +77305,7 @@ function uFe({ item: e, queue: t, write: n, helpers: r, actions: i }) {
 					"aria-live": "polite",
 					children: n.sourceState
 				}),
-				/* @__PURE__ */ (0, I.jsx)(fFe, {
+				/* @__PURE__ */ (0, I.jsx)(_Fe, {
 					item: e,
 					write: n
 				}),
@@ -77164,12 +77344,12 @@ function uFe({ item: e, queue: t, write: n, helpers: r, actions: i }) {
 					id: e.id,
 					onOpened: () => i.toast("已请求打开本地播放器")
 				}, e.id) : null,
-				/* @__PURE__ */ (0, I.jsx)(pFe, {
+				/* @__PURE__ */ (0, I.jsx)(vFe, {
 					item: e,
 					helpers: r,
 					actions: i
 				}),
-				/* @__PURE__ */ (0, I.jsx)(mFe, {
+				/* @__PURE__ */ (0, I.jsx)(yFe, {
 					item: e,
 					write: n,
 					helpers: r,
@@ -77181,7 +77361,7 @@ function uFe({ item: e, queue: t, write: n, helpers: r, actions: i }) {
 						H.invalidateQueries({ queryKey: sP(e.id) });
 					}
 				}),
-				/* @__PURE__ */ (0, I.jsx)(hFe, { item: e }),
+				/* @__PURE__ */ (0, I.jsx)(bFe, { item: e }),
 				/* @__PURE__ */ (0, I.jsxs)("div", {
 					"data-stage-actions": "",
 					"data-item-feedback": "",
@@ -77275,7 +77455,7 @@ function uFe({ item: e, queue: t, write: n, helpers: r, actions: i }) {
 						})
 					]
 				}),
-				/* @__PURE__ */ (0, I.jsx)(gFe, {
+				/* @__PURE__ */ (0, I.jsx)(xFe, {
 					item: e,
 					open: s,
 					write: n
@@ -77331,7 +77511,7 @@ function z4({ item: e, queue: t, helpers: n, actions: r, onStatus: i }) {
 					}),
 					e.has_cover && (e.cover_key || e.code) ? /* @__PURE__ */ (0, I.jsx)("span", {
 						"data-cover-crop-host": "",
-						children: /* @__PURE__ */ (0, I.jsx)(eFe, {
+						children: /* @__PURE__ */ (0, I.jsx)(iFe, {
 							code: e.cover_key || e.code || "",
 							coverUrl: co(e),
 							box: e.poster_box || null,
@@ -77343,7 +77523,7 @@ function z4({ item: e, queue: t, helpers: n, actions: r, onStatus: i }) {
 							}
 						})
 					}) : null,
-					e.location === "online" ? null : /* @__PURE__ */ (0, I.jsx)(dFe, {
+					e.location === "online" ? null : /* @__PURE__ */ (0, I.jsx)(gFe, {
 						id: e.id,
 						actions: r,
 						onStatus: i
@@ -77353,7 +77533,7 @@ function z4({ item: e, queue: t, helpers: n, actions: r, onStatus: i }) {
 		})
 	});
 }
-function dFe({ id: e, actions: t, onStatus: n }) {
+function gFe({ id: e, actions: t, onStatus: n }) {
 	let [r, i] = (0, F.useState)(""), a = async () => {
 		r || (i("reveal"), n(""), n(await t.reveal(e)), i(""));
 	}, o = async () => {
@@ -77386,7 +77566,7 @@ function dFe({ id: e, actions: t, onStatus: n }) {
 		children: /* @__PURE__ */ (0, I.jsx)(F4, { name: "folder-sync" })
 	})] });
 }
-function fFe({ item: e, write: t }) {
+function _Fe({ item: e, write: t }) {
 	let n = aP(e.rating);
 	return /* @__PURE__ */ (0, I.jsxs)("div", {
 		id: "detailRating",
@@ -77412,7 +77592,7 @@ function fFe({ item: e, write: t }) {
 		})]
 	});
 }
-function pFe({ item: e, actions: t }) {
+function vFe({ item: e, actions: t }) {
 	let n = (0, F.useMemo)(() => Mde(e), [e]), [r, i] = (0, F.useState)(!1), a = Math.max(0, n.cast.length - 8), o = (e, n, i) => {
 		let a = e === "performer" && i >= 8 && !r;
 		return /* @__PURE__ */ (0, I.jsx)(_4, {
@@ -77484,7 +77664,7 @@ function pFe({ item: e, actions: t }) {
 		})]
 	});
 }
-function mFe({ item: e, write: t, helpers: n, actions: r }) {
+function yFe({ item: e, write: t, helpers: n, actions: r }) {
 	return /* @__PURE__ */ (0, I.jsx)("div", {
 		"data-item-tags": "",
 		children: /* @__PURE__ */ (0, I.jsx)(l4, {
@@ -77500,7 +77680,7 @@ function mFe({ item: e, write: t, helpers: n, actions: r }) {
 		}, e.id)
 	});
 }
-function hFe({ item: e }) {
+function bFe({ item: e }) {
 	let t = Hde(e);
 	return /* @__PURE__ */ (0, I.jsxs)("div", {
 		"data-item-trace": "",
@@ -77535,7 +77715,7 @@ function hFe({ item: e }) {
 		})]
 	});
 }
-function gFe({ item: e, open: t, write: n }) {
+function xFe({ item: e, open: t, write: n }) {
 	let [r, i] = (0, F.useState)(e.like_reason || ""), a = (0, F.useRef)(null);
 	(0, F.useEffect)(() => {
 		t && a.current?.focus();
@@ -77574,7 +77754,7 @@ function gFe({ item: e, open: t, write: n }) {
 		})]
 	});
 }
-function _Fe(e) {
+function SFe(e) {
 	let { item: t, relatedLimit: n, helpers: r, grid: i } = e, a = Pt({
 		queryKey: Ode(t.id, n),
 		queryFn: async ({ signal: e }) => (await B(Ade(t.id, n), e)).items || []
@@ -77603,7 +77783,7 @@ function _Fe(e) {
 		}) : /* @__PURE__ */ (0, I.jsx)(I4, { html: o })
 	});
 }
-function vFe(e, t, n) {
+function CFe(e, t, n) {
 	let r = e.id, i = sP(r), [a, o] = (0, F.useState)(() => /* @__PURE__ */ new Set()), [s, c] = (0, F.useState)(""), [l, u] = (0, F.useState)(""), d = (e, t) => o((n) => {
 		let r = new Set(n);
 		return t ? r.add(e) : r.delete(e), r;
@@ -77756,12 +77936,12 @@ function H4(e) {
 	let o = new Date(Date.UTC(n, r + 2, 0)).getUTCDate();
 	return Date.UTC(n, r + 1, Math.min(i, o));
 }
-function yFe(e, t = Date.now()) {
+function wFe(e, t = Date.now()) {
 	let n = H4(e);
 	return n !== void 0 && V4(t) > n ? Infinity : B4;
 }
 function U4(e, t, n = Date.now()) {
-	return !Number.isFinite(e) || e <= 0 || e > n ? !1 : yFe(t, n) === Infinity ? V4(e) > H4(t) : n - e < B4;
+	return !Number.isFinite(e) || e <= 0 || e > n ? !1 : wFe(t, n) === Infinity ? V4(e) > H4(t) : n - e < B4;
 }
 // src/react/wants/resource-cache.ts
 var W4 = "peach.want-resources.v2";
@@ -77783,11 +77963,11 @@ function q4() {
 		return [];
 	}
 }
-function bFe(e, t) {
+function TFe(e, t) {
 	let n = q4().find((t) => t.code === e);
 	return n && U4(n.saved, t) ? n : void 0;
 }
-function xFe(e) {
+function EFe(e) {
 	let t = new Map(q4().map((e) => [e.code, e])), n = /* @__PURE__ */ new Map();
 	for (let r of e) {
 		if (!r.code) continue;
@@ -77796,7 +77976,7 @@ function xFe(e) {
 	}
 	return n;
 }
-function SFe(e, t) {
+function DFe(e, t) {
 	if (t.state === "ready" && G4(t)) try {
 		let n = q4().filter((t) => t.code !== e), r = Date.parse(t.checked_at || "");
 		localStorage.setItem(W4, JSON.stringify([{
@@ -77807,11 +77987,11 @@ function SFe(e, t) {
 	} catch {}
 }
 // src/react/wants/resource-display.ts
-function CFe(e) {
+function OFe(e) {
 	let t = (e ?? "").trim(), n = /^([\d,]+)\s*B$/i.exec(t);
 	return /^[\d,.]+$/.test(t) ? "大小未知" : n ? Yn(Number(n[1].replaceAll(",", ""))) : e || "大小未知";
 }
-function wFe(e) {
+function kFe(e) {
 	return /^更多评论.*(?:VIP|官方 App)/.test(e) ? "来源只返回了部分评论，资源链接可能不完整。" : e;
 }
 // src/react/wants/want-magnets.tsx
@@ -77826,7 +78006,7 @@ function J4({ icon: e, children: t, title: n }) {
 	});
 }
 function Y4({ want: e, readOnly: t, downloads: n, provider: r, toast: i, onSource: a, queryUrl: o }) {
-	let s = (0, F.useRef)(null), [c, l] = (0, F.useState)(typeof IntersectionObserver > "u"), [u, d] = (0, F.useState)([]), f = mH(), p = ae(), m = (0, F.useRef)(!1), h = o ? `comment-resources:${o}:${e.code}` : `all-sources:${e.code || ""}`, g = (0, F.useMemo)(() => bFe(h, e.release_date), [h, e.release_date]);
+	let s = (0, F.useRef)(null), [c, l] = (0, F.useState)(typeof IntersectionObserver > "u"), [u, d] = (0, F.useState)([]), f = mH(), p = ae(), m = (0, F.useRef)(!1), h = o ? `comment-resources:${o}:${e.code}` : `all-sources:${e.code || ""}`, g = (0, F.useMemo)(() => TFe(h, e.release_date), [h, e.release_date]);
 	(0, F.useEffect)(() => {
 		if (!s.current || c) return;
 		let e = new IntersectionObserver((t) => {
@@ -77846,7 +78026,7 @@ function Y4({ want: e, readOnly: t, downloads: n, provider: r, toast: i, onSourc
 		],
 		queryFn: async ({ signal: t }) => {
 			let n = m.current, r = o || `/api/wants/magnets?id=${e.id}`, i = await B(`${r}${n ? `${r.includes("?") ? "&" : "?"}refresh=1` : ""}`, t);
-			return m.current = n && i.state === "busy", SFe(h, i), i;
+			return m.current = n && i.state === "busy", DFe(h, i), i;
 		},
 		initialData: g?.result,
 		initialDataUpdatedAt: g?.saved,
@@ -77914,7 +78094,7 @@ function Y4({ want: e, readOnly: t, downloads: n, provider: r, toast: i, onSourc
 			}) : null,
 			_.data?.warnings?.map((e) => /* @__PURE__ */ (0, I.jsx)(fH, {
 				tone: "neutral",
-				children: wFe(e)
+				children: kFe(e)
 			}, e)),
 			_.data?.warnings?.length && _.data.source_url ? /* @__PURE__ */ (0, I.jsx)(Wz, {
 				variant: "secondary",
@@ -77966,7 +78146,7 @@ function Y4({ want: e, readOnly: t, downloads: n, provider: r, toast: i, onSourc
 									/* @__PURE__ */ (0, I.jsx)(J4, {
 										icon: RV,
 										title: e.size ? `来源大小：${e.size}` : void 0,
-										children: CFe(e.size)
+										children: OFe(e.size)
 									}),
 									e.files ? /* @__PURE__ */ (0, I.jsx)(J4, {
 										icon: dve,
@@ -78045,7 +78225,7 @@ function Z4() {
 		return [];
 	}
 }
-function TFe(e, t) {
+function AFe(e, t) {
 	if (t.ok && !t.cache_stale) try {
 		let n = Date.parse(t.checked_at || ""), r = [{
 			code: e,
@@ -78055,7 +78235,7 @@ function TFe(e, t) {
 		i.length <= 2e6 && localStorage.setItem(X4, i);
 	} catch {}
 }
-function EFe(e, t) {
+function jFe(e, t) {
 	let n = Z4(), r = [], i = Infinity;
 	for (let a = 1; a <= 8; a++) {
 		let o = n.find((t) => t.code === e && t.result.page === a);
@@ -78067,11 +78247,11 @@ function EFe(e, t) {
 		saved: i
 	} : void 0;
 }
-function DFe(e, t, n) {
+function MFe(e, t, n) {
 	return e.length > 0 && e.every((e) => e.ok && !e.cache_stale && U4(Date.parse(e.checked_at || "") || t, n));
 }
 // src/react/jav-detail/jav-detail-page.tsx
-function OFe(e) {
+function NFe(e) {
 	let t = (0, F.useRef)(!1), n = Pt({
 		queryKey: x4(e.code),
 		queryFn: ({ signal: n }) => {
@@ -78086,7 +78266,7 @@ function OFe(e) {
 		"data-jav-detail": "",
 		"data-item-detail": "",
 		"data-stage-grid": "",
-		children: n.data ? /* @__PURE__ */ (0, I.jsx)(kFe, {
+		children: n.data ? /* @__PURE__ */ (0, I.jsx)(PFe, {
 			...e,
 			item: n.data,
 			retry: r,
@@ -78109,7 +78289,7 @@ var Q4 = ({ close: e }) => /* @__PURE__ */ (0, I.jsx)("button", {
 	onClick: e,
 	dangerouslySetInnerHTML: { __html: R("x") }
 });
-function kFe({ code: e, item: t, actions: n, readOnly: r, retry: i, retrying: a }) {
+function PFe({ code: e, item: t, actions: n, readOnly: r, retry: i, retrying: a }) {
 	(0, F.useEffect)(() => {
 		n.canonicalCode?.(t.code);
 	}, [n, t.code]), (0, F.useEffect)(() => {
@@ -78152,7 +78332,7 @@ function kFe({ code: e, item: t, actions: n, readOnly: r, retry: i, retrying: a 
 					onClick: () => s(o === -2 ? -1 : -2),
 					children: [/* @__PURE__ */ (0, I.jsx)($4, { name: o === -2 ? "image" : "play" }), o === -2 ? "查看图片" : "视频预览"]
 				}) : null,
-				o === -2 && t.preview_video_url ? /* @__PURE__ */ (0, I.jsx)(MFe, { src: t.preview_video_url }, t.preview_video_url) : /* @__PURE__ */ (0, I.jsx)(jQ, {
+				o === -2 && t.preview_video_url ? /* @__PURE__ */ (0, I.jsx)(LFe, { src: t.preview_video_url }, t.preview_video_url) : /* @__PURE__ */ (0, I.jsx)(jQ, {
 					item: t,
 					image: o === -1 ? "cover" : String(o)
 				}, t.code),
@@ -78175,7 +78355,7 @@ function kFe({ code: e, item: t, actions: n, readOnly: r, retry: i, retrying: a 
 				"data-stage-side-content": "",
 				"data-jav-info": "",
 				children: [
-					/* @__PURE__ */ (0, I.jsx)(AFe, { item: t }),
+					/* @__PURE__ */ (0, I.jsx)(FFe, { item: t }),
 					Number(t.score) > 0 ? /* @__PURE__ */ (0, I.jsx)(t3, { score: Number(t.score) }) : null,
 					/* @__PURE__ */ (0, I.jsxs)("div", {
 						className: "mono",
@@ -78191,7 +78371,7 @@ function kFe({ code: e, item: t, actions: n, readOnly: r, retry: i, retrying: a 
 							value: t.duration ? `${t.duration} 分钟` : void 0
 						})]
 					}),
-					/* @__PURE__ */ (0, I.jsx)(jFe, {
+					/* @__PURE__ */ (0, I.jsx)(IFe, {
 						item: t,
 						navigate: n.navigate
 					}),
@@ -78281,12 +78461,12 @@ function kFe({ code: e, item: t, actions: n, readOnly: r, retry: i, retrying: a 
 						tone: "error",
 						children: p.error
 					}) : null,
-					/* @__PURE__ */ (0, I.jsx)(NFe, {
+					/* @__PURE__ */ (0, I.jsx)(RFe, {
 						code: t.code,
 						count: t.comments_count,
 						released: t.release_date
 					}),
-					/* @__PURE__ */ (0, I.jsx)(PFe, {
+					/* @__PURE__ */ (0, I.jsx)(zFe, {
 						item: t,
 						actions: n,
 						readOnly: r
@@ -78310,7 +78490,7 @@ var $4 = ({ name: e }) => /* @__PURE__ */ (0, I.jsx)("span", {
 	title: t,
 	children: [/* @__PURE__ */ (0, I.jsx)($4, { name: e }), /* @__PURE__ */ (0, I.jsx)("span", { children: n })]
 }) : null;
-function AFe({ item: e }) {
+function FFe({ item: e }) {
 	let { text: t, expanded: n, foldable: r, toggle: i } = y4(e.title), a = e.title === e.code ? "" : e.title;
 	return /* @__PURE__ */ (0, I.jsxs)("div", {
 		"data-item-title": "",
@@ -78359,7 +78539,7 @@ function t3({ score: e, review: t = !1 }) {
 		})]
 	});
 }
-function jFe({ item: e, navigate: t }) {
+function IFe({ item: e, navigate: t }) {
 	let n = (e, n) => t(Nn(e, n)), r = (t, r, i, a) => i.length ? /* @__PURE__ */ (0, I.jsxs)("section", {
 		"data-id-group": t,
 		"data-id-gender": a,
@@ -78401,7 +78581,7 @@ function jFe({ item: e, navigate: t }) {
 		})]
 	});
 }
-function MFe({ src: e }) {
+function LFe({ src: e }) {
 	let t = (0, F.useRef)(null), [n, r] = (0, F.useState)(!1);
 	return (0, F.useLayoutEffect)(() => {
 		if (n) return;
@@ -78424,8 +78604,8 @@ function MFe({ src: e }) {
 		}) : null
 	});
 }
-function NFe({ code: e, count: t, released: n }) {
-	let r = ae(), [i, a] = (0, F.useState)(!1), o = (0, F.useMemo)(() => EFe(e, n), [e, n]), s = (0, F.useRef)(!1), c = It({
+function RFe({ code: e, count: t, released: n }) {
+	let r = ae(), [i, a] = (0, F.useState)(!1), o = (0, F.useMemo)(() => jFe(e, n), [e, n]), s = (0, F.useRef)(!1), c = It({
 		queryKey: ["jav-reviews", e],
 		enabled: i,
 		initialPageParam: 1,
@@ -78434,12 +78614,12 @@ function NFe({ code: e, count: t, released: n }) {
 			pageParams: o.pageParams
 		} : void 0,
 		initialDataUpdatedAt: o?.saved,
-		staleTime: (e) => DFe(e.state.data?.pages || [], e.state.dataUpdatedAt, n) ? Infinity : 0,
+		staleTime: (e) => MFe(e.state.data?.pages || [], e.state.dataUpdatedAt, n) ? Infinity : 0,
 		gcTime: 864e5,
 		refetchOnWindowFocus: !1,
 		queryFn: async ({ signal: t, pageParam: n }) => {
 			let i = await WPe(e, n, t, s.current);
-			if (TFe(e, i), !i.ok || i.cache_stale) {
+			if (AFe(e, i), !i.ok || i.cache_stale) {
 				let t = r.getQueryData(["jav-reviews", e])?.pages.find((e) => e.page === n);
 				if (t?.ok) return {
 					...t,
@@ -78556,7 +78736,7 @@ function NFe({ code: e, count: t, released: n }) {
 		})
 	});
 }
-function PFe({ item: e, actions: t, readOnly: n }) {
+function zFe({ item: e, actions: t, readOnly: n }) {
 	let [r, i] = (0, F.useState)(!1), a = Pt({
 		queryKey: LW,
 		enabled: r,
@@ -78588,7 +78768,7 @@ function PFe({ item: e, actions: t, readOnly: n }) {
 }
 // src/react/stage/stage-player.ts
 var n3 = null, r3 = null, i3 = null, a3 = null, o3 = null, s3 = !1, c3 = 0, l3 = null, u3 = () => !1, d3 = (e, t, n) => `${e}:${t}:${n ?? ""}`;
-function FFe(e, t) {
+function BFe(e, t) {
 	n3 = e, u3 = () => t.isOpen(), l3 = () => t.requestClose(), Eue({
 		...e.player,
 		stage: () => document.getElementById("stage")
@@ -78607,10 +78787,10 @@ function p3() {
 function m3(e) {
 	a3 = e;
 }
-var IFe = () => a3;
+var VFe = () => a3;
 function h3(e, t) {
 	let { kind: n, item: r, media: i = null } = t, a = d3(n, r.id, i?.index ?? null);
-	if (r3 && r3.key === a) return RFe(e, r3);
+	if (r3 && r3.key === a) return UFe(e, r3);
 	r3 && A3();
 	let o = {
 		player: null,
@@ -78638,7 +78818,7 @@ function h3(e, t) {
 		i3 === o && (i3 = null), c(), !e && (o.player || (s.pause(), s.removeAttribute("src"), s.load()), FN());
 	};
 }
-async function LFe(e, t, n) {
+async function HFe(e, t, n) {
 	let r = await wn(`/api/item?id=${e.id}`, { signal: n });
 	if (n.throwIfAborted(), !r || r.error) throw Error(r?.error || "作品未取得");
 	if (r.medium && r.medium !== "video") throw Error("这条作品没有可播放的视频");
@@ -78662,7 +78842,7 @@ async function LFe(e, t, n) {
 		s || (s = !0, e && a3 === a && _3(!0), o(), a3 === a && m3(null));
 	};
 }
-function RFe(e, t) {
+function UFe(e, t) {
 	let { player: n } = t;
 	O3(t), r3 = null, k3(), n.el().classList.remove("vjs-peach-mini"), KN(e), e.append(n.el()), RM(n);
 	let r = {
@@ -78688,7 +78868,7 @@ function _3(e) {
 	let n = i3, r = n?.player, i = a3;
 	if (!n || !r || r.isDisposed() || !i || !o3) return;
 	let a = p3().player.settings();
-	(t || e && a.miniplayer && !r.paused() && !r.ended() && !r.error()) && HFe({
+	(t || e && a.miniplayer && !r.paused() && !r.ended() && !r.error()) && qFe({
 		player: r,
 		kind: n.kind,
 		item: n.item,
@@ -78703,11 +78883,11 @@ function y3(e) {
 	o3 = e, o3 && E3();
 }
 var b3 = () => !!r3 && !r3.pending && !r3.player.isDisposed();
-function zFe() {
+function WFe() {
 	return b3() ? o3?.frame.querySelector("video") ?? null : null;
 }
-function BFe() {
-	return u3() ? document.getElementById("stage")?.querySelector("video") ?? null : g3()?.el().querySelector("video") ?? zFe();
+function GFe() {
+	return u3() ? document.getElementById("stage")?.querySelector("video") ?? null : g3()?.el().querySelector("video") ?? WFe();
 }
 function x3(e) {
 	o3 && (o3.title.textContent = e.title || "", o3.sub.textContent = e.sub || "", o3.info.setAttribute("aria-label", e.title ? `展开到详情：${e.title}` : "展开到详情"));
@@ -78756,7 +78936,7 @@ function D3(e) {
 function O3(e) {
 	e.off.forEach((e) => e()), e.off = [];
 }
-function VFe() {
+function KFe() {
 	let e = o3?.root;
 	if (!e) return;
 	let t = e.hidden;
@@ -78777,7 +78957,7 @@ function k3() {
 		e.style.transform = "";
 	}
 }
-function HFe(e, t) {
+function qFe(e, t) {
 	if (!o3) return;
 	let n = {
 		...e,
@@ -78785,7 +78965,7 @@ function HFe(e, t) {
 		off: [],
 		pending: !1
 	};
-	r3 = n, c3++, e.player.el().classList.add("vjs-peach-mini"), o3.frame.prepend(e.player.el()), x3(t), D3(n), VFe(), zM(e.player);
+	r3 = n, c3++, e.player.el().classList.add("vjs-peach-mini"), o3.frame.prepend(e.player.el()), x3(t), D3(n), KFe(), zM(e.player);
 }
 function A3() {
 	let e = r3;
@@ -78801,7 +78981,7 @@ function j3() {
 function M3() {
 	b3() && !u3() ? j3() : u3() && g3() && l3 && (s3 = !0, l3());
 }
-function UFe() {
+function JFe() {
 	let e = r3?.player;
 	e && !e.isDisposed() && (e.paused() ? e.play()?.catch(() => {}) : e.pause());
 }
@@ -78814,7 +78994,7 @@ function N3(e) {
 function P3(e) {
 	return !(!b3() || !e || e.part_group || e.edition_group || e.medium && e.medium !== "video" || e.cost === "metered" && e.location !== "online" || e.location === "online" && !e.follow_item_id || p3().sourceOffline(String(e.root_id || e.location || "")));
 }
-async function WFe(e) {
+async function YFe(e) {
 	if (!b3() || !r3 || !o3) return;
 	let t = ++c3, n = await wn(`/api/item?id=${e}`).catch(() => null);
 	if (t !== c3 || !b3() || !r3 || !o3 || !n || n.error) return;
@@ -78866,9 +79046,9 @@ var F3 = ({ name: e }) => /* @__PURE__ */ (0, I.jsx)("svg", {
 	viewBox: "0 0 24 24",
 	"aria-hidden": "true",
 	children: /* @__PURE__ */ (0, I.jsx)("use", { href: `#i-${e}` })
-}), GFe = { __html: "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><use href=\"#i-player-pause\"/></svg>" }, I3 = (e) => (t) => {
+}), XFe = { __html: "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><use href=\"#i-player-pause\"/></svg>" }, I3 = (e) => (t) => {
 	t.stopPropagation(), e();
-}, KFe = (0, F.memo)(function() {
+}, ZFe = (0, F.memo)(function() {
 	let e = (0, F.useRef)(null), t = (0, F.useRef)(null), n = (0, F.useRef)(null), r = (0, F.useRef)(null), i = (0, F.useRef)(null), a = (0, F.useRef)(null), o = (0, F.useRef)(null), s = (0, F.useRef)(null), c = (0, F.useRef)(null), l = (0, F.useRef)(null);
 	return (0, F.useLayoutEffect)(() => (y3({
 		root: e.current,
@@ -78880,7 +79060,7 @@ var F3 = ({ name: e }) => /* @__PURE__ */ (0, I.jsx)("svg", {
 		title: s.current,
 		sub: c.current,
 		info: l.current
-	}), () => y3(null)), []), (0, F.useEffect)(() => YFe(e.current, t.current), []), (0, F.useEffect)(() => qFe(e.current), []), /* @__PURE__ */ (0, I.jsx)("aside", {
+	}), () => y3(null)), []), (0, F.useEffect)(() => eIe(e.current, t.current), []), (0, F.useEffect)(() => QFe(e.current), []), /* @__PURE__ */ (0, I.jsx)("aside", {
 		ref: e,
 		"data-miniplayer": "",
 		id: "miniplayer",
@@ -78930,8 +79110,8 @@ var F3 = ({ name: e }) => /* @__PURE__ */ (0, I.jsx)("svg", {
 							id: "miniplayerPlay",
 							"aria-label": "暂停",
 							"aria-keyshortcuts": "k",
-							onClick: I3(UFe),
-							dangerouslySetInnerHTML: GFe
+							onClick: I3(JFe),
+							dangerouslySetInnerHTML: XFe
 						}),
 						/* @__PURE__ */ (0, I.jsx)("button", {
 							ref: o,
@@ -78970,7 +79150,7 @@ var F3 = ({ name: e }) => /* @__PURE__ */ (0, I.jsx)("svg", {
 		})
 	});
 });
-function qFe(e) {
+function QFe(e) {
 	let t = () => {
 		let t = e.dataset.corner || "";
 		!e.hidden && t.startsWith("b") && (t === "br" || innerWidth <= 600) ? document.documentElement.style.setProperty("--miniplayer-space", `${Math.ceil(e.offsetHeight + 16 + 12)}px`) : document.documentElement.style.removeProperty("--miniplayer-space");
@@ -78984,7 +79164,7 @@ function qFe(e) {
 		n.disconnect(), r.disconnect(), window.removeEventListener("resize", t), document.documentElement.style.removeProperty("--miniplayer-space");
 	};
 }
-function JFe(e, t, n) {
+function $Fe(e, t, n) {
 	let r = e.getBoundingClientRect(), i = (r.top + r.height / 2 < innerHeight / 2 ? "t" : "b") + (r.left + r.width / 2 < innerWidth / 2 ? "l" : "r"), a = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--topH")) || 56, o = {
 		left: r.left - t,
 		top: r.top - n
@@ -79006,7 +79186,7 @@ function JFe(e, t, n) {
 	};
 	e.addEventListener("transitionend", u), setTimeout(u, 600);
 }
-function YFe(e, t) {
+function eIe(e, t) {
 	let n = null, r = (e) => {
 		if (!(e.button !== 0 || e.target.closest("[data-miniplayer-button],[data-miniplayer-play],[data-miniplayer-seek],.vjs-control-bar"))) {
 			n = {
@@ -79032,7 +79212,7 @@ function YFe(e, t) {
 		} catch {}
 		i.moved && (e.dataset.dragged = "1", setTimeout(() => {
 			delete e.dataset.dragged;
-		}, 0), JFe(e, i.dx, i.dy));
+		}, 0), $Fe(e, i.dx, i.dy));
 	}, o = (t) => {
 		e.dataset.dragged && (t.stopPropagation(), t.preventDefault());
 	}, s = (e) => {
@@ -79051,19 +79231,19 @@ function K3() {
 	if (!L3) throw Error("舞台还没有接上宿主（configureStage）");
 	return L3;
 }
-function XFe(e) {
+function tIe(e) {
 	return B3.add(e), () => {
 		B3.delete(e);
 	};
 }
-function ZFe() {
+function nIe() {
 	for (let e of [...B3]) e();
 }
 function q3() {
-	(0, Lt.flushSync)(ZFe);
+	(0, Lt.flushSync)(nIe);
 }
-function QFe({ view: e }) {
-	return /* @__PURE__ */ (0, I.jsxs)(I.Fragment, { children: [e ? /* @__PURE__ */ (0, I.jsx)($Fe, { view: e }, e.generation) : null, /* @__PURE__ */ (0, I.jsx)(KFe, {})] });
+function rIe({ view: e }) {
+	return /* @__PURE__ */ (0, I.jsxs)(I.Fragment, { children: [e ? /* @__PURE__ */ (0, I.jsx)(iIe, { view: e }, e.generation) : null, /* @__PURE__ */ (0, I.jsx)(ZFe, {})] });
 }
 var J3 = () => /* @__PURE__ */ (0, I.jsx)("div", {
 	"data-skeleton": "detail",
@@ -79085,7 +79265,7 @@ function X3() {
 		cancelable: !0
 	}))) : Z3();
 }
-function $Fe({ view: e }) {
+function iIe({ view: e }) {
 	let t = (0, F.useRef)(null);
 	(0, F.useLayoutEffect)(() => {
 		let e = t.current, n = (t) => {
@@ -79093,7 +79273,7 @@ function $Fe({ view: e }) {
 		};
 		return e.addEventListener("cancel", n), () => e.removeEventListener("cancel", n);
 	}, []);
-	let { phase: n, content: r } = e, i = r.kind === "item" ? /* @__PURE__ */ (0, I.jsx)(nFe, { ...r.props }) : r.kind === "jav" ? /* @__PURE__ */ (0, I.jsx)(OFe, { ...r.props }, r.props.code) : /* @__PURE__ */ (0, I.jsx)(PPe, { ...r.props }, r.props.id);
+	let { phase: n, content: r } = e, i = r.kind === "item" ? /* @__PURE__ */ (0, I.jsx)(oFe, { ...r.props }) : r.kind === "jav" ? /* @__PURE__ */ (0, I.jsx)(NFe, { ...r.props }, r.props.code) : /* @__PURE__ */ (0, I.jsx)(PPe, { ...r.props }, r.props.id);
 	return /* @__PURE__ */ (0, I.jsxs)("dialog", {
 		ref: t,
 		id: "stage",
@@ -79213,7 +79393,7 @@ function $3(e) {
 		}
 	};
 }
-function eIe(e, t) {
+function aIe(e, t) {
 	let n = e.querySelector(":scope > [data-stage-fade]");
 	e.setAttribute("data-stage-reveal", ""), e.getBoundingClientRect(), e.setAttribute("data-stage-revealing", "");
 	let r = 0, i = () => {
@@ -79230,7 +79410,7 @@ function e6(e) {
 	let t = G3();
 	return !R3 || R3.content.kind !== e || U3 || !t?.open || t.hasAttribute("data-closing") ? null : t;
 }
-async function tIe(e) {
+async function oIe(e) {
 	!z3 && document.activeElement instanceof HTMLElement && document.activeElement !== document.body && (z3 = {
 		left: window.scrollX,
 		top: window.scrollY,
@@ -79238,7 +79418,7 @@ async function tIe(e) {
 	});
 	let t = e6(e.kind);
 	if (t) {
-		await rIe(e, t);
+		await cIe(e, t);
 		return;
 	}
 	R3 && t6({ miniplayer: !1 });
@@ -79256,7 +79436,7 @@ async function tIe(e) {
 		await a.catch(() => {});
 		return;
 	}
-	let o = nIe(i);
+	let o = sIe(i);
 	R3 = {
 		...R3,
 		phase: o ? "content" : "skeleton"
@@ -79277,11 +79457,11 @@ async function tIe(e) {
 	R3 = {
 		...R3,
 		phase: c ? "content" : "reveal"
-	}, q3(), c || eIe(s, n), rc(s, ":scope>:not([data-stage-fade]) [data-reveal-line]");
+	}, q3(), c || aIe(s, n), rc(s, ":scope>:not([data-stage-fade]) [data-reveal-line]");
 	let l = document.activeElement;
 	l !== s && s.contains(l) || s.querySelector("#closeStage")?.focus();
 }
-function nIe(e) {
+function sIe(e) {
 	if (e.kind === "jav") return !!H.getQueryData(x4(e.props.code));
 	if (e.kind === "follow") return !!H.getQueryData(A2(e.props.id));
 	let { queue: t, id: n } = e.props, r = t ? H.getQueryData(cP(t)) : null;
@@ -79289,7 +79469,7 @@ function nIe(e) {
 	let i = r ? bP(r, n) : n;
 	return i != null && !!H.getQueryData(sP(i));
 }
-async function rIe(e, t) {
+async function cIe(e, t) {
 	let n = ++V3;
 	H3?.abort();
 	let r = new AbortController();
@@ -79310,7 +79490,7 @@ async function rIe(e, t) {
 	let a = document.activeElement;
 	a !== t && t.contains(a) || (t.querySelector("[data-mix-item][aria-current=\"true\"]") || t.querySelector("#closeStage"))?.focus({ preventScroll: !0 });
 }
-function iIe() {
+function lIe() {
 	k2(null);
 	let e = G3();
 	return !e?.open || e.hasAttribute("data-closing") || matchMedia("(prefers-reduced-motion: reduce)").matches ? Promise.resolve() : (e.setAttribute("data-closing", ""), new Promise((t) => {
@@ -79337,7 +79517,7 @@ function t6({ miniplayer: e = !0 } = {}) {
 	};
 	r(), requestAnimationFrame(r);
 }
-function aIe(e) {
+function uIe(e) {
 	R3 && (R3 = {
 		...R3,
 		content: R3.content.kind === "item" ? {
@@ -79355,24 +79535,24 @@ function aIe(e) {
 		}
 	}, q3());
 }
-function oIe() {
-	let e = IFe(), t = e?.kind === "item" ? e.item : null, n = t ? Ao(t, K3().player.settings().javImage) : "";
+function dIe() {
+	let e = VFe(), t = e?.kind === "item" ? e.item : null, n = t ? Ao(t, K3().player.settings().javImage) : "";
 	if (!n) return;
 	let r = g3();
 	r ? r.poster(n) : document.getElementById("vid")?.setAttribute("poster", n);
 }
-var sIe = {
-	open: tIe,
-	update: aIe,
-	exit: iIe,
+var fIe = {
+	open: oIe,
+	update: uIe,
+	exit: lIe,
 	dispose: t6,
 	requestClose: Z3,
 	requestEscape: X3,
-	repaintPoster: oIe,
+	repaintPoster: dIe,
 	isOpen: () => !!R3,
 	showing: () => R3 && e6(R3.content.kind) ? R3.content.kind : null,
-	activeVideo: () => BFe(),
-	mountWallPlayer: LFe,
+	activeVideo: () => GFe(),
+	mountWallPlayer: HFe,
 	toggleTheater: () => {
 		R3 && pN(!K3().player.settings().theaterMode);
 	},
@@ -79381,36 +79561,36 @@ var sIe = {
 	miniplayerActive: () => b3(),
 	miniplayerTakesCard: (e) => P3(e),
 	miniplayerPlay: (e) => {
-		WFe(e);
+		YFe(e);
 	}
 };
-function cIe(e) {
-	return L3 = e, FFe(e, {
+function pIe(e) {
+	return L3 = e, BFe(e, {
 		isOpen: () => !!R3,
 		requestClose: Z3
-	}), sIe;
+	}), fIe;
 }
-function lIe() {
-	let e = (0, F.useSyncExternalStore)(XFe, () => R3);
-	return L3 ? /* @__PURE__ */ (0, I.jsx)(QFe, { view: e }) : null;
+function mIe() {
+	let e = (0, F.useSyncExternalStore)(tIe, () => R3);
+	return L3 ? /* @__PURE__ */ (0, I.jsx)(rIe, { view: e }) : null;
 }
 // src/react/stats/stats.ts
-var uIe = "/api/stats", n6 = ["stats"], r6 = (e) => B(uIe, e);
-async function dIe(e) {
+var hIe = "/api/stats", n6 = ["stats"], r6 = (e) => B(hIe, e);
+async function gIe(e) {
 	await H.fetchQuery({
 		queryKey: n6,
 		queryFn: () => r6(e)
 	});
 }
-var i6 = (e) => e != null && Number.isFinite(e), fIe = (e) => i6(e) ? e.toLocaleString() : "未取得", pIe = (e, t) => i6(e) && i6(t) && t > 0 ? Math.min(100, Math.max(0, Math.round(e / t * 100))) : 0, mIe = (e, t) => {
-	let n = pIe(e, t);
+var i6 = (e) => e != null && Number.isFinite(e), _Ie = (e) => i6(e) ? e.toLocaleString() : "未取得", vIe = (e, t) => i6(e) && i6(t) && t > 0 ? Math.min(100, Math.max(0, Math.round(e / t * 100))) : 0, yIe = (e, t) => {
+	let n = vIe(e, t);
 	return !n && i6(e) && e > 0 && i6(t) && t > 0 ? "<1%" : `${n}%`;
 }, a6 = (e) => {
 	if (!i6(e)) return "未取得";
 	let t = Math.max(0, e);
 	return t >= 172800 ? `${(t / 86400).toLocaleString(void 0, { maximumFractionDigits: 1 })} 天` : t >= 3600 ? `${(t / 3600).toFixed(1)} 小时` : `${Math.round(t / 60)} 分钟`;
-}, o6 = (e) => e.duration ? Math.min(e.play_seconds / e.duration, 1) * 100 : 0, s6 = (e) => (e.max_reached || 0) * 100, hIe = (e) => e.kind === "online" ? "在线直接观看" : o6(e) < s6(e) - 25 ? "快进扫过" : e.o_count ? `高潮 ${e.o_count}` : "正常观看", gIe = (e) => `${e.kind === "online" ? "/posts/" : "/assets/"}${e.id}`;
-function _Ie(e, t = 6) {
+}, o6 = (e) => e.duration ? Math.min(e.play_seconds / e.duration, 1) * 100 : 0, s6 = (e) => (e.max_reached || 0) * 100, bIe = (e) => e.kind === "online" ? "在线直接观看" : o6(e) < s6(e) - 25 ? "快进扫过" : e.o_count ? `高潮 ${e.o_count}` : "正常观看", xIe = (e) => `${e.kind === "online" ? "/posts/" : "/assets/"}${e.id}`;
+function SIe(e, t = 6) {
 	let n = e.filter((e) => Number.isFinite(e.value) && e.value >= 0);
 	if (n.length <= t) return n;
 	let r = [...n].sort((e, t) => t.value - e.value), i = r.slice(t - 1);
@@ -79420,7 +79600,7 @@ function _Ie(e, t = 6) {
 		bytes: i.reduce((e, t) => e + (t.bytes ?? 0), 0)
 	}];
 }
-var vIe = (e) => Math.max(1, ...e) * 1.1, yIe = (e, t) => e > 0 ? Math.max(e, t * .02) : 0, bIe = (e) => Math.max(4, Math.min(14, Math.round(90 / Math.max(1, e)))), xIe = {
+var CIe = (e) => Math.max(1, ...e) * 1.1, wIe = (e, t) => e > 0 ? Math.max(e, t * .02) : 0, TIe = (e) => Math.max(4, Math.min(14, Math.round(90 / Math.max(1, e)))), EIe = {
 	video: "视频",
 	image: "图片",
 	illustration: "插画",
@@ -79428,10 +79608,10 @@ var vIe = (e) => Math.max(1, ...e) * 1.1, yIe = (e, t) => e > 0 ? Math.max(e, t 
 	audio: "音频",
 	account: "账号",
 	other: "其它文件"
-}, SIe = (e) => e.map((e) => ({
-	name: xIe[e.k] ?? e.k,
+}, DIe = (e) => e.map((e) => ({
+	name: EIe[e.k] ?? e.k,
 	value: e.n
-})).sort((e, t) => t.value - e.value), CIe = {
+})).sort((e, t) => t.value - e.value), OIe = {
 	速食: "<5 分钟",
 	短: "5–15 分钟",
 	中: "15–40 分钟",
@@ -79439,7 +79619,7 @@ var vIe = (e) => Math.max(1, ...e) * 1.1, yIe = (e, t) => e > 0 ? Math.max(e, t 
 }, c6 = (e, t = {}) => e.map((e) => ({
 	name: t[e.k] ?? e.k,
 	value: e.n
-})), wIe = (e) => c6(e, CIe), TIe = [
+})), kIe = (e) => c6(e, OIe), AIe = [
 	[
 		1,
 		1,
@@ -79475,7 +79655,7 @@ var vIe = (e) => Math.max(1, ...e) * 1.1, yIe = (e, t) => e > 0 ? Math.max(e, t 
 		Infinity,
 		"≥10"
 	]
-], EIe = (e) => TIe.map(([t, n, r]) => ({
+], jIe = (e) => AIe.map(([t, n, r]) => ({
 	name: r,
 	value: e.filter((e) => e.k >= t && e.k <= n).reduce((e, t) => e + t.n, 0)
 }));
@@ -79510,7 +79690,7 @@ function d6(e, t) {
 	return n;
 }
 // node_modules/d3-sankey/src/align.js
-function DIe(e, t) {
+function MIe(e, t) {
 	return e.sourceLinks.length ? e.depth : t - 1;
 }
 // node_modules/d3-sankey/src/constant.js
@@ -79532,13 +79712,13 @@ function h6(e, t) {
 function g6(e) {
 	return e.value;
 }
-function OIe(e) {
+function NIe(e) {
 	return e.index;
 }
-function kIe(e) {
+function PIe(e) {
 	return e.nodes;
 }
-function AIe(e) {
+function FIe(e) {
 	return e.links;
 }
 function _6(e, t) {
@@ -79553,8 +79733,8 @@ function v6({ nodes: e }) {
 		for (let e of t.targetLinks) e.y1 = n + e.width / 2, n += e.width;
 	}
 }
-function jIe() {
-	let e = 0, t = 0, n = 1, r = 1, i = 24, a = 8, o, s = OIe, c = DIe, l, u, d = kIe, f = AIe, p = 6;
+function IIe() {
+	let e = 0, t = 0, n = 1, r = 1, i = 24, a = 8, o, s = NIe, c = MIe, l, u, d = PIe, f = FIe, p = 6;
 	function m() {
 		let e = {
 			nodes: d.apply(null, arguments),
@@ -79739,7 +79919,7 @@ function jIe() {
 	return m;
 }
 // node_modules/d3-path/src/path.js
-var y6 = Math.PI, b6 = 2 * y6, x6 = 1e-6, MIe = b6 - x6;
+var y6 = Math.PI, b6 = 2 * y6, x6 = 1e-6, LIe = b6 - x6;
 function S6() {
 	this._x0 = this._y0 = this._x1 = this._y1 = null, this._ = "";
 }
@@ -79780,7 +79960,7 @@ S6.prototype = C6.prototype = {
 		e = +e, t = +t, n = +n, a = !!a;
 		var o = n * Math.cos(r), s = n * Math.sin(r), c = e + o, l = t + s, u = 1 ^ a, d = a ? r - i : i - r;
 		if (n < 0) throw Error("negative radius: " + n);
-		this._x1 === null ? this._ += "M" + c + "," + l : (Math.abs(this._x1 - c) > x6 || Math.abs(this._y1 - l) > x6) && (this._ += "L" + c + "," + l), n && (d < 0 && (d = d % b6 + b6), d > MIe ? this._ += "A" + n + "," + n + ",0,1," + u + "," + (e - o) + "," + (t - s) + "A" + n + "," + n + ",0,1," + u + "," + (this._x1 = c) + "," + (this._y1 = l) : d > x6 && (this._ += "A" + n + "," + n + ",0," + +(d >= y6) + "," + u + "," + (this._x1 = e + n * Math.cos(i)) + "," + (this._y1 = t + n * Math.sin(i))));
+		this._x1 === null ? this._ += "M" + c + "," + l : (Math.abs(this._x1 - c) > x6 || Math.abs(this._y1 - l) > x6) && (this._ += "L" + c + "," + l), n && (d < 0 && (d = d % b6 + b6), d > LIe ? this._ += "A" + n + "," + n + ",0,1," + u + "," + (e - o) + "," + (t - s) + "A" + n + "," + n + ",0,1," + u + "," + (this._x1 = c) + "," + (this._y1 = l) : d > x6 && (this._ += "A" + n + "," + n + ",0," + +(d >= y6) + "," + u + "," + (this._x1 = e + n * Math.cos(i)) + "," + (this._y1 = t + n * Math.sin(i))));
 	},
 	rect: function(e, t, n, r) {
 		this._ += "M" + (this._x0 = this._x1 = +e) + "," + (this._y0 = this._y1 = +t) + "h" + +n + "v" + +r + "h" + -n + "Z";
@@ -79796,25 +79976,25 @@ function w6(e) {
 	};
 }
 // node_modules/d3-shape/src/point.js
-function NIe(e) {
+function RIe(e) {
 	return e[0];
 }
-function PIe(e) {
+function zIe(e) {
 	return e[1];
 }
 // node_modules/d3-shape/src/array.js
-var FIe = Array.prototype.slice;
+var BIe = Array.prototype.slice;
 // node_modules/d3-shape/src/link/index.js
-function IIe(e) {
+function VIe(e) {
 	return e.source;
 }
-function LIe(e) {
+function HIe(e) {
 	return e.target;
 }
-function RIe(e) {
-	var t = IIe, n = LIe, r = NIe, i = PIe, a = null;
+function UIe(e) {
+	var t = VIe, n = HIe, r = RIe, i = zIe, a = null;
 	function o() {
-		var o, s = FIe.call(arguments), c = t.apply(this, s), l = n.apply(this, s);
+		var o, s = BIe.call(arguments), c = t.apply(this, s), l = n.apply(this, s);
 		if (a ||= o = C6(), e(a, +r.apply(this, (s[0] = c, s)), +i.apply(this, s), +r.apply(this, (s[0] = l, s)), +i.apply(this, s)), o) return a = null, o + "" || null;
 	}
 	return o.source = function(e) {
@@ -79829,54 +80009,54 @@ function RIe(e) {
 		return arguments.length ? (a = e ?? null, o) : a;
 	}, o;
 }
-function zIe(e, t, n, r, i) {
+function WIe(e, t, n, r, i) {
 	e.moveTo(t, n), e.bezierCurveTo(t = (t + r) / 2, n, t, i, r, i);
 }
-function BIe() {
-	return RIe(zIe);
+function GIe() {
+	return UIe(WIe);
 }
 // node_modules/d3-sankey/src/sankeyLinkHorizontal.js
-function VIe(e) {
+function KIe(e) {
 	return [e.source.x1, e.y0];
 }
-function HIe(e) {
+function qIe(e) {
 	return [e.target.x0, e.y1];
 }
-function UIe() {
-	return BIe().source(VIe).target(HIe);
+function JIe() {
+	return GIe().source(KIe).target(qIe);
 }
 // src/react/taste/taste.ts
-var WIe = "/api/taste", T6 = "/api/taste/refresh", GIe = "/api/taste/import", E6 = "/api/taste/source", D6 = (e) => ["taste", e], KIe = ["taste", "refresh"], qIe = [
+var YIe = "/api/taste", T6 = "/api/taste/refresh", XIe = "/api/taste/import", E6 = "/api/taste/source", D6 = (e) => ["taste", e], ZIe = ["taste", "refresh"], QIe = [
 	["7d", "最近 7 天"],
 	["30d", "最近 30 天"],
 	["90d", "最近 90 天"],
 	["365d", "最近一年"],
 	["all", "全部时间"]
-], JIe = 2e3, YIe = (e) => e?.stale && !e.error ? JIe : !1, XIe = (e) => e ? new Date(e).toLocaleString("zh-CN", {
+], $Ie = 2e3, eLe = (e) => e?.stale && !e.error ? $Ie : !1, tLe = (e) => e ? new Date(e).toLocaleString("zh-CN", {
 	month: "numeric",
 	day: "numeric",
 	hour: "2-digit",
 	minute: "2-digit"
-}) : "—", ZIe = (e, t) => V(E6, {
+}) : "—", nLe = (e, t) => V(E6, {
 	...e,
 	window: t
-}), O6 = (e, t, n = !1) => B(`${WIe}?window=${e}${n ? "&retry=1" : ""}`, t), QIe = (e) => B(T6, e);
-async function $Ie(e, t) {
+}), O6 = (e, t, n = !1) => B(`${YIe}?window=${e}${n ? "&retry=1" : ""}`, t), rLe = (e) => B(T6, e);
+async function iLe(e, t) {
 	await H.fetchQuery({
 		queryKey: D6(e),
 		queryFn: () => O6(e, t)
 	});
 }
-var eLe = (e) => V(T6, {
+var aLe = (e) => V(T6, {
 	window: e,
 	background: !0
-}), tLe = (e, t) => V(E6, {
+}), oLe = (e, t) => V(E6, {
 	operation: "remove",
 	source_key: e,
 	window: t
 });
-async function nLe(e) {
-	let t = await fetch(GIe, {
+async function sLe(e) {
+	let t = await fetch(XIe, {
 		method: "POST",
 		credentials: "same-origin",
 		headers: {
@@ -79894,8 +80074,8 @@ async function nLe(e) {
 	}
 	return n;
 }
-var rLe = 1e4, k6 = (e) => e ? new Date(e).toLocaleDateString("zh-CN") : "—";
-function iLe(e) {
+var cLe = 1e4, k6 = (e) => e ? new Date(e).toLocaleDateString("zh-CN") : "—";
+function lLe(e) {
 	let t = `${Number(e.history_sources || 0).toLocaleString()} 个数据源`;
 	if (!e.range_start && !e.range_end) return t;
 	let n = e.range_start?.slice(0, 4) === e.range_end?.slice(0, 4), r = (e) => e && n ? new Date(e).toLocaleDateString("zh-CN", {
@@ -79904,31 +80084,31 @@ function iLe(e) {
 	}) : k6(e);
 	return `${t} · ${r(e.range_start)}–${r(e.range_end)}`;
 }
-var aLe = a6, oLe = (e) => e.filter((e) => Number.isFinite(Number(e.score)) && Number(e.score) > 0).sort((e, t) => Number(t.score) - Number(e.score)), sLe = (e) => Number(e.web_visits ?? e.score ?? e.visits ?? e.peach_items ?? 0);
-function cLe(e) {
+var uLe = a6, dLe = (e) => e.filter((e) => Number.isFinite(Number(e.score)) && Number(e.score) > 0).sort((e, t) => Number(t.score) - Number(e.score)), fLe = (e) => Number(e.web_visits ?? e.score ?? e.visits ?? e.peach_items ?? 0);
+function pLe(e) {
 	if (e.web_visits == null && !e.web_bookmarks) return Number(e.score || e.visits || 0).toLocaleString();
 	let t = [], n = Number(e.web_bookmarks || 0), r = Number(e.web_visits ?? e.visits ?? 0) - n;
 	return r > 0 && t.push(`浏览 ${r.toLocaleString()}`), n && t.push(`书签 ${n.toLocaleString()}`), e.peach_items && t.push(`Pear ${Number(e.peach_items).toLocaleString()}`), t.join(" · ");
 }
-function lLe(e) {
-	let t = e.map(sLe), n = Math.max(1, ...t);
+function mLe(e) {
+	let t = e.map(fLe), n = Math.max(1, ...t);
 	return t.map((e) => Math.max(0, Math.min(100, e / n * 100)));
 }
 var A6 = (e, t) => e.filter((e) => Number.isFinite(Number(e.score)) && Number(e.score) > 0).map((e) => ({
 	name: e.name,
 	value: Number(e.score)
 })).sort((e, t) => t.value - e.value).slice(0, t);
-function uLe(e) {
+function hLe(e) {
 	let t = A6(e, 6);
 	return t.length < 3 ? [] : t;
 }
 var j6 = {
 	width: 720,
 	height: 435
-}, dLe = {
+}, gLe = {
 	source: 145,
 	target: 545
-}, M6 = 30, fLe = 240;
+}, M6 = 30, _Le = 240;
 function N6(e, t, n) {
 	let r = /* @__PURE__ */ new Map();
 	for (let n of e) r.set(n[t], (r.get(n[t]) ?? 0) + n.value);
@@ -79936,7 +80116,7 @@ function N6(e, t, n) {
 	let i = [...r].sort((e, t) => t[1] - e[1]).map(([e]) => e), a = new Set(i.slice(0, 11)), o = n(i.length - a.size);
 	return (e) => a.has(e) ? e : o;
 }
-function pLe(e = []) {
+function vLe(e = []) {
 	let t = e.filter((e) => e.source && e.target && Number.isFinite(e.value) && e.value > 0);
 	if (!t.length) return null;
 	let n = N6(t, "source", (e) => `其余 ${e.toLocaleString()} 个网站`), r = N6(t, "target", (e) => `其余 ${e.toLocaleString()} 位创作者`), i = /* @__PURE__ */ new Map();
@@ -79948,7 +80128,7 @@ function pLe(e = []) {
 			value: e.value
 		});
 	}
-	let a = [...i.values()], o = [...new Set(a.map((e) => e.source))], s = [...new Set(a.map((e) => e.target))], c = Math.max(o.length, s.length), l = Math.max(404, 16 + (c - 1) * M6 + fLe), u = jIe().nodeId((e) => e.id).nodeWidth(10).nodePadding(M6).extent([[155, 16], [535, l]])({
+	let a = [...i.values()], o = [...new Set(a.map((e) => e.source))], s = [...new Set(a.map((e) => e.target))], c = Math.max(o.length, s.length), l = Math.max(404, 16 + (c - 1) * M6 + _Le), u = IIe().nodeId((e) => e.id).nodeWidth(10).nodePadding(M6).extent([[155, 16], [535, l]])({
 		nodes: [...o.map((e) => ({
 			id: `source:${e}`,
 			name: e,
@@ -79963,7 +80143,7 @@ function pLe(e = []) {
 			target: `target:${e.target}`,
 			value: e.value
 		}))
-	}), d = a.reduce((e, t) => e + t.value, 0), f = UIe();
+	}), d = a.reduce((e, t) => e + t.value, 0), f = JIe();
 	return {
 		nodes: u.nodes.map((e) => ({
 			id: e.id,
@@ -79994,14 +80174,14 @@ function pLe(e = []) {
 		height: l + j6.height - 404
 	};
 }
-var mLe = (e) => er(e, 17), P6 = {
+var yLe = (e) => er(e, 17), P6 = {
 	performers: "艺人",
 	creators: "卖家",
 	studios: "厂牌",
 	agencies: "事务所",
 	series: "系列",
 	tags: "标签"
-}, hLe = [[
+}, bLe = [[
 	"big",
 	"大图 · 竖幅头像",
 	"maximize"
@@ -80009,7 +80189,7 @@ var mLe = (e) => er(e, 17), P6 = {
 	"compact",
 	"紧凑 · 圆形头像",
 	"layout-grid"
-]], gLe = [[
+]], xLe = [[
 	"big",
 	"大图 · 完整标识",
 	"maximize"
@@ -80017,7 +80197,7 @@ var mLe = (e) => er(e, 17), P6 = {
 	"compact",
 	"紧凑 · 圆形标识",
 	"layout-grid"
-]], _Le = [[
+]], SLe = [[
 	"big",
 	"大图 · 系列图片",
 	"maximize"
@@ -80025,7 +80205,7 @@ var mLe = (e) => er(e, 17), P6 = {
 	"compact",
 	"紧凑 · 系列图片",
 	"layout-grid"
-]], vLe = [
+]], CLe = [
 	[
 		"studios",
 		"厂牌",
@@ -80041,7 +80221,7 @@ var mLe = (e) => er(e, 17), P6 = {
 		"事务所",
 		"briefcase"
 	]
-], yLe = [[
+], wLe = [[
 	"local",
 	"本地",
 	"hard-drive"
@@ -80049,7 +80229,7 @@ var mLe = (e) => er(e, 17), P6 = {
 	"online",
 	"在线",
 	"rss"
-]], bLe = [
+]], TLe = [
 	[
 		"performers",
 		"艺人",
@@ -80065,7 +80245,7 @@ var mLe = (e) => er(e, 17), P6 = {
 		"在线",
 		"rss"
 	]
-], xLe = [[
+], ELe = [[
 	"cloud",
 	"标签云",
 	"tags"
@@ -80092,12 +80272,12 @@ var L6 = (e, t, n) => Gs(e.map(([e, t, n]) => ({
 	active: t,
 	label: n,
 	className: "indextabs"
-}), SLe = (e) => `<div class="peach-react contents"><div data-filter-glass data-glass-pane class="sticky top-topbar z-10 mb-5.5 flex flex-col">
+}), DLe = (e) => `<div class="peach-react contents"><div data-filter-glass data-glass-pane class="sticky top-topbar z-10 mb-5.5 flex flex-col">
     <div class="flex h-12 min-w-0 items-center gap-1.75 overflow-x-auto overscroll-x-contain px-3 py-2" data-filter-row="top" data-skeleton-tier="filter-pill" aria-label="标签类型"></div>
     <div class="flex min-h-11.5 min-w-0 items-center gap-3 px-3 py-2" data-filter-row="bottom"><span class="countskeleton"></span>
-      <span class="ml-auto">${tl("tag-view", "标签视图", xLe, e, { className: "tag-skeleton-view" })}</span></div></div></div>`;
-function CLe({ kind: e, q: t, scope: n, view: r, category: i }, a) {
-	let o = P6[e] || "标签", s = e !== "tags", c = e === "studios" || e === "agencies" || e === "series", l = s ? tl("people-layout", o + "索引版式", e === "series" ? _Le : c ? gLe : hLe, a) : "";
+      <span class="ml-auto">${tl("tag-view", "标签视图", ELe, e, { className: "tag-skeleton-view" })}</span></div></div></div>`;
+function OLe({ kind: e, q: t, scope: n, view: r, category: i }, a) {
+	let o = P6[e] || "标签", s = e !== "tags", c = e === "studios" || e === "agencies" || e === "series", l = s ? tl("people-layout", o + "索引版式", e === "series" ? SLe : c ? xLe : bLe, a) : "";
 	return `<div class="ihead peach-react" data-index-head>
       <h2 class="disp indexheading">${o}</h2>
       ${s ? "<span class=\"mono\" id=\"indexCount\"><span class=\"countskeleton\"></span></span>" : ""}${l}
@@ -80109,8 +80289,8 @@ function CLe({ kind: e, q: t, scope: n, view: r, category: i }, a) {
 	}) : ""}
       <div data-index-search class="ml-auto min-w-0 max-w-80 flex-1">${Os("", t, "过滤" + o)}</div>
     </div>
-    ${e === "tags" ? L6(yLe, n, "词表") : e === "performers" || e === "creators" ? L6(bLe, e === "performers" && n === "online" ? "online" : e, "人物名册") : c ? L6(vLe, e, "资料类型") : ""}
-    ${e === "tags" ? SLe(r) : ""}
+    ${e === "tags" ? L6(wLe, n, "词表") : e === "performers" || e === "creators" ? L6(TLe, e === "performers" && n === "online" ? "online" : e, "人物名册") : c ? L6(CLe, e, "资料类型") : ""}
+    ${e === "tags" ? DLe(r) : ""}
     ${e === "performers" && n !== "online" ? qDe(i) : ""}
     ${cc({
 		kind: e,
@@ -80118,15 +80298,15 @@ function CLe({ kind: e, q: t, scope: n, view: r, category: i }, a) {
 		mode: r
 	})}`;
 }
-var wLe = (e) => e.match(/data-skeleton="([^"]*)"/)?.[1] || "";
+var kLe = (e) => e.match(/data-skeleton="([^"]*)"/)?.[1] || "";
 function R6(e, t, n) {
-	let r = CLe(t, n);
-	e.querySelector("[data-skeleton]")?.dataset.skeleton !== wLe(r) && (e.innerHTML = r, hc(e));
+	let r = OLe(t, n);
+	e.querySelector("[data-skeleton]")?.dataset.skeleton !== kLe(r) && (e.innerHTML = r, hc(e));
 }
 // src/react/router/pages/index-entity.tsx
-var TLe = () => yu, ELe = () => iu, z6 = () => document.getElementById("index");
+var ALe = () => yu, jLe = () => iu, z6 = () => document.getElementById("index");
 function B6(e, t, n = {}) {
-	let r = (0, F.useSyncExternalStore)(ku, TLe);
+	let r = (0, F.useSyncExternalStore)(ku, ALe);
 	sf();
 	let i = Kf(G.navigation.location.pathname), a = (0, F.useRef)({
 		mounted: !0,
@@ -80174,7 +80354,7 @@ function B6(e, t, n = {}) {
 		i
 	]);
 }
-async function DLe(e, t, n, r) {
+async function MLe(e, t, n, r) {
 	let i = z6();
 	if (!i) return;
 	let a = `/${t}`, o = I6(t, n), s = F6(Kj().value.peopleLayout), c = !!i.querySelector("[data-index-page]") && !i.hidden;
@@ -80189,23 +80369,23 @@ async function DLe(e, t, n, r) {
 		reuse: c
 	}) && r() && (e.surfaceShown?.("index", a), Cm(r, i));
 }
-function OLe(e) {
+function NLe(e) {
 	let t = z6(), n = t ? bp(t) : null;
 	return !!t && !t.hidden && !!n && n.path === e && n.host.isConnected;
 }
-function kLe({ epoch: e }) {
+function PLe({ epoch: e }) {
 	let t = (0, F.useContext)(HG), n = sf(), r = n.pathname.split("/").filter(Boolean)[0];
 	return B6(e, (e, i) => {
-		t && DLe(t, r, n.search, i);
-	}, { shown: () => OLe(`/${r}`) }), null;
+		t && MLe(t, r, n.search, i);
+	}, { shown: () => NLe(`/${r}`) }), null;
 }
-function ALe() {
-	let e = VG(), t = (0, F.useSyncExternalStore)(ku, ELe), n = (0, F.useRef)(t);
+function FLe() {
+	let e = VG(), t = (0, F.useSyncExternalStore)(ku, jLe), n = (0, F.useRef)(t);
 	return (0, F.useEffect)(() => {
 		n.current !== t && (n.current = t, window.location.pathname === "/tags" && Dp(z6(), { selectMode: t }));
-	}, [t]), /* @__PURE__ */ (0, I.jsx)(kLe, { epoch: e }, e);
+	}, [t]), /* @__PURE__ */ (0, I.jsx)(PLe, { epoch: e }, e);
 }
-function jLe(e) {
+function ILe(e) {
 	let t;
 	try {
 		t = decodeURIComponent(e);
@@ -80220,7 +80400,7 @@ function jLe(e) {
 	} : null;
 }
 var V6 = /* @__PURE__ */ new WeakMap();
-function MLe(e) {
+function LLe(e) {
 	let t = V6.get(e);
 	return t || (t = {
 		helpers: {
@@ -80237,7 +80417,7 @@ function H6() {
 	let e = z6(), t = e ? bp(e) : null;
 	return !!t && t.path.endsWith("/*") && t.host.isConnected;
 }
-async function NLe(e, t, n, r, i, a, o) {
+async function RLe(e, t, n, r, i, a, o) {
 	let s = z6();
 	if (!s) return;
 	let { segment: c, kind: l, name: u } = n;
@@ -80261,7 +80441,7 @@ async function NLe(e, t, n, r, i, a, o) {
 	let g = {
 		...h,
 		hosts: m,
-		card: MLe(e),
+		card: LLe(e),
 		resolvedEntity: o,
 		restoreNavigation: xm(),
 		actions: {
@@ -80278,7 +80458,7 @@ async function NLe(e, t, n, r, i, a, o) {
 		place: (e) => (e.replaceChildren(...f), p.firstElementChild)
 	}) && a() && H6() && (e.surfaceShown?.("entity", r), Cm(a, m.filter));
 }
-function PLe({ target: e }) {
+function zLe({ target: e }) {
 	let t = (0, F.useContext)(HG), n = VG(), r = sf();
 	return B6(n, (n, i) => {
 		let a = t?.entity;
@@ -80311,7 +80491,7 @@ function PLe({ target: e }) {
 				return;
 			}
 			let c = String(s.canonical_name || e.name), l = Nn(e.kind, c, Number(s.id));
-			l === r.pathname ? !n && a.refresh(e.kind, c, r.search) ? Cm(i, z6()?.querySelector("[data-entity-filter]")) : NLe(t, a, {
+			l === r.pathname ? !n && a.refresh(e.kind, c, r.search) ? Cm(i, z6()?.querySelector("[data-entity-filter]")) : RLe(t, a, {
 				...e,
 				name: c
 			}, r.pathname, r.search, i, s) : zp(l + r.search + r.hash, {
@@ -80321,13 +80501,13 @@ function PLe({ target: e }) {
 		})();
 	}, { shown: () => H6() && !z6()?.hidden }), null;
 }
-function FLe() {
-	let e = jLe(sf().pathname);
-	return e ? /* @__PURE__ */ (0, I.jsx)(PLe, { target: e }, JSON.stringify([e.kind, e.name])) : null;
+function BLe() {
+	let e = ILe(sf().pathname);
+	return e ? /* @__PURE__ */ (0, I.jsx)(zLe, { target: e }, JSON.stringify([e.kind, e.name])) : null;
 }
 // src/react/router/pages/follow.tsx
-var U6 = () => document.getElementById("stats"), ILe = () => Tu;
-async function LLe(e, t) {
+var U6 = () => document.getElementById("stats"), VLe = () => Tu;
+async function HLe(e, t) {
 	let n = U6(), r = e.follow;
 	if (!n || !r) return;
 	let i = bm("follow"), a = r.refresh(i), o = r.props();
@@ -80343,16 +80523,16 @@ async function LLe(e, t) {
 		beforePlace: s ? () => e.surfaceChanged("follow", "/follow") : void 0
 	}), t() && Cm(t, n.querySelector("[data-filter-frame]"));
 }
-function RLe() {
+function ULe() {
 	let e = U6(), t = e ? bp(e) : null;
 	return !!e && !e.hidden && !!t && t.path === "/follow" && t.host.isConnected;
 }
-function zLe() {
+function WLe() {
 	let e = (0, F.useContext)(HG);
 	return B6(VG(), (t, n) => {
-		e && LLe(e, n);
+		e && HLe(e, n);
 	}, {
-		shown: RLe,
+		shown: ULe,
 		onCovered: () => {
 			G.navigation.location.pathname.startsWith("/posts/") && e?.follow?.ground();
 		}
@@ -80362,7 +80542,7 @@ function W6(e) {
 	let t = e ? bp(e) : null;
 	return !!t && t.path === "/playlists" && t.host.isConnected;
 }
-async function BLe(e, t) {
+async function GLe(e, t) {
 	let n = U6();
 	n && (e.surfaceChanged("playlists", "/playlists"), r4(n, t4("/playlists", {
 		followLayout: "",
@@ -80373,36 +80553,36 @@ async function BLe(e, t) {
 		isCurrent: t
 	}), t() && Cm(t));
 }
-function VLe() {
-	let e = (0, F.useContext)(HG), t = (0, F.useSyncExternalStore)(ku, ILe), n = (0, F.useRef)(t);
+function KLe() {
+	let e = (0, F.useContext)(HG), t = (0, F.useSyncExternalStore)(ku, VLe), n = (0, F.useRef)(t);
 	return (0, F.useEffect)(() => {
 		if (n.current === t) return;
 		n.current = t;
 		let e = U6();
 		W6(e) && Dp(e, { revision: t });
 	}, [t]), B6(VG(), (t, n) => {
-		e && BLe(e, n);
+		e && GLe(e, n);
 	}, { shown: () => {
 		let e = U6();
 		return W6(e) && !e.hidden;
 	} }), null;
 }
 // src/react/router/pages/immerse.tsx
-function HLe() {
+function qLe() {
 	let e = new URLSearchParams(G.navigation.location.search).get("id");
 	return /^\d+$/.test(e || "") ? Number(e) : void 0;
 }
-function ULe() {
+function JLe() {
 	let e = (0, F.useContext)(HG);
 	return zG(() => {
-		e?.openImmerse(HLe());
+		e?.openImmerse(qLe());
 	}, !0), null;
 }
-function WLe() {
-	return /* @__PURE__ */ (0, I.jsx)(ULe, {}, VG());
+function YLe() {
+	return /* @__PURE__ */ (0, I.jsx)(JLe, {}, VG());
 }
 // src/react/router/pages/managed.tsx
-var GLe = () => yu > 0, G6 = () => (0, F.useSyncExternalStore)(ku, GLe), K6 = () => Kj().value.followLayout === "table" ? "table" : "default", q6 = () => new URLSearchParams(window.location.search);
+var XLe = () => yu > 0, G6 = () => (0, F.useSyncExternalStore)(ku, XLe), K6 = () => Kj().value.followLayout === "table" ? "table" : "default", q6 = () => new URLSearchParams(window.location.search);
 function J6(e) {
 	return wn("/healthz", { signal: e.controller.signal }).catch((e) => {
 		if (Tn(e)) return null;
@@ -80416,7 +80596,7 @@ function Y6(e, t) {
 		writerUrl: e?.ledger_writer_origin ? new URL(t, e.ledger_writer_origin).href : ""
 	};
 }
-async function KLe(e, t) {
+async function ZLe(e, t) {
 	if (e === "/jav") {
 		let e = await J6(t);
 		return t.live ? {
@@ -80455,7 +80635,7 @@ async function KLe(e, t) {
 	}
 	return {};
 }
-async function qLe(e, t, n) {
+async function QLe(e, t, n) {
 	let r = G.navigation.seq, i = () => n.live && G.navigation.seq === r;
 	if (e === "/jav" && YU(q6().get("tab")) === "library") {
 		G.replace(qye(window.location.search));
@@ -80490,7 +80670,7 @@ async function qLe(e, t, n) {
 		q: "",
 		jav: ""
 	} }), t.clearSearch());
-	let o = await KLe(e, n);
+	let o = await ZLe(e, n);
 	if (!o) return;
 	let s = await Tp(e, o, {
 		container: a,
@@ -80509,12 +80689,12 @@ function X6({ path: e }) {
 	let n = Kf(G.navigation.location.pathname), r = (0, F.useRef)(n ? null : t), i = (0, F.useRef)(n);
 	n || i.current && r.current !== null || (r.current = t), i.current = n;
 	let a = e.startsWith("/settings/") ? "/settings/configuration" : e;
-	return /* @__PURE__ */ (0, I.jsx)(JLe, {
+	return /* @__PURE__ */ (0, I.jsx)($Le, {
 		path: e,
 		covered: r.current === null
 	}, `${a} ${r.current ?? "covered"}`);
 }
-function JLe({ path: e, covered: t }) {
+function $Le({ path: e, covered: t }) {
 	let n = (0, F.useContext)(HG), r = G6(), i = (0, F.useRef)(null);
 	return (0, F.useEffect)(() => {
 		e.startsWith("/settings/") && Dp(document.getElementById("stats"), { section: If(e) });
@@ -80526,14 +80706,14 @@ function JLe({ path: e, covered: t }) {
 			controller: new AbortController()
 		};
 		i.current = a, queueMicrotask(() => {
-			a.live && qLe(e, n, a);
+			a.live && QLe(e, n, a);
 		});
 	}, [r]), (0, F.useEffect)(() => () => {
 		let e = i.current;
 		e && (e.live = !1, e.controller.abort());
 	}, []), null;
 }
-function YLe() {
+function eRe() {
 	let e = G6(), t = (0, F.useRef)(!1);
 	return (0, F.useEffect)(() => {
 		if (!e || t.current || Kf(G.navigation.location.pathname)) return;
@@ -80547,11 +80727,11 @@ function YLe() {
 	}, [e]), null;
 }
 // src/react/router/route-chunk.ts
-var Z6 = [], Q6 = "peach.chunkReloadAt", XLe = 3e4;
-async function ZLe() {
+var Z6 = [], Q6 = "peach.chunkReloadAt", tRe = 3e4;
+async function nRe() {
 	try {
 		let e = Number(sessionStorage.getItem(Q6) || 0);
-		if (Date.now() - e < XLe || !(await fetch("/healthz", {
+		if (Date.now() - e < tRe || !(await fetch("/healthz", {
 			cache: "no-store",
 			credentials: "same-origin"
 		})).ok) return;
@@ -80564,7 +80744,7 @@ function $6(e) {
 	});
 	return Z6.push(r), {
 		preload: () => r().catch(async (e) => {
-			throw await ZLe(), e;
+			throw await nRe(), e;
 		}),
 		get: () => {
 			if (!t) throw Error("页面代码还没装载");
@@ -80572,7 +80752,7 @@ function $6(e) {
 		}
 	};
 }
-function QLe() {
+function rRe() {
 	let e = globalThis.requestIdleCallback;
 	if (typeof e != "function") return;
 	let t = [...Z6], n = () => {
@@ -80596,7 +80776,7 @@ var t8 = $6(() => import("./peach-app.jav-page-srtaKuxG.js")), n8 = $6(() => imp
 		DiagnosticsPage: t
 	};
 }), u8 = $6(() => import("./peach-app.activity-page-B1BhVjNb.js")), d8 = $6(() => import("./peach-app.follow-manage-page-B5jO1dTc.js")), f8 = $6(() => import("./peach-app.playlists-page-DGcNbxyC.js"));
-function $Le(e, t, n) {
+function iRe(e, t, n) {
 	if (e === "duplicates") {
 		n("/duplicates");
 		return;
@@ -80646,7 +80826,7 @@ var p8 = (e) => ({
 	},
 	"/stats": {
 		element: /* @__PURE__ */ (0, I.jsx)(X6, { path: "/stats" }),
-		prefetch: (e, t) => e8(n8, dIe(t)),
+		prefetch: (e, t) => e8(n8, gIe(t)),
 		page: (e, t) => {
 			let { StatsPage: n } = n8.get();
 			return /* @__PURE__ */ (0, I.jsx)(n, {
@@ -80657,7 +80837,7 @@ var p8 = (e) => ({
 	},
 	"/taste": {
 		element: /* @__PURE__ */ (0, I.jsx)(X6, { path: "/taste" }),
-		prefetch: (e, t) => e8(r8, $Ie("all", t)),
+		prefetch: (e, t) => e8(r8, iLe("all", t)),
 		page: (e, t, n) => {
 			let { TastePage: r } = r8.get();
 			return /* @__PURE__ */ (0, I.jsx)(r, {
@@ -80691,7 +80871,7 @@ var p8 = (e) => ({
 			return /* @__PURE__ */ (0, I.jsx)(r, {
 				navigate: n,
 				failure: t.failure,
-				open: (e) => $Le(e, t, n),
+				open: (e) => iRe(e, t, n),
 				toast: (e, { warning: n = !1 } = {}) => n ? t.toast({ text: e }, { sound: "warning" }) : t.receipt(e)
 			});
 		}
@@ -80758,9 +80938,9 @@ var p8 = (e) => ({
 			});
 		}
 	}
-}, h8 = (e) => Object.hasOwn(m8, e), eRe = { "/resource-sync": { element: /* @__PURE__ */ (0, I.jsx)(YLe, {}) } }, tRe = { "/immerse": { element: /* @__PURE__ */ (0, I.jsx)(WLe, {}) } }, g8 = {
+}, h8 = (e) => Object.hasOwn(m8, e), aRe = { "/resource-sync": { element: /* @__PURE__ */ (0, I.jsx)(eRe, {}) } }, oRe = { "/immerse": { element: /* @__PURE__ */ (0, I.jsx)(YLe, {}) } }, g8 = {
 	"/playlists": {
-		element: /* @__PURE__ */ (0, I.jsx)(VLe, {}),
+		element: /* @__PURE__ */ (0, I.jsx)(KLe, {}),
 		prefetch: (e, t) => e8(f8, _je(t)),
 		page: (e, t) => {
 			let { PlaylistsPage: n } = f8.get();
@@ -80774,12 +80954,12 @@ var p8 = (e) => ({
 		}
 	},
 	"/follow": {
-		element: /* @__PURE__ */ (0, I.jsx)(zLe, {}),
+		element: /* @__PURE__ */ (0, I.jsx)(WLe, {}),
 		prefetch: (e, t) => aa(e, t),
 		page: (e) => /* @__PURE__ */ (0, I.jsx)(JOe, { ...e })
 	}
 }, _8 = (e) => Object.hasOwn(g8, e), v8 = {
-	element: /* @__PURE__ */ (0, I.jsx)(ALe, {}),
+	element: /* @__PURE__ */ (0, I.jsx)(FLe, {}),
 	prefetch: (e, t) => iOe(e, t),
 	page: (e, t) => /* @__PURE__ */ (0, I.jsx)(AAe, {
 		...e,
@@ -80802,7 +80982,7 @@ var p8 = (e) => ({
 	"/tags": v8,
 	"/series": v8
 }, b8 = {
-	element: /* @__PURE__ */ (0, I.jsx)(FLe, {}),
+	element: /* @__PURE__ */ (0, I.jsx)(BLe, {}),
 	prefetch: (e) => KDe(e),
 	page: (e) => /* @__PURE__ */ (0, I.jsx)(fAe, { ...e })
 }, x8 = {
@@ -80823,7 +81003,7 @@ var p8 = (e) => ({
 		prefetch: async () => {},
 		page: (e) => /* @__PURE__ */ (0, I.jsx)(UAe, { ...e })
 	}
-}, C8 = (e) => Object.hasOwn(S8, e), nRe = (e) => e.mode === "notice" ? /* @__PURE__ */ (0, I.jsx)(Lye, { ...e }) : /* @__PURE__ */ (0, I.jsx)(U$, { ...e }), w8 = {
+}, C8 = (e) => Object.hasOwn(S8, e), sRe = (e) => e.mode === "notice" ? /* @__PURE__ */ (0, I.jsx)(Lye, { ...e }) : /* @__PURE__ */ (0, I.jsx)(U$, { ...e }), w8 = {
 	"catalog-filter": {
 		prefetch: async () => {},
 		page: (e) => /* @__PURE__ */ (0, I.jsx)(lSe, { ...e })
@@ -80834,7 +81014,7 @@ var p8 = (e) => ({
 	},
 	"library-processing": {
 		prefetch: (e, t) => YH(t),
-		page: (e) => /* @__PURE__ */ (0, I.jsx)(nRe, { ...e })
+		page: (e) => /* @__PURE__ */ (0, I.jsx)(sRe, { ...e })
 	},
 	search: {
 		prefetch: async () => {},
@@ -80867,7 +81047,7 @@ var p8 = (e) => ({
 	},
 	stage: {
 		prefetch: async () => {},
-		page: () => /* @__PURE__ */ (0, I.jsx)(lIe, {})
+		page: () => /* @__PURE__ */ (0, I.jsx)(mIe, {})
 	}
 }, D8 = (e) => Object.hasOwn(E8, e), O8 = [
 	"/",
@@ -80889,21 +81069,21 @@ var k8 = (e) => h8(e) || _8(e) || Object.hasOwn(y8, e) || Object.hasOwn(x8, e) |
 function A8(e) {
 	return h8(e) ? m8[e] : _8(e) ? g8[e] : C8(e) ? S8[e] : T8(e) ? w8[e] : D8(e) ? E8[e] : Object.hasOwn(y8, e) ? y8[e] : x8[e];
 }
-function rRe(e, t, n) {
+function cRe(e, t, n) {
 	return k8(e) ? A8(e).prefetch(t, n) : Promise.reject(/* @__PURE__ */ Error(`路由树里没有这一页：${e}`));
 }
-function iRe(e, t, n, r) {
+function lRe(e, t, n, r) {
 	return A8(e).page(t, n, r);
 }
 // src/react/application-residents.ts
 var j8 = null, M8 = null, N8 = 0, P8 = /* @__PURE__ */ new Set();
-function aRe(e) {
+function uRe(e) {
 	return j8 = e, M8 && e(M8), () => {
 		j8 === e && (j8 = null);
 	};
 }
-function oRe(e) {
-	return j8 && (M8 = e, j8(e), yp(Promise.resolve(rRe)), QLe()), Promise.resolve();
+function dRe(e) {
+	return j8 && (M8 = e, j8(e), yp(Promise.resolve(cRe)), rRe()), Promise.resolve();
 }
 async function F8(e, t, n = (e) => e) {
 	let r = N8;
@@ -80914,7 +81094,7 @@ async function F8(e, t, n = (e) => e) {
 		place: () => n(t)
 	}) || r !== N8 || !j8) throw new DOMException("应用已卸载", "AbortError");
 }
-function sRe() {
+function fRe() {
 	N8 += 1, j8 = null, M8 = null, I8 = null, L8 = null, B8 = null, V8 = null, U8 = null, W8 = null, K8 = null, q8 = null, Y8 = null, X8 = null, Q8 = null, $8 = null, t5 = null;
 	for (let e of P8) e.remove();
 	P8.clear(), lB();
@@ -80922,47 +81102,47 @@ function sRe() {
 var I8 = null, L8 = null;
 function R8(e) {
 	return I8 ??= (async () => {
-		let t = cIe(e), n = document.createElement("div");
+		let t = pIe(e), n = document.createElement("div");
 		return n.dataset.stageHost = "", await F8("stage", n, (e) => (document.body.append(e), e)), L8 = t, t;
 	})(), I8;
 }
 var z8 = () => L8, B8 = null, V8 = null;
-function cRe(e) {
+function pRe(e) {
 	return B8 ??= (async () => {
 		let t = Sfe(e), n = document.createElement("div");
 		return n.dataset.immerseHost = "", await F8("immerse", n, (e) => (document.body.append(e), e)), V8 = t, t;
 	})(), B8;
 }
 var H8 = () => V8, U8 = null, W8 = null;
-function lRe(e) {
+function mRe(e) {
 	return U8 ??= (async () => {
 		let t = CMe(e), n = document.createElement("div");
 		return n.dataset.settingsHost = "", await F8("settings-panel", n, (e) => (document.body.append(e), e)), W8 = t, t;
 	})(), U8;
 }
 var G8 = () => W8, K8 = null, q8 = null;
-function uRe(e) {
+function hRe(e) {
 	return K8 ??= (async () => {
 		let t = RMe(e);
 		return await F8("sidebar", e.scroll, (e) => (e.replaceChildren(), e)), e.attached(), q8 = t, t;
 	})(), K8;
 }
 var J8 = () => q8, Y8 = null, X8 = null;
-function dRe(e) {
+function gRe(e) {
 	return Y8 ??= (async () => {
 		let t = Zge(e);
 		return await F8("manage-header", e.root, (e) => (e.replaceChildren(), e)), X8 = t, t;
 	})(), Y8;
 }
 var Z8 = () => X8, Q8 = null, $8 = null;
-function fRe(e) {
+function _Re(e) {
 	return Q8 ??= (async () => {
 		let t = Rle(e);
 		return await F8("batch-dock", e.root), $8 = t, t;
 	})(), Q8;
 }
 var e5 = () => $8, t5 = null;
-function pRe(e) {
+function vRe(e) {
 	return t5 ??= (async () => {
 		Cue(e), await F8("glow-picker", e.root);
 	})(), t5;
@@ -80980,7 +81160,7 @@ var r5 = {
 	rollSeed: void 0,
 	seededSample: void 0
 };
-function mRe() {
+function yRe() {
 	uB(L("#toasts"), {
 		success: R("check"),
 		error: R("circle-alert")
@@ -81024,7 +81204,7 @@ function mRe() {
 	};
 }
 // src/react/catalog-grid/catalog-state.ts
-var hRe = [
+var bRe = [
 	"loc",
 	"creator",
 	"studio",
@@ -81048,7 +81228,7 @@ var hRe = [
 function i5(e, t, n, r = n.defaultSort) {
 	return Dj(e, t, n.defaultSort, n.defaultSortDirection, r);
 }
-function gRe(e, t, n) {
+function xRe(e, t, n) {
 	let r = decodeURIComponent(e.pathname), i = new URLSearchParams(e.search), a = An(r) || r === "/trash", o = (e) => a ? i.get(e) : null;
 	return {
 		loc: i.get("loc") ?? "local,115",
@@ -81074,18 +81254,18 @@ function gRe(e, t, n) {
 		folder_recursive: o("folder_recursive") === "0" ? "0" : ""
 	};
 }
-function _Re(e, t) {
+function SRe(e, t) {
 	return e.split(",").filter(Boolean).filter((e) => t[e] !== !1).join(",") || e;
 }
-function vRe(e) {
+function CRe(e) {
 	let t = Dn[e.state ?? ""] || "/", n = new URLSearchParams();
-	for (let t of hRe) {
+	for (let t of bRe) {
 		let r = e[t];
 		!r || t === "tag_match" && r === "all" || t === "dir" && r === wj(e.sort ?? "") || n.set(t, r);
 	}
 	return !Dn[e.state ?? ""] && e.state && n.set("state", e.state), t + (n.size ? `?${n}` : "");
 }
-function yRe(e, t, n) {
+function wRe(e, t, n) {
 	return {
 		loc: e.loc ?? "",
 		creator: "",
@@ -81122,7 +81302,7 @@ function a5(e) {
 	};
 }
 // src/react/catalog-grid/catalog-controller.ts
-var bRe = class {
+var TRe = class {
 	currentRevision = 0;
 	currentPage = "";
 	painting = null;
@@ -81167,16 +81347,16 @@ var bRe = class {
 		let e = [...this.waiters.values()];
 		this.waiters.clear(), e.forEach((e) => e());
 	}
-}, o5 = Infinity, s5 = 0, xRe = (e, t = s5) => [
+}, o5 = Infinity, s5 = 0, ERe = (e, t = s5) => [
 	"facets",
 	e,
 	t
-], SRe = (e, t, n = s5) => [
+], DRe = (e, t, n = s5) => [
 	"tops",
 	e,
 	t,
 	n
-], CRe = (e, t = s5) => [
+], ORe = (e, t = s5) => [
 	"tops",
 	e,
 	t
@@ -81185,20 +81365,20 @@ async function c5(e) {
 	let t = String(e), n = await wn(`/api/tops?${t}`), r = new URLSearchParams(t);
 	return n.performers.length || n.studios.length || !r.has("state") ? n : (r.delete("state"), await wn(`/api/tops?${r}`));
 }
-function wRe(e, t) {
+function kRe(e, t) {
 	return Promise.all([H.fetchQuery({
-		queryKey: xRe(e),
+		queryKey: ERe(e),
 		queryFn: () => wn(`/api/facets${e ? `?${e}` : ""}`),
 		staleTime: o5
 	}), H.fetchQuery({
-		queryKey: SRe(t, e),
+		queryKey: DRe(t, e),
 		queryFn: () => c5(t),
 		staleTime: o5
 	})]);
 }
-function TRe(e) {
+function ARe(e) {
 	return H.fetchQuery({
-		queryKey: CRe(e),
+		queryKey: ORe(e),
 		queryFn: () => c5(e),
 		staleTime: o5
 	});
@@ -81222,7 +81402,7 @@ var u5 = [
 	["90", "最近 90 天"]
 ];
 // src/history/page-title.ts
-function ERe(e, t) {
+function jRe(e, t) {
 	let n = /^\/works\/([A-Za-z0-9_-]{2,64})$/.exec(e);
 	return n ? n[1].toUpperCase() : !t || e !== `/assets/${t.id}` ? "" : [
 		t.display_code,
@@ -81252,7 +81432,7 @@ function p5(e) {
 	let t = String(e.k || ""), n = (t.match(/[A-Za-z0-9]/)?.[0] || Array.from(t)[0] || "?").toUpperCase(), r = e.avatar ? `<img src="${z(e.avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer" ${Ba({ fallbacks: [e.avatar_fallback || ""] })}>` : "";
 	return `<span class="ini">${z(n)}</span>${r}`;
 }
-function DRe(e) {
+function MRe(e) {
 	let t = (t) => {
 		e.adoptFollowView(t), e.hideIndex(), e.openPage(Oa(t));
 	};
@@ -81353,11 +81533,11 @@ var m5 = class {
 		if (e.length) throw AggregateError(e, "应用资源清理未全部完成");
 	}
 }, h5 = new m5();
-function ORe() {
+function NRe() {
 	return h5.dispose(), h5 = new m5(), h5;
 }
 // src/application/source-action.ts
-function kRe(e) {
+function PRe(e) {
 	return async (t, n, { button: r = null } = {}) => {
 		if (r?.getAttribute("aria-busy") === "true") return;
 		let i = r?.innerHTML ?? "", a = r?.textContent?.trim() ?? "";
@@ -81397,11 +81577,11 @@ function b5(e, t) {
 	let n = new URLSearchParams(v5(e));
 	return t?.media === "photos" ? (n.set("media", "photos"), t.set && n.set("set", String(t.set))) : t?.media === "online" && n.set("media", "online"), n.toString();
 }
-function ARe(e, t, n, r) {
+function FRe(e, t, n, r) {
 	let i = b5(n, r);
 	return Nn(e, t) + (i ? `?${i}` : "");
 }
-function jRe() {
+function IRe() {
 	let e = "";
 	return {
 		fresh(t, n) {
@@ -81422,10 +81602,10 @@ function jRe() {
 	};
 }
 // src/react/entity-page/photo-surface.ts
-function MRe(e, t) {
+function LRe(e, t) {
 	return e.entityWall && e.entityCurrent && e.indexVisible || e.pathname === "/follow" && e.followMedia === "images" && e.statsVisible ? !0 : t();
 }
-function NRe(e) {
+function RRe(e) {
 	let t = () => {
 		let t = e.preferences();
 		for (let n of e.walls()) n.dataset.size = t.size, n.dataset.layout = "fixed", n.dataset.imagesOnly = String(t.imagesOnly);
@@ -81447,12 +81627,12 @@ function NRe(e) {
 	};
 }
 // src/react/entity-page/entity-controller.ts
-function PRe(e, t, n) {
+function zRe(e, t, n) {
 	let r = (t, n, r, i = {
 		media: "videos",
 		set: 0
 	}, { push: a = !0 } = {}) => {
-		if (a && e.route(ARe(t, n, r, i)), e.restoreHomeContext(), !e.live(t, n)) return !1;
+		if (a && e.route(FRe(t, n, r, i)), e.restoreHomeContext(), !e.live(t, n)) return !1;
 		e.releaseBodyPreviews();
 		let o = e.state();
 		return e.push({
@@ -81530,7 +81710,7 @@ function PRe(e, t, n) {
 	};
 }
 // src/react/entity-page/entity-loading.ts
-function FRe(e) {
+function BRe(e) {
 	return async (t, n, r) => {
 		e.paintSkeleton(t, n), e.resetView(), e.shapesReady(t, n) || e.waitShapes().then(() => {
 			r() && e.syncParts(t, n);
@@ -81540,7 +81720,7 @@ function FRe(e) {
 	};
 }
 // src/react/entity-page/entity-portrait.ts
-function IRe(e, t) {
+function VRe(e, t) {
 	let n = e === "studio" || e === "agency", r = t.id ? go({
 		kind: e,
 		id: t.id,
@@ -81562,11 +81742,11 @@ function IRe(e, t) {
 	return r || (i?.avatar ? `<img src="${z(i.avatar)}" alt="${z(t.canonical_name)}" referrerpolicy="no-referrer" ${Ba({ fallbacks: [i.avatar_fallback || ""] })}>` : "");
 }
 // src/react/entity-page/entity-application.ts
-function LRe(e) {
-	let t = jRe(), n = {
+function HRe(e) {
+	let t = IRe(), n = {
 		...e.helpers,
-		portraitImg: IRe
-	}, r = PRe(e.controller, n, e.actions);
+		portraitImg: VRe
+	}, r = zRe(e.controller, n, e.actions);
 	return {
 		...r,
 		helpers: n,
@@ -81575,12 +81755,12 @@ function LRe(e) {
 			let { filters: o, media: s } = t.read(n, i, a, e.sortPreference());
 			return r.props(n, i, o, s);
 		},
-		loading: FRe(e.loading),
-		photos: NRe(e.photos)
+		loading: BRe(e.loading),
+		photos: RRe(e.photos)
 	};
 }
 // src/card-art/feed-identity.ts
-function RRe(e) {
+function URe(e) {
 	let t = e.performer_refs || [], n = [...new Set((e.performers || "").split(/[,，、;/]/).map((e) => e.trim()).filter(Boolean))], r = t.length ? t : n.map((e) => ({ name: e })), i = r.slice(0, 3).map((t) => {
 		let n = e.code && t.source_actor_id && t.source_avatar && !t.has_image && !t.has_avatar, r = n ? ` data-feed-source-avatar data-code="${z(e.code)}" data-actor="${z(t.source_actor_id)}" data-name="${z(t.name)}"` : "", i = n ? "" : _o(t.name, t, null);
 		return "id" in t && t.id ? `<a class="mav"${r} href="${z(Nn("performer", t.name, t.id))}" aria-label="打开女优页：${z(t.name)}">${i}</a>` : `<span class="mav"${r} title="${z(t.name)}">${i}</span>`;
@@ -81607,7 +81787,7 @@ var x5 = {
 function S5(e) {
 	return e.has_cover ? So(e, "big") : !e.cover_url || !e.code ? Nl(e) : So(e, "big").replace(/ src="[^"]*"/, ` src="${z(uo(e))}" data-panel-prior="1"`).replace("data-drop=\"self\"", "data-drop=\"initial\" data-initial=\"封面未取得\" data-drop-class=\"nopic\"");
 }
-function zRe(e) {
+function WRe(e) {
 	let t = [e.performers && `<span class="feednewperformers" title="${z(e.performers)}">${z(e.performers)}</span>`, e.release_date && `<span>${z(e.release_date)}</span>`].filter(Boolean).join(""), n = S5(e), r = e.code || String(e.title || "").trim() || "未命名新作", i = e.code ? GB({
 		is_jav: !0,
 		code: e.code,
@@ -81620,10 +81800,10 @@ function zRe(e) {
         <button type="button" data-feed-action="${e.wanted ? "unwant" : "want"}" aria-pressed="${!!e.wanted}" title="${e.wanted ? "取消想要" : "想要"}" aria-label="想要 ${z(r)}">${R("star")}</button>
         <button type="button" data-feed-action="ignore" title="不想看" aria-label="不想看 ${z(r)}">${R("x")}</button>
         <button type="button" data-feed-action="read" title="标为已看过" aria-label="标为已看过 ${z(r)}">${R("check")}</button></div></div>
-    <div class="meta">${RRe(e)}<div class="mtext"><span class="t">${i}</span>
+    <div class="meta">${URe(e)}<div class="mtext"><span class="t">${i}</span>
       <div class="s mono">${t || (e.title ? "" : "资料还没取到")}</div></div></div></article>`;
 }
-function BRe() {
+function GRe() {
 	let e = document.getElementById("peach-entity-shape");
 	if (e) try {
 		let t = JSON.parse(e.textContent || "null");
@@ -81642,7 +81822,7 @@ function T5(e) {
 		localStorage.setItem(w5, e ? "1" : "0");
 	} catch {}
 }
-function VRe() {
+function KRe() {
 	try {
 		let e = localStorage.getItem(w5);
 		return e === "1" || e !== "0" && null;
@@ -81653,7 +81833,7 @@ function VRe() {
 function E5(e) {
 	!e || xp(e) || e.querySelector("[data-feed-id]") || (e.hidden = X.homeHasFeed !== !0, X.homeHasFeed === !0 && (e.setAttribute("aria-busy", "true"), e.querySelector(".feednewskeleton") || (e.innerHTML = x5.feedNewSkeletonHtml())));
 }
-function HRe(e, t) {
+function qRe(e, t) {
 	return !(e > 0) || !t.some((e) => !e.has_cover) ? "" : Bs(`${e} 部新作的封面连不上 DMM 图片主机，中国移动宽带常见。把 DMM / FANZA 的连接方式设成 Pear 代理，下一轮会自动重取。`, {
 		variant: "warning",
 		className: "feednetwork",
@@ -81663,7 +81843,7 @@ function HRe(e, t) {
 }
 function D5(e, t = "") {
 	let n = e && !e.error && e.items || [], r = t && n.length ? `<a class="feednewall" href="${z(t)}" style="--card-ratio:${tM}"><span>查看全部新作</span>${R("chevron-right")}</a>` : "";
-	return HRe(e?.cover_network, n) + `<div class="feednewrow srow">${n.map(zRe).join("")}${r}</div>`;
+	return qRe(e?.cover_network, n) + `<div class="feednewrow srow">${n.map(WRe).join("")}${r}</div>`;
 }
 function O5(e) {
 	e && (_9(e), Z.appSettings.feedAutoScroll && Hc(e));
@@ -81671,7 +81851,7 @@ function O5(e) {
 function k5(e) {
 	return An(e) && e !== "/junk-files";
 }
-function URe() {
+function JRe() {
 	let e = L("#feedNew");
 	xp(e) ? e.hidden = X.homeHasFeed !== !0 : (E5(e), Tp("feed-new", {
 		host: e,
@@ -81690,26 +81870,26 @@ function A5() {
 function j5() {
 	x5.feedRevision += 1, Dp(L("#feedNew"), { revision: x5.feedRevision }), F5({ feedRevision: x5.feedRevision });
 }
-function WRe() {
+function YRe() {
 	document.querySelectorAll(".feednewrow").forEach((e) => Z.appSettings.feedAutoScroll ? Hc(e) : Uc(e));
 }
 var M5 = 0;
-function GRe([e]) {
+function XRe([e]) {
 	let t = e.contentRect.width >= x5.HERO_WIDE_PX;
 	cancelAnimationFrame(M5), M5 = requestAnimationFrame(() => {
 		M5 = 0, L("#index")?.toggleAttribute("data-hero-wide", t);
 	});
 }
-function KRe() {
+function ZRe() {
 	x5.FEED_SKELETON_CARDS = 8, x5.feedNewSkeletonHtml = () => `<div class="feednewrow srow" data-skeleton="feed/new" aria-hidden="true">${`<article class="card feednewcard feednewskeleton"><div class="pic imgwait" style="--card-ratio:${tM}"></div>
     <div class="meta"><div class="mtext"><span class="t"><span class="skeleton"></span></span>
       <div class="s mono"><span class="skeleton">&#8203;</span></div></div></div></article>`.repeat(x5.FEED_SKELETON_CARDS)}</div>`, x5.entityShapes = null, x5.entityShapesComplete = !1, x5.hasEntityShape = (e, t) => x5.entityShapesComplete || !!x5.entityShapes?.has(`${e}/${Hn(t)}`), x5.hasEntityPart = (e, t, n) => !!t && !!x5.entityShapes?.get(`${e}/${Hn(t)}`)?.includes(n), x5.feedNewSkeletonSection = () => `<section class="feednew">${x5.feedNewSkeletonHtml()}</section>`, x5.COSTAR_SKELETON_PEOPLE = 12, x5.costarSkeletonFoot = () => `<div class="entityfoot" data-entity-foot><div class="relatedpeople" data-related-people>${"<button type=\"button\" disabled tabindex=\"-1\"><span class=\"skeleton\" data-hero-ring></span><span class=\"skeleton\" data-hero-costar-name>&#8203;</span></button>".repeat(x5.COSTAR_SKELETON_PEOPLE)}</div></div>`, x5.factsSkeleton = () => `<dl class="entityfacts" data-entity-facts>${"<dt><span class=\"skeleton\"></span></dt><dd><span class=\"skeleton\"></span></dd>".repeat(5)}</dl>`, x5.feedRevision = 0, x5.feedNewHelpers = {
 		feedRowHtml: D5,
 		wireFeedRow: (e) => O5(e)
-	}, x5.feedNewActions = { settled: (e) => T5(e) }, x5.HERO_WIDE_PX = 900, h5.resize(GRe).observe(L("#index"));
+	}, x5.feedNewActions = { settled: (e) => T5(e) }, x5.HERO_WIDE_PX = 900, h5.resize(XRe).observe(L("#index"));
 }
 // src/entity-skeleton.ts
-function qRe(e, t, n, r = "") {
+function QRe(e, t, n, r = "") {
 	let i = e === "studio" || e === "agency", a = new URLSearchParams(location.search), o = a.get("browse") === "folders" || a.get("folder") ? `<div class="peach-react entity-folder-workspace" data-folder-workspace data-folder-browse><aside data-folder-tree-host><div class="flex flex-col gap-3"><span class="skeleton ui-configuration-skeleton-input"></span>${"<span class=\"skeleton\" style=\"width:75%;height:32px\"></span>".repeat(8)}</div></aside><div class="min-w-0"><div data-folder-header-host><span class="skeleton" style="width:160px;height:32px"></span></div>${n}</div></div>` : n;
 	return `<section data-skeleton="entity/${e}" role="status" aria-label="正在读取资料">
     <span class="sr-only">正在读取资料</span><div aria-hidden="true" inert><div class="peach-react contents">
@@ -81770,7 +81950,7 @@ function I5() {
 	return eu;
 }
 function L5(e, t, n = P7()) {
-	return Bze(n).map(([n, r]) => {
+	return Gze(n).map(([n, r]) => {
 		let i = e === n, a = Tj(n, e, t);
 		return {
 			key: n,
@@ -81785,7 +81965,7 @@ function R5(e, t, n, r = N5.EMPTY_ENTITY_MEDIA, i = {}) {
 	return N5.application.route(e, t, n, r, i);
 }
 function z5() {
-	return MRe({
+	return LRe({
 		entityWall: N5.entityPageWall,
 		entityCurrent: N5.entityPageCurrent(),
 		indexVisible: !L("#index").hidden,
@@ -81800,10 +81980,10 @@ function B5() {
 function V5() {
 	z5() ? gue(sM()) : bM();
 }
-function JRe(e) {
+function $Re(e) {
 	N5.photos.setSize(e);
 }
-var H5 = kRe({
+var H5 = PRe({
 	request: (e) => wn("/api/reveal", {
 		method: "POST",
 		body: JSON.stringify({ id: e })
@@ -81815,7 +81995,7 @@ async function U5(e) {
 	let t = { textContent: "" };
 	return await H5(e, t), t.textContent;
 }
-async function YRe(e) {
+async function eze(e) {
 	let t = { textContent: "" }, n = [];
 	return await W5(e, t, (e) => {
 		e.items && (n = e.items.map((e) => e.id));
@@ -81854,17 +82034,17 @@ async function W5(e, t, n) {
 		t.textContent = N5.sourceHint(e.message), r5.actionFailure("核对目录", e);
 	}
 }
-function XRe(e) {
+function tze(e) {
 	return `<div class="srctools">${N5.sourceToolButtons(e)}
     <span class="srcstate" aria-live="polite"></span></div>`;
 }
-function ZRe(e, t) {
+function nze(e, t) {
 	let n = e.querySelector(".srcstate");
 	if (!n) return;
 	let r = e.querySelector("[data-reveal]"), i = e.querySelector("[data-sync]");
 	r && h5.handler(r, "onclick", () => H5(Number(r.dataset.reveal), n, { button: r })), i && h5.handler(i, "onclick", () => W5(Number(i.dataset.sync), n, t));
 }
-async function QRe(e, t) {
+async function rze(e, t) {
 	let n = ll({
 		title: "添加别名",
 		description: "图库按名字查找图片，添加别名可能找到更多备选图片；也可以将别名设为统一显示的名称。",
@@ -81908,7 +82088,7 @@ function G5(e, t) {
 		label: "JAV 卡片版式",
 		value: rM(),
 		options: Qj
-	} : null)}</div>`, i = e === "agency" ? "" : `<div data-entity-media><button type="button" data-media-view="videos" aria-label="视频" aria-pressed="true" ${$0}>${R("play")}</button><button type="button" data-media-view="photos" data-media-icon="image" aria-label="照片" ${$0}>${R("pics")}</button></div><span data-entity-sep></span><div data-entity-scroll><div data-entity-states>${X.catalogViews().map((e) => `<button type="button" data-entity-state="${z(e.k)}" aria-pressed="${U.state === e.k}" ${$0}>${z(e.label)}</button>`).join("")}<span data-entity-sep></span></div>`, a = qRe(e, r, e === "agency" ? cc({
+	} : null)}</div>`, i = e === "agency" ? "" : `<div data-entity-media><button type="button" data-media-view="videos" aria-label="视频" aria-pressed="true" ${$0}>${R("play")}</button><button type="button" data-media-view="photos" data-media-icon="image" aria-label="照片" ${$0}>${R("pics")}</button></div><span data-entity-sep></span><div data-entity-scroll><div data-entity-states>${X.catalogViews().map((e) => `<button type="button" data-entity-state="${z(e.k)}" aria-pressed="${U.state === e.k}" ${$0}>${z(e.label)}</button>`).join("")}<span data-entity-sep></span></div>`, a = QRe(e, r, e === "agency" ? cc({
 		kind: "performers",
 		layout: s7.peopleIndexLayout()
 	}) : hY("正在读取作品", dM(uM({
@@ -81933,7 +82113,7 @@ function q5(e) {
 function J5(e, t) {
 	O9(N5.application.fresh(e, t));
 }
-function $Re() {
+function ize() {
 	N5.ENTITY_FILTER_KEYS = [
 		"loc",
 		"creator",
@@ -81956,7 +82136,7 @@ function $Re() {
 		return e.type === "home" ? U : e.filters;
 	}, L("#q").value = U.q, X.rememberSearchValue();
 }
-function eze() {
+function aze() {
 	N5.entityPageView = "", N5.entityPageWall = !1, N5.entityPageRevision = 0, N5.entityPageCurrent = () => !!P5(), N5.entityPageLive = (e, t) => {
 		let n = P5();
 		return !!n && !L("#index").hidden && n.props.kind === e && n.props.name === t;
@@ -81974,10 +82154,10 @@ function eze() {
 		feedRowHtml: D5,
 		receipt: (e, t) => r5.actionReceipt(e, t),
 		failure: (e, t) => r5.actionFailure(e, t),
-		aliasForm: (e, t) => QRe(e, t),
-		sourceToolsHtml: (e) => XRe(e),
-		wireSourceTools: (e, t) => ZRe(e, t),
-		comboItems: (e) => lBe(e),
+		aliasForm: (e, t) => rze(e, t),
+		sourceToolsHtml: (e) => tze(e),
+		wireSourceTools: (e, t) => nze(e, t),
+		comboItems: (e) => mBe(e),
 		sortKeys: (e, t, n) => L5(e, t, n)
 	}, N5.entityFollowActions = {
 		...$.followFeedActions,
@@ -82001,8 +82181,8 @@ function eze() {
     <button type="button" data-sync="${e}" title="核对该目录：磁盘上已删除的移入 Pear 回收站，带个人记录的标为已消失"
       aria-label="同步删除">${R("folder-sync")}</button>`;
 }
-function tze() {
-	N5.application = LRe({
+function oze() {
+	N5.application = HRe({
 		controller: {
 			context: () => {
 				let e = I5();
@@ -82102,7 +82282,7 @@ function tze() {
 }
 // src/application/playlists.js
 var Y5 = { playlistWrite: void 0 };
-function nze(e, t) {
+function sze(e, t) {
 	e === "tag" ? (W({ state: {
 		...U,
 		tag: t,
@@ -82118,7 +82298,7 @@ function X5(e = "") {
 	return `<label class="modalfield"><span>名称</span><input class="geist-input" name="name"
     maxlength="80" placeholder="输入名称" value="${z(e)}"></label>`;
 }
-async function rze({ title: e, count: t, save: n }) {
+async function cze({ title: e, count: t, save: n }) {
 	let r = ll({
 		title: "保存为播放列表",
 		description: `这个 Mix 的 ${t} 个视频会存成一份可以继续播放的列表。`,
@@ -82132,14 +82312,14 @@ async function rze({ title: e, count: t, save: n }) {
 	});
 	r.dialog.querySelector("[name=\"name\"]").select();
 	let { confirmed: i, result: a } = await r.done;
-	i && (await BBe(a.id, a.current_asset_id, !0), r5.actionReceipt("已保存为播放列表", { undo: async () => {
+	i && (await GBe(a.id, a.current_asset_id, !0), r5.actionReceipt("已保存为播放列表", { undo: async () => {
 		await Y5.playlistWrite({
 			action: "delete",
 			id: a.id
 		}), O9("/playlists");
 	} }));
 }
-async function ize(e) {
+async function lze(e) {
 	let t = ((await wn("/api/playlists")).items || []).map((e) => `<label class="pickrow">${qs(`data-pick-playlist="${e.id}"`)}
     <span class="pickrowtext"><b>${z(e.name)}</b><small>${e.item_count} 个视频</small></span></label>`).join(""), n = ll({
 		title: "加入播放列表",
@@ -82188,7 +82368,7 @@ function Z5() {
 	let e = bp(L("#stats"));
 	e?.path !== "/playlists" || !e.host.isConnected ? W({ pageOpens: yu + 1 }) : (_7({ manage: !1 }), W({ playlistsRevision: Tu + 1 }));
 }
-function aze(e) {
+function uze(e) {
 	let t = new URLSearchParams(location.search);
 	for (let n of ["category", "queue"]) e[n] ? t.set(n, e[n]) : t.delete(n);
 	Q.route("/review" + (t.size ? "?" + t : ""));
@@ -82196,7 +82376,7 @@ function aze(e) {
 function Q5(e) {
 	W({ configurationRequestedSection: e }), Q.navigatePath(Bf(e));
 }
-function oze() {
+function dze() {
 	Y5.playlistWrite = (e) => wn("/api/playlist", {
 		method: "POST",
 		body: JSON.stringify(e)
@@ -82221,7 +82401,7 @@ function t7(e, t, n, r, i, a = !1) {
 		...o ? { followLastSelectedId: s } : { lastSelectedId: s }
 	};
 }
-function sze(e, t, n, r) {
+function fze(e, t, n, r) {
 	let i = $5(t);
 	return {
 		count: (i === "follow" ? e.followSelected : e.selected).size,
@@ -82248,7 +82428,7 @@ function r7() {
 	}), N9({
 		selected: new Set(ru),
 		selectMode: iu
-	}), n7.batchDockProps = _ze(), e5() && (e5().render(n7.batchDockProps), Z.syncGlassOptics());
+	}), n7.batchDockProps = Sze(), e5() && (e5().render(n7.batchDockProps), Z.syncGlassOptics());
 }
 function i7(e, t = !1) {
 	W(e7({
@@ -82256,25 +82436,25 @@ function i7(e, t = !1) {
 		followSelected: ru
 	}, o7(), $5(location.pathname), !!e, t)), document.body.classList.toggle("select-mode", iu), iu && Rl(), L("#selectMode").setAttribute("aria-pressed", String(iu)), r7();
 }
-function cze() {
+function pze() {
 	return [...d7.gridCards()].map((e) => +e.dataset.id);
 }
 function a7(e, t = !1) {
 	W(t7({
 		selected: nu,
 		followSelected: ru
-	}, o7(), $5(location.pathname), cze(), e, t)), i7(!0);
+	}, o7(), $5(location.pathname), pze(), e, t)), i7(!0);
 }
-function lze() {
+function mze() {
 	return [...document.querySelectorAll("[data-follow-list] > [data-follow-item]")].map((e) => +e.dataset.followItem);
 }
-function uze(e, t = !1) {
+function hze(e, t = !1) {
 	W(t7({
 		selected: nu,
 		followSelected: ru
-	}, o7(), "follow", lze(), e, t)), i7(!0);
+	}, o7(), "follow", mze(), e, t)), i7(!0);
 }
-async function dze(e, t) {
+async function gze(e, t) {
 	let n = {
 		like: "喜欢",
 		seen: "标为看过",
@@ -82343,7 +82523,7 @@ async function dze(e, t) {
 		}
 	});
 }
-async function fze() {
+async function _ze() {
 	let e = [...nu];
 	if (!e.length) return;
 	let t = ll({
@@ -82375,7 +82555,7 @@ async function fze() {
 	let { confirmed: n, result: r } = await t.done;
 	n && (i7(!1, !0), await z7(), r5.actionReceipt(r.region === "none" ? `已撤回 ${e.length} 项的产地判定` : `已判为${r.label}：${e.length} 项`));
 }
-async function pze(e, t) {
+async function vze(e, t) {
 	let n = [...ru];
 	if (!n.length) return;
 	let r = {
@@ -82410,7 +82590,7 @@ async function pze(e, t) {
 		}
 	});
 }
-async function mze(e, t) {
+async function yze(e, t) {
 	let n = [...nu];
 	if (!n.length) return;
 	let r = {
@@ -82456,8 +82636,8 @@ async function mze(e, t) {
 		}
 	});
 }
-function hze() {
-	fRe({
+function bze() {
+	_Re({
 		root: L("[data-batch-dock]"),
 		run: (e, t, n) => {
 			n7.BATCH_RUNNERS[e]?.(t, n);
@@ -82466,7 +82646,7 @@ function hze() {
 		e.render(n7.batchDockProps), Z.syncGlassOptics();
 	}).catch(() => {});
 }
-function gze() {
+function xze() {
 	n7.batchDockProps = {
 		count: 0,
 		context: "catalog",
@@ -82479,13 +82659,13 @@ function gze() {
 		["other", "其他"],
 		["none", "撤回判定"]
 	], n7.BATCH_RUNNERS = {
-		batch: dze,
-		region: fze,
-		follow: pze,
-		junk: mze,
+		batch: gze,
+		region: _ze,
+		follow: vze,
+		junk: yze,
 		clear: () => i7(!1, !0)
 	}, h5.handler(L("#density"), "onclick", () => {
-		z5() ? JRe(sM() === "big" ? "small" : "big") : hue();
+		z5() ? $Re(sM() === "big" ? "small" : "big") : hue();
 	}), bM(), Il({
 		selecting: () => iu,
 		censored: () => g9(),
@@ -82506,8 +82686,8 @@ function o7() {
 		followLastSelectedId: ou
 	};
 }
-function _ze() {
-	return sze({
+function Sze() {
+	return fze({
 		selected: nu,
 		followSelected: ru
 	}, location.pathname, location.search, U.state);
@@ -82517,22 +82697,22 @@ var s7 = {
 	peopleIndexLayout: void 0,
 	personAvatar: void 0
 };
-function vze() {
+function Cze() {
 	return Z.appSettings.followLayout === "table" ? "table" : "default";
 }
-function yze() {
+function wze() {
 	return eQ(location.search);
 }
-function bze(e) {
+function Tze(e) {
 	return tQ(e);
 }
-function xze(e) {
-	Q.route(bze(e));
+function Eze(e) {
+	Q.route(Tze(e));
 }
-function Sze(e = "") {
+function Dze(e = "") {
 	return nQ(location.search, e);
 }
-function Cze(e) {
+function Oze(e) {
 	return p5(e);
 }
 function c7(e) {
@@ -82541,7 +82721,7 @@ function c7(e) {
 function l7() {
 	L("#stats").hidden = !0, L("#index").hidden = !1, s9(), X.hideCatalogCombo(), L("#count").textContent = "", L("#loadSentinel").hidden = !0;
 }
-function wze(e, t) {
+function kze(e, t) {
 	W({ state: {
 		...U,
 		state: "",
@@ -82552,16 +82732,16 @@ function wze(e, t) {
 function u7(e) {
 	s7.controller.openFollowAuthor(e);
 }
-function Tze(e) {
+function Aze(e) {
 	s7.controller.openFollowTag(e);
 }
-function Eze() {
+function jze() {
 	$.FOLLOW_MANAGE_TABS = $Z, h5.listen(document, "click", (e) => {
 		e.target.closest?.("[data-empty-settings]") && Q5("媒体库与入库");
 	}), s7.peopleIndexLayout = () => F6(Z.appSettings.peopleLayout), s7.personAvatar = f5;
 }
-function Dze() {
-	s7.controller = DRe({
+function Mze() {
+	s7.controller = MRe({
 		route: Q.route,
 		followView: A9,
 		adoptFollowView: j9,
@@ -82589,10 +82769,10 @@ function f7(e = "正在读取作品") {
 	let t = L("#count"), n = decodeURIComponent(location.pathname) === "/junk-files";
 	if (t.classList.toggle("manage-static", n), t.classList.toggle("junkcount", n), n ? (t.setAttribute("aria-busy", "true"), t.setAttribute("aria-label", e), t.innerHTML = Ebe(CW(location.search)), hc(t)) : (t.removeAttribute("aria-busy"), t.removeAttribute("aria-label"), t.textContent = "", U && t9({
 		count: null,
-		...tBe()
+		...oBe()
 	})), L("#loadSentinel").hidden = !0, l9()) return;
 	let r = L("#grid"), i = f9(e), a = r.querySelector(".catalog-skeleton");
-	(a?.dataset.skeleton !== n4(i) || Number(a.querySelector("[style]")?.style.getPropertyValue("--skeleton-card-ratio")) !== mBe()) && (a ? r.innerHTML = `<div class="grid">${i}</div>` : d7.setGridCards(i), hc(L("#grid")));
+	(a?.dataset.skeleton !== n4(i) || Number(a.querySelector("[style]")?.style.getPropertyValue("--skeleton-card-ratio")) !== yBe()) && (a ? r.innerHTML = `<div class="grid">${i}</div>` : d7.setGridCards(i), hc(L("#grid")));
 }
 function p7() {
 	L("#catalogFilter").style.display = "none", e9();
@@ -82607,7 +82787,7 @@ function m7() {
 	});
 	return Promise.race([d7.entityShapesReady ||= C5(), e]);
 }
-function Oze() {
+function Nze() {
 	let e = decodeURIComponent(location.pathname);
 	if (document.body.dataset.surface = location.pathname, e === "/wall") document.body.setAttribute("data-wall-open", ""), p7(), mxe();
 	else if (/^\/assets\/\d+$/.test(e)) p7();
@@ -82627,7 +82807,7 @@ function Oze() {
 		});
 	} else Q.routeMeta(e) ? f7() : (s9(), L("#count").textContent = "", L("#loadSentinel").hidden = !0);
 }
-function kze() {
+function Pze() {
 	$.followContentSkeletonHtml = (e = new URLSearchParams(location.search).get("media") === "images" ? "images" : "videos", t = "正在读取关注内容") => e4(t, {
 		cards: !0,
 		className: "follow-content-skeleton postercard-skeleton",
@@ -82643,15 +82823,15 @@ function kze() {
   ${$.followContentSkeletonHtml(void 0, e)}</div></div>`, L("#loadSentinel").innerHTML = Ws(Us), d7.setGridCards = (e) => oc(L("#grid"), () => {
 		L("#grid").innerHTML = `<div class="grid">${e}</div>`;
 	}), d7.gridCards = () => document.querySelectorAll(":is(#grid,#index [data-entity-grid]) :is([data-media-grid] > [data-media-card][data-id],[data-catalog-row][data-id])"), d7.managementPlaceholder = (e) => t4(e, {
-		followLayout: vze(),
+		followLayout: Cze(),
 		...(({ sort: e, dir: t, tab: n }) => ({
 			followSort: e,
 			followDir: t,
 			followTab: n
-		}))(yze())
+		}))(wze())
 	}), d7.wantsDiscoveryBars = () => L("#catalogFilter").style.display !== "none", d7.entityShapesReady = null, d7.ENTITY_SHAPES_WAIT = 400, d7.syncPageTitle = (e) => {
-		let t = new URL(e, location.origin), n = decodeURIComponent(t.pathname), r = ERe(n, mu) || op(n)?.title;
-		document.title = r ? `${r} · Pear` : "Pear", document.body.dataset.surface = t.pathname, KBe();
+		let t = new URL(e, location.origin), n = decodeURIComponent(t.pathname), r = jRe(n, mu) || op(n)?.title;
+		document.title = r ? `${r} · Pear` : "Pear", document.body.dataset.surface = t.pathname, ZBe();
 	};
 }
 // src/sidebar-skeleton.ts
@@ -82662,7 +82842,7 @@ var h7 = (e) => e.replace(/[&<>"']/g, (e) => ({
 	"\"": "&quot;",
 	"'": "&#39;"
 })[e]);
-function Aze(e, t, n) {
+function Fze(e, t, n) {
 	let r = new Map(t.map((e) => [e[0], e])), i = e.map((e) => r.get(e)).filter((e) => e !== void 0).map(([e, t, r]) => {
 		let i = e === "" ? "<img data-sidebar-home-logo=\"\" src=\"/peach-logo-64.png\" srcset=\"/peach-logo-64.png 64w, /peach-logo-128.png 128w\" sizes=\"24px\" width=\"24\" height=\"24\" alt=\"\" decoding=\"async\">" : `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${h7(r)}"/></svg>`;
 		return `<button type="button" data-nav="${h7(e)}" aria-pressed="${n(e)}" aria-label="${h7(t)}">${i}<span>${h7(t)}</span></button>`;
@@ -82670,7 +82850,7 @@ function Aze(e, t, n) {
 	return `<div data-sidebar-head=""></div><div data-sidebar-nav="">${i.join("")}${a}</div>`;
 }
 // src/application/filter-scroll.js
-function jze(e, t, n, r = !1) {
+function Ize(e, t, n, r = !1) {
 	if (t = Math.max(0, t), !e || !n || r || t <= 8) return {
 		y: t,
 		origin: t,
@@ -82719,7 +82899,7 @@ function v7() {
 function y7() {
 	L("#javLibraryHeader").hidden = !An(location.pathname) || !P7(), document.body.classList.remove("entity-open", "index-open"), Op(L("#index")), L("#stats").hidden = !0, L("#index").hidden = !0, k5(location.pathname) || (L("#feedNew").hidden = !0), L("#catalogFilter").style.display = "", e9(), D7(), k7();
 }
-function Mze() {
+function Lze() {
 	Q.route("/"), y7();
 }
 function b7({ tags: e = [], providers: t = [], duration: n = !1 }) {
@@ -82747,7 +82927,7 @@ function b7({ tags: e = [], providers: t = [], duration: n = !1 }) {
 	});
 }
 function x7(e) {
-	nVe({
+	sVe({
 		...A9(),
 		...e
 	}), C9({ filters: $.followSidebarFilters() });
@@ -82762,7 +82942,7 @@ function C7(e) {
 function w7() {
 	S7() && C7(!1);
 }
-function Nze() {
+function Rze() {
 	_u === null && (W({ runtimeConfigurable: !1 }), wn("/healthz").then((e) => {
 		W({ runtimeConfigurable: !!e.configurable }), _u && E7() && D7();
 	}).catch(() => {}));
@@ -82780,12 +82960,12 @@ function T7(e = "", t = !1) {
 		replace: !0,
 		state: G.navigation.location.state
 	});
-	return e ||= zf(location.pathname), lRe(g7.settingsHost()).then((t) => (t.open(e), t));
+	return e ||= zf(location.pathname), mRe(g7.settingsHost()).then((t) => (t.open(e), t));
 }
-function Pze() {
+function zze() {
 	Rf(location.pathname) && (Vf(G.navigation.location.state) ? G.go(-1) : Q.navigatePath("/", !0));
 }
-function Fze() {
+function Bze() {
 	return {
 		scroll: L("#drawerScroll"),
 		store: Z.settingsStore,
@@ -82820,15 +83000,15 @@ function Fze() {
 		}
 	};
 }
-function Ize() {
+function Vze() {
 	let e = L("#drawerScroll"), t = [...e.querySelector("[data-sidebar-head]")?.children || []];
-	e.innerHTML = Aze(Z.appSettings.sidebarOrder, g7.NAV_CATALOG, V7), e.querySelector("[data-sidebar-head]").append(...t), h5.listen(e, "click", (e) => {
+	e.innerHTML = Fze(Z.appSettings.sidebarOrder, g7.NAV_CATALOG, V7), e.querySelector("[data-sidebar-head]").append(...t), h5.listen(e, "click", (e) => {
 		if (J8()) return;
 		let t = e.target.closest?.("[data-nav]");
 		t && H7(t.dataset.nav);
-	}), uRe(Fze()).then((e) => e.render(g7.sidebarProps)).catch(() => {});
+	}), hRe(Bze()).then((e) => e.render(g7.sidebarProps)).catch(() => {});
 }
-async function Lze() {
+async function Hze() {
 	let e = h5, t = null;
 	try {
 		t = await wn("/api/settings", { signal: e.signal });
@@ -82842,9 +83022,9 @@ function E7() {
 }
 function D7() {
 	let e = E7();
-	Nze(), e && p7(), L("#count").classList.toggle("no-tagbar", !!e), w9(), e !== "trash" && (n7.trashCount = null), O7(e);
+	Rze(), e && p7(), L("#count").classList.toggle("no-tagbar", !!e), w9(), e !== "trash" && (n7.trashCount = null), O7(e);
 }
-function Rze(e) {
+function Uze(e) {
 	return {
 		section: e,
 		path: decodeURIComponent(location.pathname),
@@ -82855,7 +83035,7 @@ function Rze(e) {
 }
 function O7(e = E7()) {
 	k7();
-	let t = Rze(e), n = Z8();
+	let t = Uze(e), n = Z8();
 	if (n) n.render(t);
 	else {
 		let e = Dfe(t);
@@ -82864,7 +83044,7 @@ function O7(e = E7()) {
 	let r = AF(t)?.title || "";
 	r !== g7.lastManagePageLabel && (g7.lastManagePageLabel = r, r && rc(g7.manageHeaderRoot(), "[data-manage-title],[data-manage-lede]"));
 }
-function zze() {
+function Wze() {
 	let e = g7.manageHeaderRoot();
 	h5.listen(e, "click", (e) => {
 		if (Z8()) return;
@@ -82873,13 +83053,13 @@ function zze() {
 		else if (e.target.closest?.("[data-manage-crumb] a[href]")) {
 			if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
 			e.preventDefault(), Q.navigatePath("/data-cleanup");
-		} else e.target.closest?.("[data-empty-trash]") && cBe();
-	}), dRe({
+		} else e.target.closest?.("[data-empty-trash]") && pBe();
+	}), gRe({
 		root: e,
 		store: Z.settingsStore,
 		openManage: N7,
 		openDataCleanup: () => Q.navigatePath("/data-cleanup"),
-		emptyTrash: cBe
+		emptyTrash: pBe
 	}).then(() => O7()).catch(() => {});
 }
 function k7() {
@@ -82926,7 +83106,7 @@ function P7() {
 	let e = decodeURIComponent(location.pathname);
 	return e === "/" ? U.jav === "1" : e.startsWith("/performers/") || e.startsWith("/studios/") ? U.jav === "1" || xu : !1;
 }
-function Bze(e = P7()) {
+function Gze(e = P7()) {
 	let t = vj.filter(([e]) => e !== "seed");
 	return e ? [yj, ...t] : t;
 }
@@ -82936,7 +83116,7 @@ function F7() {
 function I7() {
 	return iM(F7());
 }
-function Vze(e) {
+function Kze(e) {
 	fue(e), R7(), L("#grid").hidden || p9();
 }
 function L7(e) {
@@ -82945,9 +83125,9 @@ function L7(e) {
 function R7() {
 	document.querySelectorAll("[data-video-layout]").forEach((e) => {
 		e.checked = e.value === I7();
-	}), X.catalogFilterProps && t9({ layout: eBe() });
+	}), X.catalogFilterProps && t9({ layout: aBe() });
 }
-function Hze(e) {
+function qze(e) {
 	pue(e), R7(), p9();
 }
 async function z7() {
@@ -83007,11 +83187,11 @@ function U7() {
 	let n = t.length > 1 && Object.prototype.hasOwnProperty.call(Mn, t[0]), r = An(e) || e === "/trash", i = r || n || e === "/tags" || e === "/follow", a = r || n || e === "/follow";
 	L("#selectMode").hidden = !i, L("#density").hidden = !a, B5(), !i && iu && i7(!1, !0);
 }
-function Uze() {
+function Jze() {
 	let e = [...document.querySelectorAll("[data-filter-frame]")], t = e.find((e) => e.offsetParent !== null);
 	(t !== g7.mobileFilterHost || location.pathname !== g7.mobileFilterPath) && (g7.mobileFilterScroll = null), g7.mobileFilterHost = t, g7.mobileFilterPath = location.pathname;
 	let n = Math.max(0, Math.min(scrollY, document.documentElement.scrollHeight - innerHeight)), r = !!t?.querySelector(":focus-visible,input:focus,select:focus,textarea:focus,[aria-expanded=\"true\"]");
-	g7.mobileFilterScroll = jze(g7.mobileFilterScroll, n, innerWidth <= 760, r);
+	g7.mobileFilterScroll = Ize(g7.mobileFilterScroll, n, innerWidth <= 760, r);
 	for (let n of e) {
 		let e = n === t && g7.mobileFilterScroll.free;
 		if (e && n.style.setProperty("--filter-free-top", `${-n.offsetHeight - 12}px`), e === n.hasAttribute("data-filter-free")) continue;
@@ -83025,18 +83205,18 @@ function Uze() {
 		});
 	}
 }
-function Wze() {
-	Uze(), [".board-filter-frame", "#count"].forEach((e) => {
+function Yze() {
+	Jze(), [".board-filter-frame", "#count"].forEach((e) => {
 		let t = L(e), n = t && getComputedStyle(t), r = n ? parseFloat(n.top) : NaN, i = !!t && n.position === "sticky" && t.offsetParent !== null && window.scrollY > 0 && Number.isFinite(r) && t.getBoundingClientRect().top - (parseFloat(n.translate.split(" ")[1]) || 0) <= r + 1;
 		t && t.classList.toggle("is-stuck", i), t?.matches(".board-filter-frame") && t.classList.toggle("board-is-stuck", i);
 	});
 }
 function W7() {
 	g7.stickyFrame ||= h5.frame(() => {
-		g7.stickyFrame = 0, Wze();
+		g7.stickyFrame = 0, Yze();
 	});
 }
-function Gze() {
+function Xze() {
 	$.followSidebarFilters = () => ({
 		provider: [...$.followProviders][0] || "",
 		dur_min: $.followDurMin || "",
@@ -83046,7 +83226,7 @@ function Gze() {
 			replace: !0,
 			state: G.navigation.location.state
 		}),
-		closed: Pze,
+		closed: zze,
 		store: Z.settingsStore,
 		changed: (e) => Z.settingsEffects[e]?.(),
 		sound: (e) => $o(e),
@@ -83055,13 +83235,13 @@ function Gze() {
 		videoLayouts: Qj,
 		followInitialRanges: u5,
 		videoLayout: () => I7(),
-		setVideoLayout: Hze,
+		setVideoLayout: qze,
 		censored: g9,
-		setCensored: EBe,
-		sfwShortcut: DBe,
-		setSfwShortcut: OBe,
+		setCensored: jBe,
+		sfwShortcut: MBe,
+		setSfwShortcut: NBe,
 		highContrast: () => document.documentElement.classList.contains("board-high-contrast"),
-		setHighContrast: kBe,
+		setHighContrast: PBe,
 		receipt: (e) => r5.actionReceipt(e),
 		failure: r5.actionFailure,
 		syncRemote: (e) => qj(e, (e) => Z.settingsEffects[e]?.()),
@@ -83111,22 +83291,22 @@ var X = {
 	junkQueueHelpers: void 0,
 	junkQueueActions: void 0
 };
-function Kze() {
+function Zze() {
 	X.initialParams.has("loc") || (U.loc = G7(U.loc), Ou());
 }
 function G7(e) {
-	return _Re(e, Z.sourceOnline);
+	return SRe(e, Z.sourceOnline);
 }
 function K7(e = U) {
-	return vRe(e);
+	return CRe(e);
 }
-function qze() {
-	W(a5(yRe(U, Z.appSettings, r5.rollSeed)));
+function Qze() {
+	W(a5(wRe(U, Z.appSettings, r5.rollSeed)));
 }
 function q7(e = null) {
-	qze(), e && (Object.assign(U, e), Ou()), Q.route(e ? K7() : "/"), X.clearSearchField(), y9(!1), w9(), r9();
+	Qze(), e && (Object.assign(U, e), Ou()), Q.route(e ? K7() : "/"), X.clearSearchField(), y9(!1), w9(), r9();
 }
-function Jze(e, t = null) {
+function $ze(e, t = null) {
 	let n = e.id;
 	!e.medium || e.medium === "video" ? x9(n, !0, null, t) : e.medium === "image" && e.location !== "online" ? window.open("/photo?id=" + n, "_blank", "noopener") : a7(n);
 }
@@ -83135,13 +83315,13 @@ function J7(e) {
 		throw X.mixRelatedCache.delete(e), t;
 	})), X.mixRelatedCache.get(e);
 }
-function Yze(e, t) {
+function eBe(e, t) {
 	z8()?.miniplayerTakesCard(e) ? z8().miniplayerPlay(e.id) : Y7(e, t);
 }
 function Y7(e, t) {
-	e.edition_group ? RBe(e.edition_group.seed_id, e.id, !0, t) : e.part_group ? zBe(e.part_group.seed_id, e.id, !0, t) : x9(e.id, !0, null, t);
+	e.edition_group ? UBe(e.edition_group.seed_id, e.id, !0, t) : e.part_group ? WBe(e.part_group.seed_id, e.id, !0, t) : x9(e.id, !0, null, t);
 }
-async function Xze(e, t) {
+async function tBe(e, t) {
 	try {
 		let n = await wn("/api/watch-later", {
 			method: "POST",
@@ -83158,7 +83338,7 @@ async function Xze(e, t) {
 		r5.actionFailure("更新稍后看", e);
 	}
 }
-async function Zze(e, t) {
+async function nBe(e, t) {
 	try {
 		await wn("/api/batch", {
 			method: "POST",
@@ -83182,7 +83362,7 @@ async function Zze(e, t) {
 		throw r5.actionFailure("操作", e), e;
 	}
 }
-async function Qze(e, t, n, r) {
+async function rBe(e, t, n, r) {
 	let i = Number(e.rating) || 0, a = oP(i, t), o = async (t, r) => {
 		let i = (await wn("/api/feedback", {
 			method: "POST",
@@ -83226,14 +83406,14 @@ async function X7(e) {
 			e[n] && t.set(n, e[n]);
 		});
 	}
-	return wRe(t.toString(), X.topsQueryParams(e).toString());
+	return kRe(t.toString(), X.topsQueryParams(e).toString());
 }
 function Z7(e) {
-	I5().type !== "entity" && t9({ tags: nBe(e) }), C9({ filters: { ...e } }), a9();
+	I5().type !== "entity" && t9({ tags: sBe(e) }), C9({ filters: { ...e } }), a9();
 }
 async function Q7(e) {
 	let t = ++X.facetCountsSeq, [n] = await X7(e);
-	t === X.facetCountsSeq && (e.type === "home" && (v9.facets = n), C9({ latest: CBe(n, e) }));
+	t === X.facetCountsSeq && (e.type === "home" && (v9.facets = n), C9({ latest: OBe(n, e) }));
 }
 function $7(e) {
 	let t = I5();
@@ -83252,7 +83432,7 @@ function $7(e) {
 		} }), Q.route(K7()), y7(), r9();
 	} else e(U), Ou(), Q.route(K7()), Z7(U), Q7(eu);
 }
-function $ze() {
+function iBe() {
 	return {
 		tiers: null,
 		tiersPending: !1,
@@ -83288,9 +83468,9 @@ function t9(e) {
 		...e,
 		offscreen: n
 	}, X.catalogFilterProps = {
-		...X.catalogFilterProps || $ze(),
+		...X.catalogFilterProps || iBe(),
 		...e
-	}, !X.catalogFilterMounting && (xp(t) ? Dp(t, e) : (!t.firstChild && !n && (t.innerHTML = SNe(X.catalogViews(), X.catalogFilterProps.state, tBe()), hc(t)), X.catalogFilterMounting = Tp("catalog-filter", X.catalogFilterProps, {
+	}, !X.catalogFilterMounting && (xp(t) ? Dp(t, e) : (!t.firstChild && !n && (t.innerHTML = SNe(X.catalogViews(), X.catalogFilterProps.state, oBe()), hc(t)), X.catalogFilterMounting = Tp("catalog-filter", X.catalogFilterProps, {
 		container: t,
 		isCurrent: () => !0
 	}).then(() => Dp(t, X.catalogFilterProps)).finally(() => {
@@ -83318,19 +83498,19 @@ function n9() {
 			let t = Tj(e, U.sort, U.dir);
 			t && (U.sort = t.sort, U.dir = t.dir, Ou(), h9());
 		},
-		reshuffle: () => wBe(),
+		reshuffle: () => kBe(),
 		setLayout: (e) => {
-			P7() ? L7(e) : Vze(e);
+			P7() ? L7(e) : Kze(e);
 		},
 		moreTops: async (e) => {
 			let t = X.catalogTopsPages;
 			if (!t) return [];
-			let n = (await TRe(X.topsQueryParams(t.context, ++t[e]).toString()))[e] || [];
-			return e === "performers" ? n.map(rBe) : n.map(iBe);
+			let n = (await ARe(X.topsQueryParams(t.context, ++t[e]).toString()))[e] || [];
+			return e === "performers" ? n.map(cBe) : n.map(lBe);
 		}
 	};
 }
-function eBe() {
+function aBe() {
 	return P7() ? {
 		name: "jav-layout",
 		label: "JAV 卡片版式",
@@ -83343,21 +83523,21 @@ function eBe() {
 		options: Qj
 	} : null;
 }
-function tBe() {
+function oBe() {
 	return {
 		sorts: L5(U.sort, U.dir),
-		layout: eBe(),
+		layout: aBe(),
 		state: U.state || "",
 		trash: U.state === "trash"
 	};
 }
-function nBe(e) {
+function sBe(e) {
 	return X.catalogTagRows.map((t) => ({
 		...t,
 		selected: X.tagPressed(e.tag, t.k)
 	}));
 }
-function rBe(e) {
+function cBe(e) {
 	return {
 		name: e.k,
 		ringHtml: `<span data-tier-initial>${z($n(tn("performer", e.k, e.id)))}</span>${go({
@@ -83371,14 +83551,14 @@ function rBe(e) {
 		})}`
 	};
 }
-function iBe(e) {
+function lBe(e) {
 	return {
 		name: e.k,
 		fallback: Qn(e.k, 2),
 		logo: e.has_logo ? po(e.k, "icon", e.logo_version) : ""
 	};
 }
-function aBe(e, t) {
+function uBe(e, t) {
 	X.barsPendingSeq = t, X.catalogFilterProps?.tiers ? t9({
 		tiersPending: !0,
 		state: e.state || ""
@@ -83388,7 +83568,7 @@ function aBe(e, t) {
 		state: e.state || ""
 	}));
 }
-function oBe(e) {
+function dBe(e) {
 	X.barsPendingSeq === e && (X.barsPendingSeq = 0, t9({ tiersPending: !1 }));
 }
 async function r9() {
@@ -83401,16 +83581,16 @@ async function r9() {
 		U.seed || "",
 		P7()
 	]);
-	aBe(n, e);
+	uBe(n, e);
 	let i;
 	try {
 		i = await X7(t);
 	} catch (t) {
-		throw oBe(e), t;
+		throw dBe(e), t;
 	}
 	let [a, o] = i;
 	if (e !== X.barsRequestSeq) {
-		oBe(e);
+		dBe(e);
 		return;
 	}
 	let s = r + "\n" + JSON.stringify([a, o]);
@@ -83438,26 +83618,26 @@ async function r9() {
 	})), X.barsPendingSeq = 0, t9({
 		tiers: {
 			key: String(X.barsRequestSeq),
-			performers: o.performers.map(rBe),
-			studios: o.studios.map(iBe)
+			performers: o.performers.map(cBe),
+			studios: o.studios.map(lBe)
 		},
 		tiersPending: !1,
 		empty: l,
-		tags: nBe(n),
+		tags: sBe(n),
 		tagFirst: f.length + m.length,
 		views: X.catalogViews(),
 		state: n.state || ""
 	}), a9(), g7.sidebarCatalog = {
 		kind: "catalog",
 		key: String(++g7.sidebarContentSeq),
-		facets: CBe(a, t)
+		facets: OBe(a, t)
 	}, C9({
 		content: g7.sidebarCatalog,
 		filters: { ...n },
 		latest: null
 	});
 }
-function sBe(e, t) {
+function fBe(e, t) {
 	v9.total = e, U.state === "trash" && (n7.trashCount = {
 		total: v9.total,
 		shown: t
@@ -83466,7 +83646,7 @@ function sBe(e, t) {
 		shown: t
 	} });
 }
-function cBe() {
+function pBe() {
 	return ul({
 		title: "清空回收站",
 		body: "回收站中的全部文件和馆藏记录将永久删除，无法恢复。",
@@ -83488,7 +83668,7 @@ function i9(e) {
 		t.tag = e ? X.withTagToggled(t.tag, e) : "";
 	});
 }
-function lBe(e) {
+function mBe(e) {
 	let t = [];
 	return e.creator && t.push({
 		kind: "clear",
@@ -83514,7 +83694,7 @@ function lBe(e) {
 }
 function a9() {
 	t9({
-		combo: lBe(U),
+		combo: mBe(U),
 		comboHidden: !X.catalogOnScreen()
 	});
 }
@@ -83526,27 +83706,27 @@ async function o9() {
 			filters: U
 		},
 		detailReturnBarsContext: null
-	}), y9(!1), U.state === "ads") return gBe(e);
+	}), y9(!1), U.state === "ads") return xBe(e);
 	X.controller.page === "/junk-files" && s9(), f7(), y7();
-	let t = dBe(e);
+	let t = gBe(e);
 	if (k5(location.pathname) && U.browse !== "folders") {
 		if (await d7.entityShapesReady, !Q.surfaceCurrent(e)) return;
-		URe();
+		JRe();
 	} else A5();
 	return a9(), L("#count").classList.remove("manage-static", "junkcount"), t;
 }
-function uBe(e) {
+function hBe(e) {
 	X.controller.settle(e);
 }
 function s9() {
 	let e = L("#grid");
 	Rl(e), Op(e), X.controller.clear(), e.innerHTML = "";
 }
-function dBe(e) {
-	return pBe("/", hBe, e, { place: iVe });
+function gBe(e) {
+	return vBe("/", bBe, e, { place: lVe });
 }
-function fBe(e) {
-	return pBe("/junk-files", vBe, e);
+function _Be(e) {
+	return vBe("/junk-files", CBe, e);
 }
 function c9() {
 	return !!bp(L("#grid"));
@@ -83557,7 +83737,7 @@ function l9() {
 function u9(e) {
 	Dp(L("#grid"), e);
 }
-function pBe(e, t, n, r = {}) {
+function vBe(e, t, n, r = {}) {
 	let i = L("#grid");
 	X.controller.page && X.controller.page !== e && s9();
 	let a = X.controller.begin(e, c9()), o = t();
@@ -83581,9 +83761,9 @@ function d9() {
 	});
 }
 function f9(e = "正在读取作品") {
-	return hY(e, mBe());
+	return hY(e, yBe());
 }
-function mBe() {
+function yBe() {
 	return U ? dM(d9()) : 16 / 9;
 }
 function p9() {
@@ -83595,7 +83775,7 @@ function p9() {
 		seekSeconds: Z.appSettings.seekSeconds
 	}));
 }
-function hBe() {
+function bBe() {
 	let e = decodeURIComponent(location.pathname), t = An(e), n = U.state === "trash";
 	return {
 		mode: "catalog",
@@ -83609,7 +83789,7 @@ function hBe() {
 		seekSeconds: Z.appSettings.seekSeconds,
 		revision: X.controller.revision,
 		wireDrag: _9,
-		settled: uBe,
+		settled: hBe,
 		skeletonHtml: () => f9(),
 		filters: { ...U },
 		batchSize: Z.appSettings.batchSize,
@@ -83618,7 +83798,7 @@ function hBe() {
 		mix: t && e !== "/wall" && !n && U.browse !== "folders",
 		shorts: t && e !== "/wall" && !P7() && U.orient !== "竖屏" && !n && U.browse !== "folders",
 		countRow: L("#count"),
-		onCount: sBe,
+		onCount: fBe,
 		onCountFailed: () => t9({ count: !1 }),
 		emptyHtml: ({ trash: e, libraryEmpty: t }) => e ? Z.emptyState("trash", "回收站是空的", "删掉的内容会先到这里；确认不再需要后再清空。") : aq({
 			jav: P7() && !t,
@@ -83628,11 +83808,11 @@ function hBe() {
 		canLoadMore: () => L("#stats").hidden && L("#index").hidden
 	};
 }
-function gBe(e) {
+function xBe(e) {
 	let t = L("#count");
-	return X.controller.page === "/junk-files" && c9() && !X.controller.pending && t.querySelector(":scope > .peach-react:not([data-junk-count-skeleton])") || (s9(), f7("正在读取垃圾文件")), y7(), a9(), t.classList.add("manage-static", "junkcount"), t.classList.remove("is-stuck"), fBe(e);
+	return X.controller.page === "/junk-files" && c9() && !X.controller.pending && t.querySelector(":scope > .peach-react:not([data-junk-count-skeleton])") || (s9(), f7("正在读取垃圾文件")), y7(), a9(), t.classList.add("manage-static", "junkcount"), t.classList.remove("is-stuck"), _Be(e);
 }
-async function _Be(e, t) {
+async function SBe(e, t) {
 	let n = [e.id], r = t === "dispose", i = t === "reconsider-junk";
 	try {
 		await wn("/api/batch", {
@@ -83657,7 +83837,7 @@ async function _Be(e, t) {
 		throw r5.actionFailure("操作", e), e;
 	}
 }
-function vBe() {
+function CBe() {
 	return {
 		...CW(location.search),
 		helpers: X.junkQueueHelpers,
@@ -83667,7 +83847,7 @@ function vBe() {
 		selectMode: iu,
 		selected: new Set(nu),
 		countRow: L("#count"),
-		settled: uBe,
+		settled: hBe,
 		skeletonHtml: () => e4("正在读取垃圾文件", {
 			cards: !0,
 			className: "catalog-skeleton postercard-skeleton"
@@ -83675,8 +83855,8 @@ function vBe() {
 		canLoadMore: () => L("#stats").hidden && L("#index").hidden
 	};
 }
-function yBe() {
-	X.initialParams = new URLSearchParams(location.search), X.resolveSort = (e, t, n = Z.appSettings.defaultSort) => i5(e, t, Z.appSettings, n), W(a5(gRe(location, Z.appSettings, r5.rollSeed))), X.searchValueSnapshot = {
+function wBe() {
+	X.initialParams = new URLSearchParams(location.search), X.resolveSort = (e, t, n = Z.appSettings.defaultSort) => i5(e, t, Z.appSettings, n), W(a5(xRe(location, Z.appSettings, r5.rollSeed))), X.searchValueSnapshot = {
 		text: "",
 		scrollLeft: 0
 	}, X.cancelSearchDissolve = () => {}, X.rememberSearchValue = (e = L("#q")) => {
@@ -83697,7 +83877,7 @@ function yBe() {
 		};
 	};
 }
-function bBe() {
+function TBe() {
 	h5.handler(L("#wallBtn"), "onclick", () => {
 		i7(!1, !0);
 		let e = I5(), t = {
@@ -83719,7 +83899,7 @@ function bBe() {
 			return n.throwIfAborted(), r.mountWallPlayer(e, t, n);
 		},
 		wallDetails: Y7,
-		open: (e, t) => Yze(e, t),
+		open: (e, t) => eBe(e, t),
 		openComic: async (e) => {
 			let { openComicReader: t } = await Promise.resolve().then(() => KPe);
 			t(e.id, {
@@ -83727,10 +83907,10 @@ function bBe() {
 				failure: (e, t) => r5.actionFailure(e, t)
 			});
 		},
-		openResource: (e, t) => z8()?.miniplayerTakesCard(e) ? z8().miniplayerPlay(e.id) : Jze(e, t),
+		openResource: (e, t) => z8()?.miniplayerTakesCard(e) ? z8().miniplayerPlay(e.id) : $ze(e, t),
 		openShort: (e) => z8()?.miniplayerTakesCard(e) ? z8().miniplayerPlay(e.id) : S9(e.id),
 		openShorts: () => S9(),
-		openMix: (e, t) => LBe(e, e, !0, t),
+		openMix: (e, t) => HBe(e, e, !0, t),
 		openEntity: (e, t) => J5(e, t),
 		openUnowned: () => q7({ owner: "none" }),
 		toggleTag: (e) => {
@@ -83739,9 +83919,9 @@ function bBe() {
 			});
 		},
 		toggleSelection: (e, t) => a7(e, t),
-		watchLater: (e, t) => Xze(e, t),
-		rate: (e, t, n, r) => Qze(e, t, n, r),
-		resourceOperation: (e, t) => Zze(e, t),
+		watchLater: (e, t) => tBe(e, t),
+		rate: (e, t, n, r) => rBe(e, t, n, r),
+		resourceOperation: (e, t) => nBe(e, t),
 		mixRelated: (e) => J7(e),
 		canFlip: () => !iu && !g9() && !window.__scrolling && !X.reduceMotion()
 	}, X.topsQueryParams = (e, t = 0) => {
@@ -83781,7 +83961,7 @@ function bBe() {
 		X.catalogFilterProps && t9({ comboHidden: !0 });
 	};
 }
-function xBe() {
+function EBe() {
 	X.junkQueueHelpers = { badgeHtml: (e, t) => Z.srcBadge(e, t) }, X.junkQueueActions = {
 		navigate: (e) => {
 			iu && i7(!1, !0), Q.route(e);
@@ -83798,10 +83978,10 @@ function xBe() {
 				return N5.sourceHint(e.message);
 			}
 		},
-		operate: (e, t) => _Be(e, t)
+		operate: (e, t) => SBe(e, t)
 	};
 }
-X.controller = new bRe();
+X.controller = new TRe();
 // src/application/preferences.js
 var Z = {
 	sourceOnline: void 0,
@@ -83835,7 +84015,7 @@ async function m9() {
 		if (!e.isActive) return Z.sourceOnline;
 		Z.sourceOnline = {}, Z.sourceProblems = {};
 	}
-	return document.body.classList.toggle("offline-source", Object.values(Z.sourceOnline).includes(!1)), Kze(), Z.sourceOnline;
+	return document.body.classList.toggle("offline-source", Object.values(Z.sourceOnline).includes(!1)), Zze(), Z.sourceOnline;
 }
 function h9() {
 	let e = Q.surfacePath();
@@ -83846,7 +84026,7 @@ function h9() {
 		state: G.navigation.location.state
 	}), t;
 }
-function SBe(e) {
+function DBe(e) {
 	if (e === "local") return {
 		kind: "glyph",
 		name: "hard-drive"
@@ -83867,7 +84047,7 @@ function SBe(e) {
 		cost: "free"
 	};
 }
-function CBe(e, t) {
+function OBe(e, t) {
 	let n = (e, t = (e) => e.label || Hl(e.k)) => (e || []).map((e) => ({
 		value: String(e.k),
 		label: t(e),
@@ -83878,7 +84058,7 @@ function CBe(e, t) {
 			value: e.k,
 			label: tr[e.k] || e.k,
 			n: e.n ?? null,
-			dot: SBe(e.k),
+			dot: DBe(e.k),
 			...Z.sourceOffline(e.k) ? { offline: Z.OFFLINE_HINT } : {}
 		})),
 		regions: n(e.regions),
@@ -83891,7 +84071,7 @@ function CBe(e, t) {
 		duration: !!e.stats?.duration
 	};
 }
-async function wBe(e = !1) {
+async function kBe(e = !1) {
 	if (e && (document.hidden || !An(decodeURIComponent(location.pathname)) || v9.stageOpen() || v9.immerseOpen() || iu || nu.size || document.activeElement === L("#q"))) return !1;
 	if (!L("#stats").hidden) {
 		let e = decodeURIComponent(location.pathname), t = Q.routeMeta(e)?.route.refresh;
@@ -83920,32 +84100,32 @@ async function wBe(e = !1) {
 function g9() {
 	return document.body.classList.contains("censor");
 }
-function TBe(e) {
+function ABe(e) {
 	document.body.classList.toggle("censor", e), Z.settingsStore.notify();
 }
-function EBe(e) {
-	localStorage.setItem(Z.CENSOR_KEY, e ? "1" : "0"), TBe(e), e && Rl();
+function jBe(e) {
+	localStorage.setItem(Z.CENSOR_KEY, e ? "1" : "0"), ABe(e), e && Rl();
 }
-function DBe() {
+function MBe() {
 	return k1(localStorage.getItem("peach.sfw-shortcut")) || k1("Shift+KeyS");
 }
-function OBe(e) {
+function NBe(e) {
 	e ? localStorage.setItem(D1, A1(e)) : localStorage.removeItem(D1), Z.settingsStore.notify();
 }
-function kBe(e) {
+function PBe(e) {
 	localStorage.setItem("peach.high-contrast", String(e)), document.documentElement.classList.toggle("board-high-contrast", e), Z.settingsStore.notify();
 }
 function _9(e) {
 	return Mc(e, { drag: !0 });
 }
-function ABe() {
+function FBe() {
 	["#nrow", "#count"].forEach((e) => _9(L(e))), document.querySelectorAll(".tier,.srow").forEach(_9);
 }
-function jBe() {
+function IBe() {
 	let e = new URLSearchParams(location.search).get("id");
 	return /^\d+$/.test(e || "") ? Number(e) : void 0;
 }
-function MBe() {
+function LBe() {
 	Z.sourceOnline = {}, Z.sourceProblems = {}, Z.sourceOffline = (e) => Z.sourceOnline[e] === !1, Z.OFFLINE_HINT = "媒体目录无法访问，请检查目录、读取权限和网盘挂载状态", Z.OFFLINE_REASON = {
 		local: "无法读取媒体目录，请检查目录是否存在及读取权限。",
 		115: "无法读取 115 媒体目录，请检查目录权限及网盘挂载工具是否正常运行。",
@@ -83978,14 +84158,14 @@ function MBe() {
 		},
 		seekSeconds: () => p9(),
 		groupCollapse: () => B7(),
-		feedAutoScroll: () => WRe(),
+		feedAutoScroll: () => YRe(),
 		feedLimit: () => j5(),
 		feedCompilations: () => j5(),
 		miniplayer: () => {
 			Z.appSettings.miniplayer || z8()?.closeMiniplayer();
 		},
 		javImage: () => {
-			io(document, Z.appSettings.javImage), p9(), document.querySelectorAll("img[data-jav-image].cover").forEach(pl), IBe();
+			io(document, Z.appSettings.javImage), p9(), document.querySelectorAll("img[data-jav-image].cover").forEach(pl), VBe();
 		},
 		searchHistoryLimit: () => Dp(L("#searchMenu"), { historyLimit: Z.appSettings.searchHistoryLimit })
 	}, Z.syncGlassOptics = () => {}, Z.placeSidebarHead = () => {}, Z.SRCICON = {
@@ -83996,8 +84176,8 @@ function MBe() {
 		return `<span class="${n || "src"} ${t === "metered" ? "metered" : "free"}" title="${z(r)}" aria-label="${z(r)}">` + (Z.SRCICON[e] || "") + "</span>";
 	}, Z.emptyState = Ks;
 }
-function NBe() {
-	Z.CENSOR_KEY = "peach-censor", TBe(localStorage.getItem(Z.CENSOR_KEY) === "1");
+function RBe() {
+	Z.CENSOR_KEY = "peach-censor", ABe(localStorage.getItem(Z.CENSOR_KEY) === "1");
 }
 // src/application/media.js
 var v9 = {
@@ -84011,14 +84191,14 @@ var v9 = {
 	immerseOpen: void 0,
 	requestedImmerseId: void 0
 };
-function PBe() {
+function zBe() {
 	let e = Number(new URLSearchParams(location.search).get("t"));
 	return Number.isFinite(e) && e > 0 ? {
 		time: e,
 		autoplay: !1
 	} : null;
 }
-function FBe() {
+function BBe() {
 	return z8()?.exit() || Promise.resolve();
 }
 function y9(e = !1, t = !1, { miniplayer: n = !0, preserveQueueRequest: r = null } = {}) {
@@ -84032,7 +84212,7 @@ function y9(e = !1, t = !1, { miniplayer: n = !0, preserveQueueRequest: r = null
 		detailReturnNeedsRestore: !1
 	}), W7(), e && Q.route(cu || "/");
 }
-function IBe() {
+function VBe() {
 	z8()?.repaintPoster();
 }
 function b9(e, t, n, r, i = null, a = {}) {
@@ -84057,19 +84237,19 @@ function b9(e, t, n, r, i = null, a = {}) {
 		Q.requestedQueue = () => x9(n == null ? null : +n, !1, s, i, !0, e), W({ queueOpens: bu + 1 });
 	} else return x9(n == null ? null : +n, !1, s, i, r);
 }
-function LBe(e, t = e, n = !0, r = null) {
+function HBe(e, t = e, n = !0, r = null) {
 	return b9("mix", e, t, n, r);
 }
-function RBe(e, t = e, n = !0, r = null) {
+function UBe(e, t = e, n = !0, r = null) {
 	return b9("editions", e, t, n, r);
 }
-function zBe(e, t = e, n = !0, r = null) {
+function WBe(e, t = e, n = !0, r = null) {
 	return b9("parts", e, t, n, r);
 }
-function BBe(e, t = null, n = !0) {
+function GBe(e, t = null, n = !0) {
 	return b9("playlist", e, t, n);
 }
-function VBe() {
+function KBe() {
 	return !!L("#grid").querySelector("[data-id],[data-mix-seed]") || !!document.querySelector("[data-video-wall]") || !L("#index").hidden || !L("#stats").hidden;
 }
 async function x9(e, t = !0, n = null, r = null, i = !1, a = null) {
@@ -84079,7 +84259,7 @@ async function x9(e, t = !0, n = null, r = null, i = !1, a = null) {
 		return;
 	}
 	Rl(), e = e == null ? null : +e;
-	let o = r?.isConnected ? r : lu?.isConnected ? lu : null, s = r?.isConnected ? r.getBoundingClientRect().top + r.getBoundingClientRect().height / 2 > window.innerHeight / 2 : uu, c = VBe(), l = du || !t && !c, u = eu.type === "item" ? tu : N5.cloneBarsContext(I5());
+	let o = r?.isConnected ? r : lu?.isConnected ? lu : null, s = r?.isConnected ? r.getBoundingClientRect().top + r.getBoundingClientRect().height / 2 > window.innerHeight / 2 : uu, c = KBe(), l = du || !t && !c, u = eu.type === "item" ? tu : N5.cloneBarsContext(I5());
 	t ? W({ detailReturnPath: location.pathname + location.search }) : i || W({ detailReturnPath: $f() || cu }), t && Xf(), z8()?.showing() !== "item" && y9(!1, !0, {
 		miniplayer: !1,
 		preserveQueueRequest: a
@@ -84118,22 +84298,22 @@ async function x9(e, t = !0, n = null, r = null, i = !1, a = null) {
 		selectMode: iu,
 		selected: new Set(nu),
 		seekSeconds: Z.appSettings.seekSeconds,
-		resume: t || e == null ? null : PBe()
+		resume: t || e == null ? null : zBe()
 	}), W7();
 }
-async function HBe() {
+async function qBe() {
 	let e = N5.cloneBarsContext(tu), t = cu || "/", n = du;
-	await FBe(), y9(!1, !1, { miniplayer: !1 }), W({ detailReturnBarsContext: null }), Zf(), W({ barsContext: e || {
+	await BBe(), y9(!1, !1, { miniplayer: !1 }), W({ detailReturnBarsContext: null }), Zf(), W({ barsContext: e || {
 		type: "home",
 		filters: U
 	} }), n && Q.managedPagePath(new URL(t, location.href).pathname) ? Q.navigatePath(t) : (Q.route(t), n ? W({ pageOpens: yu + 1 }) : (r9(), location.pathname === "/playlists" && Z5()));
 }
-async function UBe(e, t = !0) {
+async function JBe(e, t = !0) {
 	if (t) {
-		W({ detailReturnPath: location.pathname + location.search }), E9("/works/" + encodeURIComponent(e), "jav", () => UBe(e, !1));
+		W({ detailReturnPath: location.pathname + location.search }), E9("/works/" + encodeURIComponent(e), "jav", () => JBe(e, !1));
 		return;
 	}
-	let n = G.navigation.seq, r = N5.cloneBarsContext(I5()), i = !VBe(), a = $f() || (i ? "/jav?tab=discover" : cu) || "/jav?tab=discover";
+	let n = G.navigation.seq, r = N5.cloneBarsContext(I5()), i = !KBe(), a = $f() || (i ? "/jav?tab=discover" : cu) || "/jav?tab=discover";
 	z8()?.showing() !== "jav" && y9(!1, !0, { miniplayer: !1 }), W({
 		detailReturnPath: a,
 		detailReturnBarsContext: r,
@@ -84145,7 +84325,7 @@ async function UBe(e, t = !0) {
 		code: e,
 		readOnly: !!s.ledger_read_only,
 		actions: {
-			close: () => void HBe(),
+			close: () => void qBe(),
 			navigate: (e) => Q.navigatePath(e),
 			canonicalCode: (t) => {
 				G.navigation.seq === n && t && t !== e && (zp("/works/" + encodeURIComponent(t) + location.search + location.hash, {
@@ -84161,9 +84341,9 @@ async function UBe(e, t = !0) {
 	}), W7());
 }
 async function S9(e = null, t = !0) {
-	t ? (v9.requestedImmerseId = e, Q.route("/immerse")) : (z8()?.closeMiniplayer(), await (await cRe(v9.immerseHost)).open(e));
+	t ? (v9.requestedImmerseId = e, Q.route("/immerse")) : (z8()?.closeMiniplayer(), await (await pRe(v9.immerseHost)).open(e));
 }
-function WBe() {
+function YBe() {
 	v9.total = 0, v9.facets = null, v9.stageHost = {
 		player: {
 			settings: () => Z.appSettings,
@@ -84179,7 +84359,7 @@ function WBe() {
 		openItem: (e) => void x9(e)
 	}, v9.stageOpen = () => !!z8()?.isOpen();
 }
-function GBe() {
+function XBe() {
 	v9.itemDetailHelpers = {
 		badgeHtml: (e, t, n) => Z.srcBadge(e, t, n),
 		titleHtml: (e) => GB(e),
@@ -84198,7 +84378,7 @@ function GBe() {
 		wireDrag: (e) => _9(e),
 		wireDragReorder: (e, t) => sl(e, t)
 	}, v9.itemDetailActions = {
-		close: () => HBe(),
+		close: () => qBe(),
 		present: (e) => {
 			W({ presentedItem: e });
 			let t = tu;
@@ -84232,12 +84412,12 @@ function GBe() {
 		openTag: (e) => $7((t) => {
 			t.tag = e;
 		}),
-		addToPlaylist: (e) => ize(e),
-		saveMix: (e) => rze(e),
+		addToPlaylist: (e) => lze(e),
+		saveMix: (e) => cze(e),
 		editPlaylist: () => O9("/playlists"),
 		openPlaylists: () => O9("/playlists"),
 		reveal: (e) => U5(e),
-		sync: (e) => YRe(e),
+		sync: (e) => eze(e),
 		trashChanged: async (e, t) => {
 			U.state === "ads" && (t || e === "trash") && (t || (Zf(), y9(!0, !1, { miniplayer: !1 })), await o9());
 		},
@@ -84278,7 +84458,7 @@ var Q = {
 	queueOpenRequest: void 0,
 	initialOverlayOpened: void 0
 };
-function KBe() {
+function ZBe() {
 	let e = J8();
 	e ? e.navChanged() : L("#drawerScroll")?.querySelectorAll("[data-nav]").forEach((e) => e.setAttribute("aria-pressed", String(V7(e.dataset.nav))));
 }
@@ -84294,7 +84474,7 @@ function C9(e = {}) {
 	}, J8()?.render(g7.sidebarProps);
 }
 function w9() {
-	C9(), KBe(), U7();
+	C9(), ZBe(), U7();
 }
 function T9() {
 	Q.queueOpenRequest && (Q.queueOpenRequest.cancelled = !0), Q.queueOpenRequest = null, Q.requestedQueue = null, W({ pendingQueueRoute: null });
@@ -84311,7 +84491,7 @@ function D9() {
 function O9(e) {
 	Q.route(e), W({ pageOpens: yu + 1 });
 }
-function qBe() {
+function QBe() {
 	Q.routeMeta = (e) => {
 		let t = op(e);
 		return t ? { route: t } : null;
@@ -84319,7 +84499,7 @@ function qBe() {
 		let t = op(e);
 		return !!t && t.reload !== "reopen" && !Q.catalogPage(e) && !Kf(e) && e !== "/immerse";
 	}, Q.openRoutePath = (e) => {
-		e === "/immerse" ? S9(jBe()) : e === "/follow" ? P9() : e === "/playlists" || Q.catalogPage(e) ? O9(e) : Q.managedPagePath(e) ? Q.navigatePath(e === "/subscriptions" ? Sze() : e) : (i7(!1, !0), O9(c7({
+		e === "/immerse" ? S9(IBe()) : e === "/follow" ? P9() : e === "/playlists" || Q.catalogPage(e) ? O9(e) : Q.managedPagePath(e) ? Q.navigatePath(e === "/subscriptions" ? Dze() : e) : (i7(!1, !0), O9(c7({
 			kind: e.slice(1),
 			q: "",
 			scope: "local",
@@ -84328,7 +84508,7 @@ function qBe() {
 		})));
 	};
 }
-function JBe() {
+function $Be() {
 	Q.surfaceEpoch = 0, Q.surfacePath = () => decodeURIComponent(location.pathname), Q.surfaceRequests = null, Q.surfaceToken = (e) => ({
 		epoch: Q.surfaceEpoch,
 		path: e,
@@ -84347,15 +84527,15 @@ function JBe() {
 	}, Q.requestedOverlay = null, Q.requestedQueue = null, Q.queueOpenRequest = null, Q.initialOverlayOpened = !1;
 }
 // src/jobs.ts
-function YBe(e, t, n) {
+function eVe(e, t, n) {
 	if (!Number.isFinite(n) || n <= 0) return "";
 	let r = Math.max(0, Math.min(n, Number.isFinite(t) ? t : 0)), i = r / n * 100;
 	return `<div class="ui-board-job-progress" role="progressbar" aria-label="${z(e)}" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${r}"><svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle class="ui-board-job-track" cx="18" cy="18" r="15"/><circle class="ui-board-job-fill" cx="18" cy="18" r="15" pathLength="100" stroke-dasharray="${i} ${100 - i}" transform="rotate(-90 18 18)"/></svg><span>${z(e)}<small>${Math.round(i)}%</small></span></div>`;
 }
-function XBe(e, t = 0, n = 0) {
-	return n > 0 ? YBe(e, t, n) : Ws(e);
+function tVe(e, t = 0, n = 0) {
+	return n > 0 ? eVe(e, t, n) : Ws(e);
 }
-async function ZBe(e) {
+async function nVe(e) {
 	let t = e.pause || ((e) => new Promise((t) => setTimeout(t, e))), n = 0;
 	for (; e.active();) {
 		let r;
@@ -84370,14 +84550,14 @@ async function ZBe(e) {
 		await t(2e3);
 	}
 }
-function QBe(e) {
+function rVe(e) {
 	let t = e.note || ((e) => Bs(e, {
 		label: "任务状态",
 		variant: "error"
-	})), n = e.loading || Ws, r = e.progress || ((e, t, n) => XBe(n || `已处理 ${e} / ${t}`, e, t)), i = e.container || ((e) => `<section class="followtask" data-geist-fieldset aria-label="任务进度"><div class="geist-fieldset-content">${e}</div></section>`), a = document.createElement("div");
+	})), n = e.loading || Ws, r = e.progress || ((e, t, n) => tVe(n || `已处理 ${e} / ${t}`, e, t)), i = e.container || ((e) => `<section class="followtask" data-geist-fieldset aria-label="任务进度"><div class="geist-fieldset-content">${e}</div></section>`), a = document.createElement("div");
 	e.host.hidden = !0, a.dataset.followJob = "", a.setAttribute("aria-live", "polite"), e.host.prepend(a);
 	let o = e.storageKey || "peach-follow-job", s = sessionStorage.getItem(o) || void 0, c = !1;
-	ZBe({
+	nVe({
 		read: e.read,
 		active: () => !c && e.active() && a.isConnected,
 		keepWatching: e.watchIdle !== !1,
@@ -84426,7 +84606,7 @@ var $ = {
 	FOLLOW_MANAGE_TABS: void 0,
 	followSidebarFilters: void 0
 };
-function $Be(e) {
+function iVe(e) {
 	let t = (e.results || []).filter((e) => !e.ok).length;
 	r5.toast({ text: Vi(e) }, {
 		warn: !!t,
@@ -84441,7 +84621,7 @@ function $Be(e) {
 function k9() {
 	return Oa(A9());
 }
-function eVe() {
+function aVe() {
 	return $.controller.read();
 }
 function A9() {
@@ -84462,17 +84642,17 @@ function A9() {
 function j9(e) {
 	$.followFilter = e.status, $.followMediaView = e.media, $.followAuthors = new Set(e.author ? [e.author] : []), $.followProviders = new Set(e.provider ? [e.provider] : []), $.followWorks = new Set(e.work ? [e.work] : []), $.followTags = new Set(e.tags), $.followDurMin = e.durMin || 0, $.followDurMax = e.durMax || 0, $.followSort = e.sort, $.followDir = e.dir, $.followSeed = e.seed;
 }
-function tVe() {
+function oVe() {
 	let e = bp(L("#stats"));
 	return e && e.path === "/follow" && e.host.isConnected ? e : null;
 }
 function M9() {
-	return !!tVe();
+	return !!oVe();
 }
 function N9(e) {
 	M9() && Dp(L("#stats"), e);
 }
-function nVe(e, t = {}) {
+function sVe(e, t = {}) {
 	return $.controller.route(e, t);
 }
 function P9(e = !1) {
@@ -84493,19 +84673,19 @@ async function F9(e, t = !0, n = null, r = !1) {
 		relatedLimit: Z.appSettings.relatedLimit > 0 ? +Z.appSettings.relatedLimit : 0,
 		helpers: $.followFeedHelpers,
 		actions: $.followDetailActions,
-		resume: t ? null : PBe()
+		resume: t ? null : zBe()
 	}), W7();
 }
-async function rVe() {
-	await FBe(), y9(!1, !1, { miniplayer: !1 }), Zf(), Q.route(hu || "/follow"), !(N5.entityPageView && N5.entityPageCurrent() && !L("#index").hidden) && (location.pathname === "/follow" && M9() ? (eVe(), N9({ view: A9() })) : W({ pageOpens: yu + 1 }));
+async function cVe() {
+	await BBe(), y9(!1, !1, { miniplayer: !1 }), Zf(), Q.route(hu || "/follow"), !(N5.entityPageView && N5.entityPageCurrent() && !L("#index").hidden) && (location.pathname === "/follow" && M9() ? (aVe(), N9({ view: A9() })) : W({ pageOpens: yu + 1 }));
 }
-function iVe(e) {
+function lVe(e) {
 	let t = document.createElement("div");
 	return t.className = "peach-react", oc(e, () => {
 		e.textContent = "", e.append(t);
 	}), t;
 }
-function aVe() {
+function uVe() {
 	$.followFeedHelpers = Wl({
 		wireDrag: (e) => {
 			e && _9(e);
@@ -84514,12 +84694,12 @@ function aVe() {
 			e && Mc(e);
 		},
 		listSkeletonHtml: (e) => $.followContentSkeletonHtml(e),
-		jobProgress: QBe
+		jobProgress: rVe
 	}), $.followFeedActions = {
 		loaded: (e) => b7(e),
 		openDetail: (e) => F9(e),
 		openAuthor: (e) => Q.navigatePath(Nn("creator", e)),
-		toggleSelection: (e, t) => uze(e, t),
+		toggleSelection: (e, t) => hze(e, t),
 		setImagesOnly: (e) => {
 			Z.appSettings.followImagesOnly = !!e, Z.saveSettings(), B5();
 		},
@@ -84529,7 +84709,7 @@ function aVe() {
 		canFlip: () => !iu && !g9() && !window.__scrolling && !X.reduceMotion(),
 		toast: (e, { undo: t } = {}) => r5.actionReceipt(e, { undo: t }),
 		failure: (e, t) => r5.actionFailure(e, t),
-		checkReport: (e) => $Be(e)
+		checkReport: (e) => iVe(e)
 	}, $.followFeedShell = {
 		skeleton: () => $.followSkeletonHtml("正在读取关注内容"),
 		ground: () => {
@@ -84539,7 +84719,7 @@ function aVe() {
 		view: A9,
 		adoptView: j9,
 		rememberReturn: (e) => W({ followDetailReturnPath: e }),
-		close: () => void rVe(),
+		close: () => void cVe(),
 		open: (e, t, n) => void F9(e, !0, t, n),
 		drawer: b7,
 		openAuthor: (e) => Q.navigatePath(Nn("creator", e))
@@ -84549,7 +84729,7 @@ function aVe() {
 		canFlip: $.followFeedActions.canFlip
 	});
 }
-function oVe() {
+function dVe() {
 	$.controller = ja({
 		location: () => location,
 		view: A9,
@@ -84593,8 +84773,8 @@ function oVe() {
 	}, $.followFeedHelpers, $.followFeedActions), $.followFeedActions = $.controller.actions, $.followFeedProps = $.controller.props, $.followFeedShell.refresh = $.controller.refresh, $.followFeedShell.props = $.controller.props;
 }
 // src/application/lifecycle.js
-function sVe() {
-	pOe(), el(document), zo(document.documentElement, { variant: "page" }), zo(L("#drawerScroll")), h5.own(Zc()), Ua(document.body), X.homeHasFeed = VRe(), X.barsRequestSeq = 0, X.barsPendingSeq = 0, X.barsRendered = "", X.catalogFilterProps = null, X.catalogFilterMounting = null, X.catalogTagRows = [], X.catalogTopsPages = null, g7.sidebarProps = {
+function fVe() {
+	pOe(), el(document), zo(document.documentElement, { variant: "page" }), zo(L("#drawerScroll")), h5.own(Zc()), Ua(document.body), X.homeHasFeed = KRe(), X.barsRequestSeq = 0, X.barsPendingSeq = 0, X.barsRendered = "", X.catalogFilterProps = null, X.catalogFilterMounting = null, X.catalogTagRows = [], X.catalogTopsPages = null, g7.sidebarProps = {
 		content: null,
 		filters: {},
 		latest: null
@@ -84605,10 +84785,10 @@ function sVe() {
 	], $.FOLLOW_RANDOM_SORT = "rand", $.followSort = "new", $.followDir = "desc", $.followSeed = 0, $.followDurMin = 0, $.followDurMax = 0;
 }
 // src/application/tutorial.js
-async function cVe() {
+async function pVe() {
 	cW({ reopen: !0 });
 }
-function lVe() {
+function mVe() {
 	let e = new URL(location.href), t = e.searchParams.get("onboarding") === "1";
 	W({ cameFromSetup: t }), h5.handler(document.getElementById("tutorialBtn"), "onclick", () => cW()), cW({ invitation: !0 }), t && e.searchParams.delete("onboarding");
 	let n = e.searchParams.get("agentation");
@@ -84621,7 +84801,7 @@ function lVe() {
 	}), n === "on" && import("/dev/agentation.js").catch(() => {});
 }
 // src/react/search/recommendations.ts
-var uVe = [
+var hVe = [
 	{
 		kind: "performer",
 		label: "艺人与新作",
@@ -84672,15 +84852,15 @@ var uVe = [
 		size: 5
 	}
 ];
-function dVe() {
-	return uVe.map((e) => ({
+function gVe() {
+	return hVe.map((e) => ({
 		...e,
 		items: [],
 		pending: !0
 	}));
 }
-var fVe = (e) => e.startsWith(String((/* @__PURE__ */ new Date()).getFullYear())) ? e.slice(5, 10) : e.slice(0, 10), pVe = (e, t = e.length) => t > 1 ? `${e[0]} 等 ${t} 人` : e[0] || "";
-async function mVe(e) {
+var _Ve = (e) => e.startsWith(String((/* @__PURE__ */ new Date()).getFullYear())) ? e.slice(5, 10) : e.slice(0, 10), vVe = (e, t = e.length) => t > 1 ? `${e[0]} 等 ${t} 人` : e[0] || "";
+async function yVe(e) {
 	let t = await e("/api/search/recommendations"), n = (e, t, n, r = "") => ({
 		value: String(e.code || e.display_title || e.title || e.name || "未命名作品"),
 		id: e.id,
@@ -84694,10 +84874,10 @@ async function mVe(e) {
 		let { kind: t, name: r, coStarred: i, refs: a, total: o } = jo(e);
 		if (!t) return n(e, void 0, "");
 		let s = t === "performer" ? a[0] : e.creator_entity, c = tn(t, r, s?.id);
-		return n(e, void 0, i ? pVe([c], o) : c, vo(r, s ?? null, t));
+		return n(e, void 0, i ? vVe([c], o) : c, vo(r, s ?? null, t));
 	}, i = (e, t) => {
 		let r = e.performer_refs || [], i = r.length ? r.map((e) => e.name) : String(e.performers || "").split(/[,，、;/]/).map((e) => e.trim()).filter(Boolean), a = i[0] ? vo(i[0], r[0] ?? null, "performer") : "";
-		return n(e, t, pVe(i), a);
+		return n(e, t, vVe(i), a);
 	}, a = {};
 	a.asset = t.items ? (t.items.items || []).map(r) : null;
 	let o = t.jav ? t.jav.items || [] : null;
@@ -84715,7 +84895,7 @@ async function mVe(e) {
 			avatar_focus: n.avatar_focus,
 			rep: n.has_avatar ? n.rep : null,
 			works: [e],
-			subtitle: r ? `最新作 ${r.code || "无番号"} · ${fVe(r.release_date)}` : "最新作未取得"
+			subtitle: r ? `最新作 ${r.code || "无番号"} · ${_Ve(r.release_date)}` : "最新作未取得"
 		});
 	}
 	a.performer = o && [...s.values()];
@@ -84757,7 +84937,7 @@ async function mVe(e) {
 		avatarHtml: p5(e),
 		subtitle: e.latest ? `最新更新于 ${mK({ published_at: e.latest })}` : "更新时间未取得"
 	})) : null, {
-		groups: uVe.map((e) => {
+		groups: hVe.map((e) => {
 			let t = a[e.kind] ?? [];
 			return {
 				...e,
@@ -84770,7 +84950,7 @@ async function mVe(e) {
 	};
 }
 // src/application/search-morph.js
-function hVe(e, t, n, r, i, a, o) {
+function bVe(e, t, n, r, i, a, o) {
 	let s = a.startsWith("linear(") ? a.slice(7, -1).split(",").map(Number) : [0, 1];
 	return s.map((a, c) => {
 		let l = c / (s.length - 1), u = (e, t) => e + (t - e) * a, d = Math.max(8, Math.min(o - 44, u(e.left, t.left))), f = Math.max(36, Math.min(o - 8 - d, u(e.width, t.width))), p = u(e.height, t.height) + Math.sin(Math.PI * l) * t.height * .12, m = u(e.top + e.height / 2, t.top + t.height / 2);
@@ -84795,7 +84975,7 @@ var I9 = {
 function L9() {
 	I9.searchControl?.close();
 }
-function gVe(e) {
+function xVe(e) {
 	let t = e ? eo({
 		...e,
 		is_jav: !!e.code
@@ -84814,7 +84994,7 @@ function z9(e) {
 	if (t.classList.toggle("open", e), L("#searchBtn").setAttribute("aria-expanded", String(e)), innerWidth > 760 || matchMedia("(prefers-reduced-motion:reduce)").matches) return;
 	let s = t.getBoundingClientRect(), c = getComputedStyle(t), l = parseFloat(c.paddingLeft), u = t.querySelector("svg").getBoundingClientRect().width, d = Math.max(0, (o.width - u) / 2 - parseFloat(c.borderLeftWidth)), f = r ? i : e ? o : s, p = e ? s : o, m = Gc();
 	t.classList.add("search-morphing");
-	let h = t.animate(hVe(f, p, s, r ? a : e ? d : l, e ? l : d, m.easing, innerWidth), {
+	let h = t.animate(bVe(f, p, s, r ? a : e ? d : l, e ? l : d, m.easing, innerWidth), {
 		duration: m.duration,
 		easing: "linear",
 		fill: "both"
@@ -84823,13 +85003,13 @@ function z9(e) {
 		I9.searchMorph === h && R9();
 	});
 }
-function _Ve() {
+function SVe() {
 	return v9.immerseOpen() ? H8().activeVideo() : z8()?.activeVideo() || null;
 }
-function vVe(e) {
+function CVe(e) {
 	return !!e && (e.tagName === "INPUT" || e.tagName === "TEXTAREA" || e.isContentEditable);
 }
-function yVe() {
+function wVe() {
 	I9.searchControl = null, I9.searchActions = {
 		search: (e) => {
 			X.rememberSearchValue(), y9(!1), U.q = e, Ou(), Q.route(U.jav === "1" ? K7() : U.q ? "/?q=" + encodeURIComponent(U.q) : "/", !0);
@@ -84842,10 +85022,10 @@ function yVe() {
 		}
 	}, I9.searchHelpers = {
 		pool: () => JSe(U, wn),
-		recommendations: () => mVe(wn),
-		pendingRecommendations: dVe,
+		recommendations: () => yVe(wn),
+		pendingRecommendations: gVe,
 		rollPlaceholder: (e, t) => ec(e, t),
-		coverHtml: (e) => `<span class="pic">${e?.thumb_url ? `<img src="${z(e.thumb_url)}" width="640" height="360" alt="" loading="lazy" referrerpolicy="no-referrer" data-drop="self">` : e?.sourceWork ? S5(e) : gVe(e)}</span>`,
+		coverHtml: (e) => `<span class="pic">${e?.thumb_url ? `<img src="${z(e.thumb_url)}" width="640" height="360" alt="" loading="lazy" referrerpolicy="no-referrer" data-drop="self">` : e?.sourceWork ? S5(e) : xVe(e)}</span>`,
 		present: (e) => ls(e),
 		dismiss: (e) => us(e),
 		wireScroller: (e) => Mc(e),
@@ -84879,7 +85059,7 @@ function yVe() {
 		e.currentTarget.value && X.rememberSearchValue(e.currentTarget);
 	});
 }
-function bVe() {
+function TVe() {
 	I9.searchMorph = null, I9.searchMorphViewport = innerWidth, h5.listen.bind(h5, window)("resize", () => {
 		innerWidth !== I9.searchMorphViewport && (I9.searchMorphViewport = innerWidth, R9());
 	}, { passive: !0 }), h5.listen(matchMedia("(prefers-reduced-motion:reduce)"), "change", R9), h5.handler(L("#searchBtn"), "onclick", () => {
@@ -84921,9 +85101,9 @@ function bVe() {
 			}
 			return;
 		}
-		if (vVe(e.target)) return;
-		if (!e.defaultPrevented && oMe(e, DBe())) {
-			e.preventDefault(), EBe(!g9());
+		if (CVe(e.target)) return;
+		if (!e.defaultPrevented && oMe(e, MBe())) {
+			e.preventDefault(), jBe(!g9());
 			return;
 		}
 		if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -84934,7 +85114,7 @@ function bVe() {
 				return;
 			}
 		}
-		let t = _Ve();
+		let t = SVe();
 		if (t) {
 			if (e.key === "t" || e.key === "T") {
 				e.preventDefault(), z8()?.toggleTheater();
@@ -84964,7 +85144,7 @@ function bVe() {
 	});
 }
 // src/history/links.ts
-function xVe(e) {
+function EVe(e) {
 	if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return null;
 	let t = e.target instanceof Element ? e.target.closest("a[href]") : null;
 	if (!t || t.hasAttribute("download") || t.target && t.target.toLowerCase() !== "_self") return null;
@@ -84987,23 +85167,23 @@ var B9 = {
 	shellActions: void 0,
 	routing: void 0
 };
-function SVe() {
+function DVe() {
 	let e = h5, t = (e) => {
-		e.kind === "item" ? x9(e.id, !1) : e.kind === "jav" ? UBe(e.code, !1) : e.kind === "follow" ? F9(e.id, !1) : b9(e.queue, e.key, e.item, !1);
+		e.kind === "item" ? x9(e.id, !1) : e.kind === "jav" ? JBe(e.code, !1) : e.kind === "follow" ? F9(e.id, !1) : b9(e.queue, e.key, e.item, !1);
 	};
-	if (BRe(), d7.entityShapesReady = C5(), Oze(), location.pathname === "/") {
+	if (GRe(), d7.entityShapesReady = C5(), Nze(), location.pathname === "/") {
 		let e = new URLSearchParams(location.search);
 		!e.has("state") && e.get("jav") !== "1" && (L("#catalogPageHeading").hidden = !1, A7(L("#catalogPageHeading"), e.get("q")));
 	}
-	k5(decodeURIComponent(location.pathname)) && E5(L("#feedNew")), Ize(), B9.shellActions = {
+	k5(decodeURIComponent(location.pathname)) && E5(L("#feedNew")), Vze(), B9.shellActions = {
 		openSettings: (e) => T7(e, !0),
 		closeSettings: () => G8()?.close(!1),
 		openItem: (e) => void x9(e),
 		openEntity: (e, t) => void J5(e, t),
 		openTag: (e) => {
-			Mze(), i9(e);
+			Lze(), i9(e);
 		},
-		openTasteSignal: nze,
+		openTasteSignal: sze,
 		navigate: (e) => {
 			let n = new URL(e, location.href), r = Gf(n.pathname, n.search);
 			if (r) {
@@ -85022,9 +85202,9 @@ function SVe() {
 		toast: (e, t) => r5.toast(e, t),
 		failure: r5.actionFailure,
 		revealSource: U5,
-		reopenTutorial: cVe,
-		routeReview: aze,
-		routeFollowManage: xze,
+		reopenTutorial: pVe,
+		routeReview: uze,
+		routeFollowManage: Eze,
 		saveFollowPreference: (e) => {
 			e.pageSize !== void 0 && (Z.appSettings.followPageSize = e.pageSize), e.layout !== void 0 && (Z.appSettings.followLayout = e.layout), Z.saveSettings();
 		},
@@ -85035,11 +85215,11 @@ function SVe() {
 		},
 		exitSelectMode: () => i7(!1, !1),
 		personAvatar: (e, t, n) => s7.personAvatar(e, t, n),
-		authorAvatar: (e) => Cze(e),
-		showIndexTags: wze,
+		authorAvatar: (e) => Oze(e),
+		showIndexTags: kze,
 		openFollowAuthor: u7,
-		openFollowTag: Tze,
-		openPlaylist: (e, t) => void BBe(e, t, !0),
+		openFollowTag: Aze,
+		openPlaylist: (e, t) => void GBe(e, t, !0),
 		canFlip: () => !iu && !g9() && !window.__scrolling && !X.reduceMotion(),
 		surfaceChanged: (e, t) => {
 			e === "entity" ? (Rl(), W({ barsContext: {
@@ -85092,32 +85272,32 @@ function SVe() {
 			fill: () => {
 				if (l9() || !Bp() && !L("#grid").querySelector(".catalog-skeleton")) return;
 				let e = L("#count");
-				e.removeAttribute("aria-busy"), e.removeAttribute("aria-label"), dBe(Q.surfaceToken(Q.surfacePath()));
+				e.removeAttribute("aria-busy"), e.removeAttribute("aria-label"), gBe(Q.surfaceToken(Q.surfacePath()));
 			},
 			release: () => {
 				s9(), A5();
 			}
 		}
 	}, B9.routing = !1, e.listen(document, "click", (e) => {
-		let t = xVe(e);
+		let t = EVe(e);
 		t && (e.preventDefault(), B9.shellActions.navigate(t));
 	}), h5.own(G.listen((e) => {
 		Q.queueOpenRequest && e.seq !== Q.queueOpenRequest.seq && !Kf(e.location.pathname) && y9(!1), B9.routing && !e.claimed && D9();
-	})), oRe(B9.shellActions).catch((e) => console.error("客户端导航装载失败", e)), zze(), hze(), D7();
+	})), dRe(B9.shellActions).catch((e) => console.error("客户端导航装载失败", e)), Wze(), bze(), D7();
 	let n = k5(decodeURIComponent(location.pathname)) && X.homeHasFeed == null ? d7.entityShapesReady : null;
 	Promise.all([
 		m9(),
-		Lze(),
+		Hze(),
 		n
 	]).then(() => {
-		e.isActive && (d7.wantsDiscoveryBars() && r9().catch((e) => console.error("首页横条装载失败", e)), w9(), ABe(), B9.routing = !0, W({ pageOpens: 1 }), D9(), W7());
+		e.isActive && (d7.wantsDiscoveryBars() && r9().catch((e) => console.error("首页横条装载失败", e)), w9(), FBe(), B9.routing = !0, W({ pageOpens: 1 }), D9(), W7());
 	}).catch((t) => {
 		e.isActive && console.error("应用启动失败", t);
 	});
 }
 // src/theme-transition.ts
 var V9 = !1;
-async function CVe(e, t) {
+async function OVe(e, t) {
 	if (V9) return;
 	if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
 		t();
@@ -85139,7 +85319,7 @@ async function CVe(e, t) {
 	}
 }
 // src/application/chrome.js
-function wVe() {
+function kVe() {
 	(() => {
 		let e = h5, t = [
 			"#brandHome",
@@ -85241,14 +85421,14 @@ function wVe() {
 		(document.querySelector(".top") || m.closest("header")).prepend(h), e.own(() => h.remove());
 		let g = document.createElement("div");
 		g.className = "board-sidebar-foot", e.own(() => g.remove()), g.innerHTML = `<div class="board-theme-toggle" role="group" aria-label="明暗主题"><span class="board-theme-thumb" aria-hidden="true"></span><button type="button" data-board-theme="light" aria-label="浅色主题">${R("sun")}</button><button type="button" data-board-theme="dark" aria-label="深色主题">${R("moon")}</button></div>`, g.insertAdjacentHTML("beforeend", "<div class=\"board-foot-actions\"><button type=\"button\" class=\"board-glow-toggle\" id=\"boardGlowBtn\" aria-label=\"光晕配色\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"boardGlowMenu\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><use href=\"#ri-palette-line\"/></svg><span class=\"board-glow-mark\" aria-hidden=\"true\"><span class=\"board-glow-mark-glow\"></span><span class=\"board-glow-mark-accent\"></span></span></button></div>"), g.querySelector(".board-foot-actions").append(document.querySelector("#settingsBtn")), document.querySelector("#drawer").append(g), g.querySelectorAll("[data-board-theme]").forEach((t) => e.handler(t, "onclick", () => {
-			t.getAttribute("aria-pressed") !== "true" && CVe(t, () => {
+			t.getAttribute("aria-pressed") !== "true" && OVe(t, () => {
 				Z.appSettings.theme = t.dataset.boardTheme, Z.saveSettings(), Xj();
 			});
 		})), Xj();
 		let _ = document.createElement("div");
 		_.className = "popmenu board-glow-menu", _.id = "boardGlowMenu", _.hidden = !0, _.setAttribute("popover", "manual"), _.setAttribute("role", "dialog"), _.setAttribute("aria-label", "配色"), document.body.append(_), e.own(() => _.remove());
 		let v = g.querySelector("#boardGlowBtn"), y = ps(g, v, _);
-		e.own(y.dispose), e.own(Sue(v)), pRe({
+		e.own(y.dispose), e.own(Sue(v)), vRe({
 			root: _,
 			store: Z.settingsStore,
 			openDetails: () => {
@@ -85391,8 +85571,8 @@ function wVe() {
 	})(), C7(!S7() && sessionStorage.getItem("board.sidebar") !== "closed");
 }
 // src/navigation-progress.ts
-var TVe = 200, EVe = 400, DVe = 240;
-function OVe() {
+var AVe = 200, jVe = 400, MVe = 240;
+function NVe() {
 	let e = document.createElement("div");
 	e.className = "navprogress", e.setAttribute("aria-hidden", "true"), e.append(document.createElement("i")), document.body.append(e);
 	let t = /* @__PURE__ */ new Set(), n = 0, r = 0, i = 0, a = !1, o = () => gp() || t.size > 0, s = () => {
@@ -85403,12 +85583,12 @@ function OVe() {
 			}
 			n ||= window.setTimeout(() => {
 				n = 0, i = performance.now(), e.dataset.state = "running";
-			}, TVe);
+			}, AVe);
 		} else clearTimeout(n), n = 0, !(e.dataset.state !== "running" || r) && (r = window.setTimeout(() => {
 			e.dataset.state = "done", r = window.setTimeout(() => {
 				r = 0, delete e.dataset.state;
-			}, DVe);
-		}, Math.max(0, EVe - (performance.now() - i))));
+			}, MVe);
+		}, Math.max(0, jVe - (performance.now() - i))));
 	}, c = () => {
 		a || (a = !0, queueMicrotask(() => {
 			a = !1, s();
@@ -85425,15 +85605,15 @@ function OVe() {
 	};
 }
 // src/application/initialize.js
-function kVe() {
-	sVe(), qBe(), kze(), JBe(), MBe(), mRe(), yBe(), lVe(), $Re(), WBe(), gze(), bBe(), KRe(), oze(), aVe(), Eze(), eze(), oVe(), Dze(), tze(), Gze(), xBe(), yVe(), GBe(), bVe(), NBe(), SVe(), wVe(), h5.own(OVe()), h5.own(s9), h5.own(T9);
+function PVe() {
+	fVe(), QBe(), Pze(), $Be(), LBe(), yRe(), wBe(), mVe(), ize(), YBe(), xze(), TBe(), ZRe(), dze(), uVe(), jze(), aze(), dVe(), Mze(), oze(), Xze(), EBe(), wVe(), XBe(), TVe(), RBe(), DVe(), kVe(), h5.own(NVe()), h5.own(s9), h5.own(T9);
 }
 // src/ui-kit/middle-truncate.ts
-var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(void 0, { granularity: "grapheme" }) : null, H9 = /* @__PURE__ */ new WeakMap(), U9 = /* @__PURE__ */ new Set(), W9 = 0, G9 = /* @__PURE__ */ new WeakSet(), K9 = null, q9 = null, MVe = (e) => jVe ? [...jVe.segment(String(e ?? ""))].map((e) => e.segment) : Array.from(String(e ?? "")), J9 = (e, t) => {
+var FVe = "…", IVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(void 0, { granularity: "grapheme" }) : null, H9 = /* @__PURE__ */ new WeakMap(), U9 = /* @__PURE__ */ new Set(), W9 = 0, G9 = /* @__PURE__ */ new WeakSet(), K9 = null, q9 = null, LVe = (e) => IVe ? [...IVe.segment(String(e ?? ""))].map((e) => e.segment) : Array.from(String(e ?? "")), J9 = (e, t) => {
 	if (t >= e.length) return e.join("");
 	let n = Math.ceil(t / 2), r = Math.floor(t / 2);
-	return e.slice(0, n).join("") + AVe + (r ? e.slice(-r).join("") : "");
-}, NVe = (e, t) => {
+	return e.slice(0, n).join("") + FVe + (r ? e.slice(-r).join("") : "");
+}, RVe = (e, t) => {
 	if (!e.length || t(e.join(""))) return e.length;
 	let n = 0, r = e.length - 1, i = 0;
 	for (; n <= r;) {
@@ -85441,23 +85621,23 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 		t(J9(e, a)) ? (i = a, n = a + 1) : r = a - 1;
 	}
 	return i;
-}, PVe = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}　-〿＀-￯]/u, FVe = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u, IVe = /[\p{Script=Latin}\p{Script=Greek}\p{Script=Cyrillic}\p{Nd}]/u, LVe = /[＀-￯]/u, RVe = (e) => FVe.test(e) ? 1 : IVe.test(e) && !LVe.test(e) ? 2 : 0, zVe = (e) => {
+}, zVe = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}　-〿＀-￯]/u, BVe = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u, VVe = /[\p{Script=Latin}\p{Script=Greek}\p{Script=Cyrillic}\p{Nd}]/u, HVe = /[＀-￯]/u, UVe = (e) => BVe.test(e) ? 1 : VVe.test(e) && !HVe.test(e) ? 2 : 0, WVe = (e) => {
 	let t = 0, n = 0;
 	for (let r of e) {
-		let e = RVe(r);
+		let e = UVe(r);
 		n && e && n !== e && t++, n = e;
 	}
 	return t;
-}, BVe = null, VVe = (e, t) => {
-	let n = getComputedStyle(e), r = (BVe ||= document.createElement("canvas")).getContext("2d");
+}, GVe = null, KVe = (e, t) => {
+	let n = getComputedStyle(e), r = (GVe ||= document.createElement("canvas")).getContext("2d");
 	if (!r) return () => Infinity;
 	r.font = n.font || `${n.fontStyle} ${n.fontWeight} ${n.fontSize} ${n.fontFamily}`;
 	let i = parseFloat(n.letterSpacing), a = parseFloat(n.wordSpacing), o = n.getPropertyValue("text-autospace"), s = t && o && o !== "no-autospace" ? (parseFloat(n.fontSize) || 0) / 8 : 0;
 	return (e) => {
 		let t = r.measureText(e).width;
-		return Number.isFinite(i) && (t += Math.max(0, MVe(e).length - 1) * i), Number.isFinite(a) && (t += (e.match(/\s/g) || []).length * a), s && (t += zVe(e) * s), t;
+		return Number.isFinite(i) && (t += Math.max(0, LVe(e).length - 1) * i), Number.isFinite(a) && (t += (e.match(/\s/g) || []).length * a), s && (t += WVe(e) * s), t;
 	};
-}, HVe = [
+}, qVe = [
 	"font-family",
 	"font-size",
 	"font-weight",
@@ -85482,7 +85662,7 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 	"text-autospace",
 	"text-spacing-trim",
 	"white-space-collapse"
-], Y9 = null, UVe = (e) => {
+], Y9 = null, JVe = (e) => {
 	if (!Y9) {
 		let e = document.createElement("div");
 		e.setAttribute("aria-hidden", "true"), e.dataset.middleTruncateProbe = "", e.style.cssText = "position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none;contain:strict", Y9 = {
@@ -85491,10 +85671,10 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 		};
 	}
 	Y9.box.isConnected || document.documentElement.append(Y9.box);
-	let t = getComputedStyle(e), n = HVe.map((e) => t.getPropertyValue(e)), r = e.closest("[lang]")?.getAttribute("lang") || "", i = n.join("\n") + "\n" + r, a = Y9.groups.get(i);
-	return a || (a = document.createElement("div"), n.forEach((e, t) => a.style.setProperty(HVe[t], e)), a.lang = r, Y9.box.append(a), Y9.groups.set(i, a)), a;
-}, WVe = 8, GVe = (e) => {
-	for (let t = 0; e.length && t < WVe; t++) {
+	let t = getComputedStyle(e), n = qVe.map((e) => t.getPropertyValue(e)), r = e.closest("[lang]")?.getAttribute("lang") || "", i = n.join("\n") + "\n" + r, a = Y9.groups.get(i);
+	return a || (a = document.createElement("div"), n.forEach((e, t) => a.style.setProperty(qVe[t], e)), a.lang = r, Y9.box.append(a), Y9.groups.set(i, a)), a;
+}, YVe = 8, XVe = (e) => {
+	for (let t = 0; e.length && t < YVe; t++) {
 		let t = e.map((e) => e.tries.map((t) => {
 			let n = document.createElement("span");
 			return n.style.cssText = "display:block;width:max-content;text-wrap-mode:nowrap", n.textContent = J9(e.fit.parts, t), e.group.append(n), n;
@@ -85512,28 +85692,28 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 			])].filter((t) => t > e.fits && t < e.fails), !0;
 		});
 	}
-}, KVe = (e) => {
+}, ZVe = (e) => {
 	let t = [];
 	for (let n of e) {
-		let e = n.state.full, r = PVe.test(e), i = VVe(n.element, r);
-		if (n.kept = NVe(n.parts, (e) => i(e) <= n.available), !r) continue;
+		let e = n.state.full, r = zVe.test(e), i = KVe(n.element, r);
+		if (n.kept = RVe(n.parts, (e) => i(e) <= n.available), !r) continue;
 		let a = [n.kept, n.kept + 1].filter((e) => e > 0 && e <= n.parts.length);
 		t.push({
 			fit: n,
-			group: UVe(n.element),
+			group: JVe(n.element),
 			fits: 0,
 			fails: n.parts.length + 1,
 			tries: a
 		});
 	}
-	GVe(t);
-}, qVe = (e) => {
+	XVe(t);
+}, QVe = (e) => {
 	let t = getComputedStyle(e), n = parseFloat(t.width);
 	if (!Number.isFinite(n)) return e.clientWidth;
 	let r = t.boxSizing === "border-box" ? n - (parseFloat(t.borderLeftWidth) || 0) - (parseFloat(t.borderRightWidth) || 0) : n + (parseFloat(t.paddingLeft) || 0) + (parseFloat(t.paddingRight) || 0);
 	return Math.max(e.clientWidth, r + 1 / 64);
-}, JVe = (e) => {
-	if (e.dataset.middleTruncateWithin === void 0) return qVe(e);
+}, $Ve = (e) => {
+	if (e.dataset.middleTruncateWithin === void 0) return QVe(e);
 	let t = e.parentElement;
 	if (!t) return e.clientWidth;
 	let n = getComputedStyle(t), r = parseFloat(n.columnGap) || 0, i = 0, a = 0;
@@ -85542,7 +85722,7 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 		n === e ? a++ : t > 0 && (i += t, a++);
 	}
 	return t.getBoundingClientRect().width - (parseFloat(n.paddingLeft) || 0) - (parseFloat(n.paddingRight) || 0) - i - r * Math.max(0, a - 1);
-}, YVe = () => {
+}, eHe = () => {
 	W9 = 0;
 	let e = [];
 	for (let t of U9) {
@@ -85550,12 +85730,12 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 		n && t.isConnected && e.push({
 			element: t,
 			state: n,
-			available: JVe(t),
-			parts: MVe(n.full),
+			available: $Ve(t),
+			parts: LVe(n.full),
 			kept: 0
 		});
 	}
-	U9.clear(), KVe(e.filter((e) => e.available > 0));
+	U9.clear(), ZVe(e.filter((e) => e.available > 0));
 	for (let { element: t, state: n, available: r, parts: i, kept: a } of e) {
 		let e = r > 0 ? J9(i, a) : n.full;
 		n.rendered = e, t.textContent !== e && (t.textContent = e);
@@ -85563,28 +85743,28 @@ var AVe = "…", jVe = typeof Intl.Segmenter == "function" ? new Intl.Segmenter(
 		t.classList.toggle("middle-truncated", o), t.setAttribute("aria-label", n.full), t.hasAttribute("title") && t.dataset.middleTitle !== "true" || (t.title = n.full, t.dataset.middleTitle = "true");
 	}
 }, X9 = (e) => {
-	H9.has(e) && (U9.add(e), W9 ||= requestAnimationFrame(YVe));
-}, XVe = (e) => {
+	H9.has(e) && (U9.add(e), W9 ||= requestAnimationFrame(eHe));
+}, tHe = (e) => {
 	e instanceof HTMLElement && (H9.has(e) || H9.set(e, {
 		full: e.textContent || "",
 		rendered: e.textContent || ""
 	}), G9.has(e) || (G9.add(e), e.dataset.middleTruncateWithin !== void 0 && e.parentElement ? K9?.observe(e.parentElement) : K9?.observe(e)), X9(e));
-}, ZVe = (e) => {
+}, nHe = (e) => {
 	if (e.nodeType !== Node.ELEMENT_NODE) return;
 	let t = e;
-	t.matches("[data-middle-truncate]") && XVe(t), t.querySelectorAll("[data-middle-truncate]").forEach(XVe);
+	t.matches("[data-middle-truncate]") && tHe(t), t.querySelectorAll("[data-middle-truncate]").forEach(tHe);
 };
-function QVe(e = document) {
+function rHe(e = document) {
 	q9?.(), G9 = /* @__PURE__ */ new WeakSet();
 	let t = !0;
 	K9 = new ResizeObserver((e) => e.forEach((e) => {
 		t && (X9(e.target), e.target.querySelectorAll?.(":scope>[data-middle-truncate-within]").forEach(X9));
 	}));
 	let n = K9;
-	ZVe(e.documentElement || e);
+	nHe(e.documentElement || e);
 	let r = new MutationObserver((e) => e.forEach((e) => {
 		if (!t) return;
-		e.addedNodes.forEach(ZVe);
+		e.addedNodes.forEach(nHe);
 		let n = (e.target.nodeType === Node.TEXT_NODE ? e.target.parentElement : e.target)?.closest?.("[data-middle-truncate]");
 		if (!n) return;
 		let r = H9.get(n);
@@ -85610,7 +85790,7 @@ function QVe(e = document) {
 	return q9 = a, a;
 }
 // src/react/result-updates.tsx
-var $Ve = [
+var iHe = [
 	"catalog-grid",
 	"catalog-folders",
 	"item",
@@ -85635,15 +85815,15 @@ var $Ve = [
 	"follow",
 	"entity",
 	"index"
-], eHe = [
+], aHe = [
 	"feed-new",
 	"jav-discoveries",
 	"jav-detail",
 	"wants",
 	"index"
-], tHe = {
+], oHe = {
 	catalog: [
-		...$Ve,
+		...iHe,
 		...Z9,
 		"review",
 		"taste"
@@ -85653,19 +85833,19 @@ var $Ve = [
 		"stats",
 		"taste"
 	],
-	discoveries: eHe,
+	discoveries: aHe,
 	review: ["review"],
 	artwork: [
-		...$Ve,
+		...iHe,
 		...Z9,
-		...eHe,
+		...aHe,
 		"avatar-choices"
 	]
 };
-function nHe() {
+function sHe() {
 	let e = /* @__PURE__ */ new Set(), t = null;
 	return (n, r) => {
-		for (let t of Object.keys(r)) if (r[t] !== n[t]) for (let n of tHe[t] || []) e.add(n);
+		for (let t of Object.keys(r)) if (r[t] !== n[t]) for (let n of oHe[t] || []) e.add(n);
 		return !t && e.size && (t = (async () => {
 			for (; e.size;) {
 				let t = new Set(e);
@@ -85678,11 +85858,11 @@ function nHe() {
 		})), t || Promise.resolve();
 	};
 }
-var rHe = (e) => e.replace(/[&<>"']/g, (e) => `&#${e.charCodeAt(0)};`), iHe = 3, aHe = (e) => {
-	let t = rHe(e.label || "一部作品");
+var cHe = (e) => e.replace(/[&<>"']/g, (e) => `&#${e.charCodeAt(0)};`), lHe = 3, uHe = (e) => {
+	let t = cHe(e.label || "一部作品");
 	return e.kind === "download" ? `「${t}」已入库并整理完成` : `新文件已入库：「${t}」`;
 };
-function oHe(e, t, n) {
+function dHe(e, t, n) {
 	if (!t) return e;
 	let r = t.items.reduce((e, t) => Math.max(e, t.id), 0);
 	if (!e || e.epoch !== t.epoch) return {
@@ -85690,14 +85870,14 @@ function oHe(e, t, n) {
 		last: r
 	};
 	let i = t.items.filter((t) => t.id > e.last);
-	if (i.length > iHe) dB(`ingest-${t.epoch}-${r}`, {
+	if (i.length > lHe) dB(`ingest-${t.epoch}-${r}`, {
 		html: `${i.length} 部作品已入库`,
 		alert: !1,
 		timeout: 8e3,
 		action: null
 	});
 	else for (let e of i) dB(`ingest-${t.epoch}-${e.id}`, {
-		html: aHe(e),
+		html: uHe(e),
 		alert: !1,
 		timeout: 8e3,
 		action: {
@@ -85710,69 +85890,69 @@ function oHe(e, t, n) {
 		last: Math.max(e.last, r)
 	};
 }
-function sHe({ openItem: e }) {
+function fHe({ openItem: e }) {
 	let t = Pt({
 		queryKey: h_e,
 		queryFn: ({ signal: e }) => g_e(e),
 		refetchInterval: (e) => e.state.data?.busy ? JB : YB
-	}), n = (0, F.useRef)(void 0), r = (0, F.useRef)(null), [i] = (0, F.useState)(nHe), a = t.data?.result_versions, o = t.data?.ingest_notices;
+	}), n = (0, F.useRef)(void 0), r = (0, F.useRef)(null), [i] = (0, F.useState)(sHe), a = t.data?.result_versions, o = t.data?.ingest_notices;
 	return (0, F.useEffect)(() => {
 		a && (n.current && i(n.current, a), n.current = a);
 	}, [a, i]), (0, F.useEffect)(() => {
-		r.current = oHe(r.current, o, e);
+		r.current = dHe(r.current, o, e);
 	}, [o, e]), null;
 }
 // src/react/application.tsx
 var Q9 = null;
-function cHe(e) {
+function pHe(e) {
 	Q9 !== e || e.owners || (Q9 = null, e.effects.dispose());
 }
-function lHe() {
+function mHe() {
 	if (!Q9) {
-		let e = ORe();
+		let e = NRe();
 		Q9 = {
 			effects: e,
 			owners: 0
-		}, e.own(QVe(document)), e.own(() => {
+		}, e.own(rHe(document)), e.own(() => {
 			Rl(), H.cancelQueries();
-		}), e.own(sRe), e.own(kp), e.own(ss);
+		}), e.own(fRe), e.own(kp), e.own(ss);
 	}
 	return Q9.owners += 1, Q9.effects.resume(), Q9;
 }
-function uHe() {
+function hHe() {
 	let [e, t] = (0, F.useState)(null);
 	return (0, F.useLayoutEffect)(() => {
-		let e = Q9 === null, n = lHe(), r = aRe(t);
+		let e = Q9 === null, n = mHe(), r = uRe(t);
 		if (e) try {
-			kVe();
+			PVe();
 		} catch (e) {
 			throw r(), n.effects.dispose(), Q9 = null, e;
 		}
 		return () => {
-			r(), --n.owners, !n.owners && (n.effects.pause(), queueMicrotask(() => cHe(n)));
+			r(), --n.owners, !n.owners && (n.effects.pause(), queueMicrotask(() => pHe(n)));
 		};
 	}, []), /* @__PURE__ */ (0, I.jsx)(Nxe, {
 		actions: e,
 		processing: !0,
-		background: e ? /* @__PURE__ */ (0, I.jsx)(sHe, { openItem: e.openItem }) : null
+		background: e ? /* @__PURE__ */ (0, I.jsx)(fHe, { openItem: e.openItem }) : null
 	});
 }
 var $9 = /* @__PURE__ */ new WeakMap();
-function dHe(e) {
+function gHe(e) {
 	let t = $9.get(e);
 	if (t) return t;
 	let n = (0, Rt.createRoot)(e, Pxe);
 	$9.set(e, n);
 	let r = n.unmount.bind(n);
 	return n.unmount = () => {
-		$9.get(e) === n && ($9.delete(e), r(), Q9 && cHe(Q9));
-	}, (0, Lt.flushSync)(() => n.render(/* @__PURE__ */ (0, I.jsx)(uHe, {}))), n;
+		$9.get(e) === n && ($9.delete(e), r(), Q9 && pHe(Q9));
+	}, (0, Lt.flushSync)(() => n.render(/* @__PURE__ */ (0, I.jsx)(hHe, {}))), n;
 }
 // src/react/bootstrap.tsx
 O();
-var fHe = document.getElementById("appRoot");
-if (!fHe) throw Error("主界面宿主缺失");
-dHe(fHe);
-export { lL as $2ec61d1d4f780267$export$a8a3e93435678ff9, _L as $3a442827418ebe87$export$eb2fcfdbd7ba97d4, PR as $542a13ca2fa5b484$export$5b6b19405a83ff9d, bD as $72abaeab4d80592f$export$78efe591171d7d45, Ez as $76d00c5a4edb230a$export$76ccd210b9029917, Cz as $76d00c5a4edb230a$export$816b5d811295e6bc, kz as $76d00c5a4edb230a$export$b59bdbef9ce70de2, jz as $76d00c5a4edb230a$export$f6f0c3fe4ec306ea, Sz as $76d00c5a4edb230a$export$f850895b287ef28e, Fhe as $b4f18e3395fe64d7$export$3d96ec278d3efce4, Phe as $b4f18e3395fe64d7$export$3e41faf802a29e71, jhe as $b4f18e3395fe64d7$export$b2539bed5023c21c, Fz as $b4f18e3395fe64d7$export$e51a686c67fdaa2d, Rhe as $bd263d78e9bf3c56$export$f5c9f3c2c4054eec, sE as $ea3928288112382f$export$439d29a4e110a164, qR as $f2ff30fde7b014be$export$3ddf2d174ce01153, ez as $fe21c36db05242bb$export$a98f0dcb43a68a25, tz as $fe21c36db05242bb$export$d7b12c4107be0d61, mve as $l, Pj as ACCENTS, Mje as AMANE_BRIDGE_CHECK_URL, t1 as AMANE_BRIDGE_KEY, Nje as AMANE_BRIDGE_REBUILD_URL, or as ApiError, FW as ArtSlot, W2 as BATCH_DELETE_TEXT, Y as Button, Wz as ButtonLink, qV as Bx, e1 as CHECK_ALL_KEY, w$ as CLEANUP_ENTRY, C$ as CLEANUP_ENTRY_GRID, rp as CLEANUP_HASH_REDIRECTS, tp as CLEANUP_TOOLS, _n as CLOUD_LOCATIONS, g0 as CLOUD_PROXY_HELP, Gr as COLUMN_SORT, y1 as CONFIGURATION_KEY, gX as CONFIGURATION_URL, Pje as COOKIE_TEXT_LIMIT, $$ as COVER_JOB_KEY, Al as COVER_STATE_TITLE, Ji as CREDENTIAL_STATE, J$ as CUSTOM_SOURCES_KEY, q$ as CUSTOM_SOURCES_URL, $G as CatalogViewToggle, LH as Checkbox, IH as CheckboxGlyph, Gz as ChevronSortDown, kW as Chip, WW as CloudDownloadDialog, yU as CollapseChevron, vU as CollapseRegion, _$ as CollectionSummary, Eye as CommandSteps, NQ as CoverQueue, vEe as DEFAULT_CATEGORY, ur as DEFAULT_SORT, XQ as DIAGNOSTICS_KEY, oDe as DIRECTORY_TEMPLATE_ERROR, ZW as DISCOVERY_SORTS, LW as DOWNLOADS_KEY, IW as DOWNLOADS_URL, IY as DUPLICATES_KEY, PW as DataTableFooter, gY as DataTableFrame, NW as DataTableSort, TU as Disclosure, Mbe as DownloadsPanel, nve as E3, yEe as ENTITY_REVIEW_KINDS, m0 as ENTRY_LINKS_HELP, h0 as ENTRY_LINKS_HINT, zV as Ea, Vve as EmptyFocusButton, gH as EmptyState, CU as ErrorText, jve as Eu, Dye as ExternalLink, Br as FEEDS_KEY, BF as FEED_SCHEDULE_KEY, x$ as FIELDSET_FOOT, dLe as FLOW_LABEL_X, j6 as FLOW_VIEWBOX, Rr as FOLLOW_CHECK_KEY, Lr as FOLLOW_CREDENTIALS_KEY, u5 as FOLLOW_INITIAL_RANGE_OPTIONS, Ir as FOLLOW_MANAGE_KEY, QZ as FOLLOW_MANAGE_NAV, zr as FOLLOW_RESOLVE_KEY, zF as FOLLOW_SCHEDULE_KEY, Aye as Fact, kye as FactList, wU as FieldLabel, F$ as Fieldset, P$ as FieldsetTitle, V_e as FilterGlass, mV as FilterGlassRows, pV as FilterIconButton, hV as FilterPill, Tye as Footer, WV as Gg, gV as GlassPill, ZV as HN, SU as Help, iH as HintText, rLe as IDLE_POLL_MS, sEe as IDLE_REPAIR, uV as IconButton, QQ as IndexSearch, lH as Input, cH as InputBase, L$ as IssueRow, Qj as JAV_LAYOUTS, l2 as JAV_RECOMMENDATION_GRID, RX as JUNK_KEY, uG as JavHeader, tEe as KEEP_LABELS, K_e as L1, Hr as LAYOUTS, p0 as LIBRARY_FOLDER_HELP, BH as LIBRARY_PROCESSING_KEY, cX as LINKS_KEY, lX as LINK_CHECK_KEY, UEe as LINK_KINDS, uX as LINK_PRUNE_KEY, tr as LOC, rH as Label, U$ as LibraryProcessingCard, AH as LibraryShortcuts, nU as LinkButton, gve as Lo, pU as LoadingDots, ive as M6, kfe as MEDIA_PROCESSING_KEY, HF as MEDIA_PROCESSING_URL, VY as MEDIA_REPAIR_KEY, BY as MEDIA_REPAIR_URL, vr as MEDIA_SOURCES_KEY, vs as MEDIA_SOURCE_ICONS, hn as MEDIA_SOURCE_OPTIONS, Vz as MENU_ITEM, Hz as MENU_ITEM_INTERACTIVE, Bz as MENU_POPOVER_SURFACE, vve as Ma, pB as MenuDialog, JK as MixCard, uH as ModalFrame, vx as MotionConfigContext, tH as NR, I$ as NameLink, fH as Note, Lve as OA, vX as ORGANIZE_KEY, V2 as ORGANIZE_PARAMETER_HINT, B2 as ORGANIZE_SCOPE_HINT, z2 as ORGANIZE_TEXT, xX as ORPHAN_RECORDS_KEY, U2 as ORPHAN_RECORDS_TEXT, HV as OV, hH as ObjectOrderDialog, DV as P7, FX as PERFORMER_DELETE_KEY, Vbe as PHASES, _X as PICK_FOLDER_URL, E$ as PLAIN_STAT_STRIP, G$ as PLAYLISTS_KEY, YMe as POLICY_COLUMNS, ZMe as POLICY_COVER_NOTE, XMe as POLICY_MATRIX, f0 as POLICY_SUMMARY, z$ as PathLine, $V as Pf, $Ae as PlainStat, uU as ProcessingMode, hU as Progress, KY as QUALITY_GOALS_KEY, QV as RB, o2 as RELEASE_COLUMN_VISIBILITY_KEY, a2 as RELEASE_COLUMN_WIDTHS_KEY, oG as RELEASE_PAGE_SIZES, QW as RELEASE_SORTS, TNe as RELEASE_SORT_COLUMNS, O$ as REPAIR_CARD_TEXT, HY as REPAIR_LIBRARIES_KEY, EX as RESOURCE_APPLY_KEY, TX as RESOURCE_SCAN_KEY, H2 as RESOURCE_SYNC_TEXT, ije as RESULT_PANEL, aje as RESULT_SECTION, _Ee as REVIEW_CATEGORIES, LX as REVIEW_COUNTS_KEY, bEe as REVIEW_DECISION_LABELS, YY as REVIEW_KEY, XY as REVIEW_LABELS, QY as REVIEW_QUEUES, $Y as REVIEW_QUEUE_LABELS, OK as RetryNote, Fve as Rf, nH as Rk, Sye as Rows, X$ as SCRAPING_CHECK_ALL_URL, Aje as SCRAPING_CHECK_URL, Z$ as SCRAPING_COVER_URL, Q$ as SCRAPING_KEY, kje as SCRAPING_SETTINGS_URL, GU as SEGMENT, WU as SEGMENTED_TRACK, RF as SETTINGS_KEY, PF as SETTINGS_URL, dr as SORT_DEFAULT_DIR, lr as SORT_OPTIONS, vn as SOURCE_LABELS, n6 as STATS_KEY, ZAe as STAT_STRIP, QAe as STAT_STRIP_SIX, xye as Section, oje as SectionHeading, wye as SectionSkeleton, UU as SegmentedRadioGroup, Gye as SegmentedTabList, xK as Segments, AW as Select, qz as Select$1, C1 as SelectField, Jz as SelectItem, CY as SelectionActions, nj as SelectionDock, wY as SelectionPopover, bU as SettingsCard, bye as SettingsRow, xU as SettingsSectionLabel, SK as Shuffle, Pye as SiteLabel, MW as SortDirectionIcon, CK as SortKeys, RB as SortableBoardTabs, MQ as SourceAvatar, kU as SourceLabel, EU as SourceMark, Cye as Stack, eje as StatCard, R$ as StatusLabel, Mve as Su, N4 as Switch, qB as TASKS_KEY, KIe as TASTE_REFRESH_KEY, qIe as TASTE_WINDOWS, VF as THUMBNAIL_JOBS_KEY, BX as TRASH_KEY, b_e as TRIGGER_LABELS, aY as Table, TY as TableColumnControls, EY as TableColumnResizer, OY as TableSelectionHeader, f$ as TagManager, Oye as TaskCenterLink, gU as TaskProgress, oH as TextField, aH as TextFieldContext, BV as Un, Ive as Uz, KW as WANTS_KEY, Y4 as WantMagnets, qg as WithPromise, jV as Wt, RV as Xc, eH as Xf, NV as Xl, MV as Xt, kV as _8, o as __commonJSMin, s as __exportAll, l as __toESM, XV as _p, Pve as aB, wi as addAlias, Ci as addSource, JW as addWant, sS as animate, B as apiGet, V as apiSend, Kj as appSettingsStore, TDe as applyConfirmText, PX as applyLeftovers, wDe as applyPlanText, DDe as applyText, Xj as applyTheme, _y as asNumber, pDe as attachOrphan, si as authorAvatar, li as authorGroups, oi as authorInitial, ai as authorName, qq as autoResetPageIndex, _o as avatarInner, c6 as bandRows, sDe as baseName, oEe as batchOperate, dde as beginPlayerGuidePreview, sj as boundedPreference, rEe as bulkCloudPreferences, pH as busyProps, Nve as cB, xFe as cachedMagnetStates, Vg as calcGeneratorVelocity, DEe as canApprove, _g as cancelFrame, vDe as candidateText, lW as cardClass, dM as cardRatio, pY as catalogListSkeletonCellHtml, LV as cc, Wi as checkEvidenceGap, Ui as checkFailures, Ni as checkFeeds, qEe as checkLine, Vi as checkReceipt, Hi as checkSummary, Ije as checkText, Gi as checkedText, FK as clickedBlank, w7 as closeDrawerAfterNav, JTe as cloudLocations, q0 as cloudProxySkeleton, BC as clsx, xve as cn, sv as collectMotionValues, pJ as columnVisibilityFeature, eY as column_getCanSort, XJ as column_getSortFn, TEe as commonReviewSources, UW as composingKey, If as configurationSection, ZIe as configureTasteBrowser, ul as confirmModal, __e as controlTask, kq as copyInstancePropertiesWithoutMemos, Qbe as coverArrived, Xbe as coverFetching, Ml as coverFetchingHtml, jl as coverStateAction, co as coverUrl, iJ as createColumnHelper, xje as createPlaylist, Yi as credentialDone, U0 as credentialsSkeleton, IEe as currentReviewRow, J as cx, ave as d6, KV as dZ, NEe as decisionPayload, PEe as decisionReceipt, MEe as defaultChoice, kDe as deletePerformerVideos, Cje as deletePlaylist, Z0 as devicesSkeleton, x as diagnosticHeaders, d0 as diagnosticsSkeleton, $be as discoveryArtwork, iG as discoveryKey, qbe as discoveryScore, y9 as disposeStage, $Te as distinctName, zi as dropSources, Ave as du, iEe as duplicateVictims, tV as elapsedText, tn as entityDisplayName, go as entityFaceImg, Nn as entityPath, ei as errorHeadline, cr as errorMessage, z as esc, Kq as expandRowModel, bV as f1, bo as facePos, $r as feedIntervalText, a1 as fetchAmaneBridge, i1 as fetchCheckAllJob, gi as fetchCheckJob, b1 as fetchConfiguration, r1 as fetchCoverJob, rG as fetchCoverNow, hi as fetchCredentials, Y$ as fetchCustomSources, IX as fetchDeletePerformers, ODe as fetchDeletePlan, ZQ as fetchDiagnostics, aG as fetchDiscoveries, RY as fetchDuplicates, Mfe as fetchFeedSchedule, Ai as fetchFeeds, mi as fetchFollow, jfe as fetchFollowSchedule, HX as fetchJunkSummary, JH as fetchLibraryProcessing, pX as fetchLinkCheck, mX as fetchLinkPrune, fX as fetchLinkStats, Afe as fetchMediaProcessing, UY as fetchMediaRepair, yr as fetchMediaSources, yX as fetchOrganize, $Ee as fetchOrganizeExample, SX as fetchOrphanRecords, ki as fetchPending, wje as fetchPlaylist, K$ as fetchPlaylists, qY as fetchQualityGoals, lG as fetchReleases, WY as fetchRepairLibraries, _i as fetchResolveJob, OX as fetchResourceApply, DX as fetchResourceScan, aX as fetchReview, VX as fetchReviewCounts, UF as fetchSettings, n1 as fetchSources, r6 as fetchStats, vi as fetchSuggestions, XB as fetchTasks, O6 as fetchTaste, QIe as fetchTasteJob, Nfe as fetchThumbnailJobs, UX as fetchTrashSummary, qW as fetchWants, CEe as filterReviewRows, $n as firstGrapheme, dq as flexRender, pLe as flowGraph, mLe as flowLabel, fIe as fmtCount, qn as fmtDur, Yn as fmtSize, p_e as foldByKind, A_e as foldRoutine, Fi as followFeedByName, Ii as followFeedEntity, Vr as followSuggestKey, M_e as followupDetail, f_e as followupTally, gg as frame, TV as g4, gJ as getDefaultPaginationState, uM as gridLayout, ci as groupByAuthor, k_e as groupFollowups, nX as groupReviewRows, SDe as hasChanges, kX as hasResourceRoots, QB as hasResultProblems, iLe as historySpan, xV as i2, nLe as importTasteExport, W0 as indexersSkeleton, Lg as interpolate, XW as invalidateWants, eV as isActive, Qr as isBroken, Kr as isLayout, _v as isMotionValue, ZY as isReviewCategory, j_e as isRoutine, G0 as javBrowserSkeleton, d2 as javContentSkeleton, rM as javLayout, u2 as javTagSkeleton, PDe as junkBreakdown, XTe as keepGroup, Eje as keepPlaylist, ke as keepPreviousData, tee as keepSelected, i6 as known, G_e as l1, Q_e as l7, O_e as latestOfKind, Qn as leadingGraphemes, wIe as lengthRows, Sr as localTime, po as logoUrl, Pi as lookupFeedActor, EV as m7, GV as mM, En as mapLimit, Oi as markItem, l6 as max, SIe as mediumRows, u6 as min, VEe as mirrorText, uEe as missingToolText, zY as mixedCloudPreferences, aV as momentText, cS as motion, lv as motionValue, nn as nameFallback, Ue as notifyManager, ove as oe, lDe as organizeOutcome, D2 as overlayHost, qr as pageSizeOf, di as pageWindow, Ri as patchSource, G as peachHistory, G as peachHistory$1, jEe as pendingGenres, mIe as percentText, nDe as pickOrganizeFolder, T$ as plainStatClass, cDe as planSummary, a6 as playedFor, gIe as playedItemUrl, m_e as pollInterval, Zs as popCount, bje as posterUrl, Lge as previewLibraryColor, tDe as previewOrganize, pEe as previewUrl, E_e as problemDestination, UH as processingActive, nV as progressText, OU as providerIcon, KEe as pruneText, jX as purgeCount, mDe as purgeOrphan, JV as pv, kve as qE, H as queryClient, SV as r2, uLe as radarRows, yIe as radialArc, bIe as radialBarSize, vIe as radialCeiling, _Ie as radialSlices, DN as randomId, cLe as rankDetail, lLe as rankShares, s6 as reachedShare, rV as readableErrorHeadline, Jbe as recommendationScore, LEe as recordGenre, gDe as recordsText, Dje as recreatePlaylist, vje as refreshPlaylists, Dl as relayoutCovers, s2 as releaseColumns, sG as releaseFilters, cG as releaseKey, Bi as reloadFollowManage, BEe as reloadReview, eNe as rememberShape, iDe as rememberTemplates, Ti as removeAlias, Mi as removeFeed, Si as removeSource, tLe as removeTasteSource, YW as removeWants, Ei as renameAliasGroup, Sje as renamePlaylist, Tje as reorderPlaylist, Se as replaceEqualDeep, EIe as replayRows, re as require_jsx_runtime, A as require_react, N as require_react_dom, Tq as require_with_selector, Wbe as resetWants, pr as resolveFollowSort, Wg as resolveStartTime, iye as restartEffectText, yje as resumeAssetId, SEe as reviewGroupingOptions, tX as reviewQueueData, eX as reviewQueueOf, NDe as reviewSummary, wEe as reviewWindow, kEe as rowEvidence, iX as rowFieldName, CJ as rowPaginationFeature, WJ as rowSelectionFeature, rY as rowSortingFeature, rX as rowSubject, AEe as rowTags, OEe as rowTitle, Y_e as s5, Di as saveCredential, CDe as scanLine, Rfe as schedulePollInterval, Kbe as searchNote, EEe as selectReviewRange, fi as selectionState, ji as setFeedEnabled, xi as setSourceEnabled, v_e as setTaskSpeed, Bf as settingsPath, zEe as settleReviewRows, QTe as sharedNamePrefix, zp as shellNavigate, n5 as showToast, dB as showToast$1, zn as siteMarkUrl, Lq as skipFirstRun, zI as sortCx, Yr as sortLabel, yn as sourceDefaultCost, qi as sourceIconUrl, EDe as sourceMeta, Hs as spinnerHtml, Fg as spring, hB as spriteGlyph, yi as startCheck, WEe as startLinkCheck, GEe as startLinkPrune, rDe as startOrganize, bi as startResolve, bDe as startResourceApply, yDe as startResourceScan, eLe as startTasteRefresh, XAe as statCardClass, S_e as statusLabel, lEe as statusLine, Zr as statusText, fM as storeJavLayout, FEe as submitDecision, oV as summaryItems, aJ as tableFeatures, Rq as tableMemo, ui as tableRows, T_e as taskIssues, D_e as taskSubject, k6 as tasteDate, oLe as tasteDimensions, aLe as tasteHours, D6 as tasteKey, YIe as tasteRefetchInterval, XIe as tasteTime, HB as textLang, i2 as tierPlaceholdersHtml, ph as time, fve as tl, pi as toggleGroup, A6 as topScores, Cve as um, _ve as uo, mH as useAction, qZ as useBackgroundJob, QG as useCatalogView, xW as useClientUpdates, Tm as useConstant, sV as useEntityNames, Em as useIsomorphicLayoutEffect, MB as useLibraryTints, Ft as useMutation, NB as useNavigationOrder, B$ as useOrderedLibraries, RH as useOverlayScrollbar, Pt as useQuery, ae as useQueryClient, Xx as useReducedMotion, Lfe as useRunSchedule, Ffe as useSaveFollowSchedule, WF as useSaveSettings, zfe as useSaveThumbnailMode, iY as useTable, yY as useTablePreferences, yV as useViewGlide, aEe as victimBytes, pve as vl, Gbe as wantName, hIe as watchNote, o6 as watchedShare, sve as we, Mc as wireHorizontalScroller, aDe as withOrganizeJob, Ybe as writeJavQuery, rve as z3 };
+var _He = document.getElementById("appRoot");
+if (!_He) throw Error("主界面宿主缺失");
+gHe(_He);
+export { lL as $2ec61d1d4f780267$export$a8a3e93435678ff9, _L as $3a442827418ebe87$export$eb2fcfdbd7ba97d4, PR as $542a13ca2fa5b484$export$5b6b19405a83ff9d, bD as $72abaeab4d80592f$export$78efe591171d7d45, Ez as $76d00c5a4edb230a$export$76ccd210b9029917, Cz as $76d00c5a4edb230a$export$816b5d811295e6bc, kz as $76d00c5a4edb230a$export$b59bdbef9ce70de2, jz as $76d00c5a4edb230a$export$f6f0c3fe4ec306ea, Sz as $76d00c5a4edb230a$export$f850895b287ef28e, Fhe as $b4f18e3395fe64d7$export$3d96ec278d3efce4, Phe as $b4f18e3395fe64d7$export$3e41faf802a29e71, jhe as $b4f18e3395fe64d7$export$b2539bed5023c21c, Fz as $b4f18e3395fe64d7$export$e51a686c67fdaa2d, Rhe as $bd263d78e9bf3c56$export$f5c9f3c2c4054eec, sE as $ea3928288112382f$export$439d29a4e110a164, qR as $f2ff30fde7b014be$export$3ddf2d174ce01153, ez as $fe21c36db05242bb$export$a98f0dcb43a68a25, tz as $fe21c36db05242bb$export$d7b12c4107be0d61, mve as $l, Pj as ACCENTS, Mje as AMANE_BRIDGE_CHECK_URL, t1 as AMANE_BRIDGE_KEY, Nje as AMANE_BRIDGE_REBUILD_URL, or as ApiError, FW as ArtSlot, W2 as BATCH_DELETE_TEXT, Y as Button, Wz as ButtonLink, qV as Bx, e1 as CHECK_ALL_KEY, w$ as CLEANUP_ENTRY, C$ as CLEANUP_ENTRY_GRID, rp as CLEANUP_HASH_REDIRECTS, tp as CLEANUP_TOOLS, _n as CLOUD_LOCATIONS, g0 as CLOUD_PROXY_HELP, Gr as COLUMN_SORT, y1 as CONFIGURATION_KEY, gX as CONFIGURATION_URL, Pje as COOKIE_TEXT_LIMIT, $$ as COVER_JOB_KEY, Al as COVER_STATE_TITLE, Ji as CREDENTIAL_STATE, J$ as CUSTOM_SOURCES_KEY, q$ as CUSTOM_SOURCES_URL, $G as CatalogViewToggle, LH as Checkbox, IH as CheckboxGlyph, Gz as ChevronSortDown, kW as Chip, WW as CloudDownloadDialog, yU as CollapseChevron, vU as CollapseRegion, _$ as CollectionSummary, Eye as CommandSteps, NQ as CoverQueue, vEe as DEFAULT_CATEGORY, ur as DEFAULT_SORT, XQ as DIAGNOSTICS_KEY, oDe as DIRECTORY_TEMPLATE_ERROR, ZW as DISCOVERY_SORTS, LW as DOWNLOADS_KEY, IW as DOWNLOADS_URL, IY as DUPLICATES_KEY, PW as DataTableFooter, gY as DataTableFrame, NW as DataTableSort, TU as Disclosure, Mbe as DownloadsPanel, nve as E3, yEe as ENTITY_REVIEW_KINDS, m0 as ENTRY_LINKS_HELP, h0 as ENTRY_LINKS_HINT, zV as Ea, Vve as EmptyFocusButton, gH as EmptyState, CU as ErrorText, jve as Eu, Dye as ExternalLink, Br as FEEDS_KEY, BF as FEED_SCHEDULE_KEY, x$ as FIELDSET_FOOT, gLe as FLOW_LABEL_X, j6 as FLOW_VIEWBOX, Rr as FOLLOW_CHECK_KEY, Lr as FOLLOW_CREDENTIALS_KEY, u5 as FOLLOW_INITIAL_RANGE_OPTIONS, Ir as FOLLOW_MANAGE_KEY, QZ as FOLLOW_MANAGE_NAV, zr as FOLLOW_RESOLVE_KEY, zF as FOLLOW_SCHEDULE_KEY, Aye as Fact, kye as FactList, wU as FieldLabel, F$ as Fieldset, P$ as FieldsetTitle, V_e as FilterGlass, mV as FilterGlassRows, pV as FilterIconButton, hV as FilterPill, Tye as Footer, WV as Gg, gV as GlassPill, ZV as HN, SU as Help, iH as HintText, cLe as IDLE_POLL_MS, sEe as IDLE_REPAIR, uV as IconButton, QQ as IndexSearch, lH as Input, cH as InputBase, L$ as IssueRow, Qj as JAV_LAYOUTS, l2 as JAV_RECOMMENDATION_GRID, RX as JUNK_KEY, uG as JavHeader, tEe as KEEP_LABELS, K_e as L1, Hr as LAYOUTS, p0 as LIBRARY_FOLDER_HELP, BH as LIBRARY_PROCESSING_KEY, cX as LINKS_KEY, lX as LINK_CHECK_KEY, UEe as LINK_KINDS, uX as LINK_PRUNE_KEY, tr as LOC, rH as Label, U$ as LibraryProcessingCard, AH as LibraryShortcuts, nU as LinkButton, gve as Lo, pU as LoadingDots, ive as M6, kfe as MEDIA_PROCESSING_KEY, HF as MEDIA_PROCESSING_URL, VY as MEDIA_REPAIR_KEY, BY as MEDIA_REPAIR_URL, vr as MEDIA_SOURCES_KEY, vs as MEDIA_SOURCE_ICONS, hn as MEDIA_SOURCE_OPTIONS, Vz as MENU_ITEM, Hz as MENU_ITEM_INTERACTIVE, Bz as MENU_POPOVER_SURFACE, vve as Ma, pB as MenuDialog, JK as MixCard, uH as ModalFrame, vx as MotionConfigContext, tH as NR, I$ as NameLink, fH as Note, Lve as OA, vX as ORGANIZE_KEY, V2 as ORGANIZE_PARAMETER_HINT, B2 as ORGANIZE_SCOPE_HINT, z2 as ORGANIZE_TEXT, xX as ORPHAN_RECORDS_KEY, U2 as ORPHAN_RECORDS_TEXT, HV as OV, hH as ObjectOrderDialog, DV as P7, FX as PERFORMER_DELETE_KEY, Vbe as PHASES, _X as PICK_FOLDER_URL, E$ as PLAIN_STAT_STRIP, G$ as PLAYLISTS_KEY, YMe as POLICY_COLUMNS, ZMe as POLICY_COVER_NOTE, XMe as POLICY_MATRIX, f0 as POLICY_SUMMARY, z$ as PathLine, $V as Pf, $Ae as PlainStat, uU as ProcessingMode, hU as Progress, KY as QUALITY_GOALS_KEY, QV as RB, o2 as RELEASE_COLUMN_VISIBILITY_KEY, a2 as RELEASE_COLUMN_WIDTHS_KEY, oG as RELEASE_PAGE_SIZES, QW as RELEASE_SORTS, TNe as RELEASE_SORT_COLUMNS, O$ as REPAIR_CARD_TEXT, HY as REPAIR_LIBRARIES_KEY, EX as RESOURCE_APPLY_KEY, TX as RESOURCE_SCAN_KEY, H2 as RESOURCE_SYNC_TEXT, ije as RESULT_PANEL, aje as RESULT_SECTION, _Ee as REVIEW_CATEGORIES, LX as REVIEW_COUNTS_KEY, bEe as REVIEW_DECISION_LABELS, YY as REVIEW_KEY, XY as REVIEW_LABELS, QY as REVIEW_QUEUES, $Y as REVIEW_QUEUE_LABELS, OK as RetryNote, Fve as Rf, nH as Rk, Sye as Rows, X$ as SCRAPING_CHECK_ALL_URL, Aje as SCRAPING_CHECK_URL, Z$ as SCRAPING_COVER_URL, Q$ as SCRAPING_KEY, kje as SCRAPING_SETTINGS_URL, GU as SEGMENT, WU as SEGMENTED_TRACK, RF as SETTINGS_KEY, PF as SETTINGS_URL, dr as SORT_DEFAULT_DIR, lr as SORT_OPTIONS, vn as SOURCE_LABELS, n6 as STATS_KEY, ZAe as STAT_STRIP, QAe as STAT_STRIP_SIX, xye as Section, oje as SectionHeading, wye as SectionSkeleton, UU as SegmentedRadioGroup, Gye as SegmentedTabList, xK as Segments, AW as Select, qz as Select$1, C1 as SelectField, Jz as SelectItem, CY as SelectionActions, nj as SelectionDock, wY as SelectionPopover, bU as SettingsCard, bye as SettingsRow, xU as SettingsSectionLabel, SK as Shuffle, Pye as SiteLabel, MW as SortDirectionIcon, CK as SortKeys, RB as SortableBoardTabs, MQ as SourceAvatar, kU as SourceLabel, EU as SourceMark, Cye as Stack, eje as StatCard, R$ as StatusLabel, Mve as Su, N4 as Switch, qB as TASKS_KEY, ZIe as TASTE_REFRESH_KEY, QIe as TASTE_WINDOWS, VF as THUMBNAIL_JOBS_KEY, BX as TRASH_KEY, b_e as TRIGGER_LABELS, aY as Table, TY as TableColumnControls, EY as TableColumnResizer, OY as TableSelectionHeader, f$ as TagManager, Oye as TaskCenterLink, gU as TaskProgress, oH as TextField, aH as TextFieldContext, BV as Un, Ive as Uz, KW as WANTS_KEY, Y4 as WantMagnets, qg as WithPromise, jV as Wt, RV as Xc, eH as Xf, NV as Xl, MV as Xt, kV as _8, o as __commonJSMin, s as __exportAll, l as __toESM, XV as _p, Pve as aB, wi as addAlias, Ci as addSource, JW as addWant, sS as animate, B as apiGet, V as apiSend, Kj as appSettingsStore, TDe as applyConfirmText, PX as applyLeftovers, wDe as applyPlanText, DDe as applyText, Xj as applyTheme, _y as asNumber, pDe as attachOrphan, si as authorAvatar, li as authorGroups, oi as authorInitial, ai as authorName, qq as autoResetPageIndex, _o as avatarInner, c6 as bandRows, sDe as baseName, oEe as batchOperate, dde as beginPlayerGuidePreview, sj as boundedPreference, rEe as bulkCloudPreferences, pH as busyProps, Nve as cB, EFe as cachedMagnetStates, Vg as calcGeneratorVelocity, DEe as canApprove, _g as cancelFrame, vDe as candidateText, lW as cardClass, dM as cardRatio, pY as catalogListSkeletonCellHtml, LV as cc, Wi as checkEvidenceGap, Ui as checkFailures, Ni as checkFeeds, qEe as checkLine, Vi as checkReceipt, Hi as checkSummary, Ije as checkText, Gi as checkedText, FK as clickedBlank, w7 as closeDrawerAfterNav, JTe as cloudLocations, q0 as cloudProxySkeleton, BC as clsx, xve as cn, sv as collectMotionValues, pJ as columnVisibilityFeature, eY as column_getCanSort, XJ as column_getSortFn, TEe as commonReviewSources, UW as composingKey, If as configurationSection, nLe as configureTasteBrowser, ul as confirmModal, __e as controlTask, kq as copyInstancePropertiesWithoutMemos, Qbe as coverArrived, Xbe as coverFetching, Ml as coverFetchingHtml, jl as coverStateAction, co as coverUrl, iJ as createColumnHelper, xje as createPlaylist, Yi as credentialDone, U0 as credentialsSkeleton, IEe as currentReviewRow, J as cx, ave as d6, KV as dZ, NEe as decisionPayload, PEe as decisionReceipt, MEe as defaultChoice, kDe as deletePerformerVideos, Cje as deletePlaylist, Z0 as devicesSkeleton, x as diagnosticHeaders, d0 as diagnosticsSkeleton, $be as discoveryArtwork, iG as discoveryKey, qbe as discoveryScore, y9 as disposeStage, $Te as distinctName, zi as dropSources, Ave as du, iEe as duplicateVictims, tV as elapsedText, tn as entityDisplayName, go as entityFaceImg, Nn as entityPath, ei as errorHeadline, cr as errorMessage, z as esc, Kq as expandRowModel, bV as f1, bo as facePos, $r as feedIntervalText, a1 as fetchAmaneBridge, i1 as fetchCheckAllJob, gi as fetchCheckJob, b1 as fetchConfiguration, r1 as fetchCoverJob, rG as fetchCoverNow, hi as fetchCredentials, Y$ as fetchCustomSources, IX as fetchDeletePerformers, ODe as fetchDeletePlan, ZQ as fetchDiagnostics, aG as fetchDiscoveries, RY as fetchDuplicates, Mfe as fetchFeedSchedule, Ai as fetchFeeds, mi as fetchFollow, jfe as fetchFollowSchedule, HX as fetchJunkSummary, JH as fetchLibraryProcessing, pX as fetchLinkCheck, mX as fetchLinkPrune, fX as fetchLinkStats, Afe as fetchMediaProcessing, UY as fetchMediaRepair, yr as fetchMediaSources, yX as fetchOrganize, $Ee as fetchOrganizeExample, SX as fetchOrphanRecords, ki as fetchPending, wje as fetchPlaylist, K$ as fetchPlaylists, qY as fetchQualityGoals, lG as fetchReleases, WY as fetchRepairLibraries, _i as fetchResolveJob, OX as fetchResourceApply, DX as fetchResourceScan, aX as fetchReview, VX as fetchReviewCounts, UF as fetchSettings, n1 as fetchSources, r6 as fetchStats, vi as fetchSuggestions, XB as fetchTasks, O6 as fetchTaste, rLe as fetchTasteJob, Nfe as fetchThumbnailJobs, UX as fetchTrashSummary, qW as fetchWants, CEe as filterReviewRows, $n as firstGrapheme, dq as flexRender, vLe as flowGraph, yLe as flowLabel, _Ie as fmtCount, qn as fmtDur, Yn as fmtSize, p_e as foldByKind, A_e as foldRoutine, Fi as followFeedByName, Ii as followFeedEntity, Vr as followSuggestKey, M_e as followupDetail, f_e as followupTally, gg as frame, TV as g4, gJ as getDefaultPaginationState, uM as gridLayout, ci as groupByAuthor, k_e as groupFollowups, nX as groupReviewRows, SDe as hasChanges, kX as hasResourceRoots, QB as hasResultProblems, lLe as historySpan, xV as i2, sLe as importTasteExport, W0 as indexersSkeleton, Lg as interpolate, XW as invalidateWants, eV as isActive, Qr as isBroken, Kr as isLayout, _v as isMotionValue, ZY as isReviewCategory, j_e as isRoutine, G0 as javBrowserSkeleton, d2 as javContentSkeleton, rM as javLayout, u2 as javTagSkeleton, PDe as junkBreakdown, XTe as keepGroup, Eje as keepPlaylist, ke as keepPreviousData, tee as keepSelected, i6 as known, G_e as l1, Q_e as l7, O_e as latestOfKind, Qn as leadingGraphemes, kIe as lengthRows, Sr as localTime, po as logoUrl, Pi as lookupFeedActor, EV as m7, GV as mM, En as mapLimit, Oi as markItem, l6 as max, DIe as mediumRows, u6 as min, VEe as mirrorText, uEe as missingToolText, zY as mixedCloudPreferences, aV as momentText, cS as motion, lv as motionValue, nn as nameFallback, Ue as notifyManager, ove as oe, lDe as organizeOutcome, D2 as overlayHost, qr as pageSizeOf, di as pageWindow, Ri as patchSource, G as peachHistory, G as peachHistory$1, jEe as pendingGenres, yIe as percentText, nDe as pickOrganizeFolder, T$ as plainStatClass, cDe as planSummary, a6 as playedFor, xIe as playedItemUrl, m_e as pollInterval, Zs as popCount, bje as posterUrl, Lge as previewLibraryColor, tDe as previewOrganize, pEe as previewUrl, E_e as problemDestination, UH as processingActive, nV as progressText, OU as providerIcon, KEe as pruneText, jX as purgeCount, mDe as purgeOrphan, JV as pv, kve as qE, H as queryClient, SV as r2, hLe as radarRows, wIe as radialArc, TIe as radialBarSize, CIe as radialCeiling, SIe as radialSlices, DN as randomId, pLe as rankDetail, mLe as rankShares, s6 as reachedShare, rV as readableErrorHeadline, Jbe as recommendationScore, LEe as recordGenre, gDe as recordsText, Dje as recreatePlaylist, vje as refreshPlaylists, Dl as relayoutCovers, s2 as releaseColumns, sG as releaseFilters, cG as releaseKey, Bi as reloadFollowManage, BEe as reloadReview, eNe as rememberShape, iDe as rememberTemplates, Ti as removeAlias, Mi as removeFeed, Si as removeSource, oLe as removeTasteSource, YW as removeWants, Ei as renameAliasGroup, Sje as renamePlaylist, Tje as reorderPlaylist, Se as replaceEqualDeep, jIe as replayRows, re as require_jsx_runtime, A as require_react, N as require_react_dom, Tq as require_with_selector, Wbe as resetWants, pr as resolveFollowSort, Wg as resolveStartTime, iye as restartEffectText, yje as resumeAssetId, SEe as reviewGroupingOptions, tX as reviewQueueData, eX as reviewQueueOf, NDe as reviewSummary, wEe as reviewWindow, kEe as rowEvidence, iX as rowFieldName, CJ as rowPaginationFeature, WJ as rowSelectionFeature, rY as rowSortingFeature, rX as rowSubject, AEe as rowTags, OEe as rowTitle, Y_e as s5, Di as saveCredential, CDe as scanLine, Rfe as schedulePollInterval, Kbe as searchNote, EEe as selectReviewRange, fi as selectionState, ji as setFeedEnabled, xi as setSourceEnabled, v_e as setTaskSpeed, Bf as settingsPath, zEe as settleReviewRows, QTe as sharedNamePrefix, zp as shellNavigate, n5 as showToast, dB as showToast$1, zn as siteMarkUrl, Lq as skipFirstRun, zI as sortCx, Yr as sortLabel, yn as sourceDefaultCost, qi as sourceIconUrl, EDe as sourceMeta, Hs as spinnerHtml, Fg as spring, hB as spriteGlyph, yi as startCheck, WEe as startLinkCheck, GEe as startLinkPrune, rDe as startOrganize, bi as startResolve, bDe as startResourceApply, yDe as startResourceScan, aLe as startTasteRefresh, XAe as statCardClass, S_e as statusLabel, lEe as statusLine, Zr as statusText, fM as storeJavLayout, FEe as submitDecision, oV as summaryItems, aJ as tableFeatures, Rq as tableMemo, ui as tableRows, T_e as taskIssues, D_e as taskSubject, k6 as tasteDate, dLe as tasteDimensions, uLe as tasteHours, D6 as tasteKey, eLe as tasteRefetchInterval, tLe as tasteTime, HB as textLang, i2 as tierPlaceholdersHtml, ph as time, fve as tl, pi as toggleGroup, A6 as topScores, Cve as um, _ve as uo, mH as useAction, qZ as useBackgroundJob, QG as useCatalogView, xW as useClientUpdates, Tm as useConstant, sV as useEntityNames, Em as useIsomorphicLayoutEffect, MB as useLibraryTints, Ft as useMutation, NB as useNavigationOrder, B$ as useOrderedLibraries, RH as useOverlayScrollbar, Pt as useQuery, ae as useQueryClient, Xx as useReducedMotion, Lfe as useRunSchedule, Ffe as useSaveFollowSchedule, WF as useSaveSettings, zfe as useSaveThumbnailMode, iY as useTable, yY as useTablePreferences, yV as useViewGlide, aEe as victimBytes, pve as vl, Gbe as wantName, bIe as watchNote, o6 as watchedShare, sve as we, Mc as wireHorizontalScroller, aDe as withOrganizeJob, Ybe as writeJavQuery, rve as z3 };
 
-//# debugId=027021cf-1406-474f-a320-3dee6516d2eb
+//# debugId=82de0fa6-df82-425e-a88a-62060bc43fbb
