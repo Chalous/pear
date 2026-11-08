@@ -11,6 +11,13 @@ import {
 
 /** 每个视口从未阅读的进度开始；账本跨设备持久化由 API 回归验证。 */
 async function freshTutorial(page: Page) {
+  await page.route(/\/api\/items\?/, async route => {
+    const response = await route.fetch();
+    const payload = await response.json();
+    payload.items.sort((left: { medium: string }, right: { medium: string }) =>
+      Number(right.medium === 'comic') - Number(left.medium === 'comic'));
+    await route.fulfill({ json: payload });
+  });
   const state = { version: 1, campaign: 'browser-tutorial', invited: false, completed: false,
     chapters: {} as Record<string, { next: number; read: string[]; skipped: string[] }> };
   await page.route('**/api/tutorial-progress', async route => {
@@ -100,7 +107,7 @@ describe('设计决定：作品卡、管理页与复核', () => {
       const item = payload.items[1];
       if (!item) throw new Error('演示目录不够两条');
       Object.assign(item, { medium: 'archive', name: '演示资料.zip', disposal: 'trash' });
-      Object.assign(payload.items[0], { disposal: 'trash', is_jav: false, has_cover: false, has_thumb: true });
+      Object.assign(payload.items[0], { medium: 'video', disposal: 'trash', is_jav: false, has_cover: false, has_thumb: true });
     });
     const { page } = opened;
     await page.route('**/poster**', (route) => route.fulfill({
@@ -556,9 +563,9 @@ describe('设计决定：作品卡、管理页与复核', () => {
     }
   });
 
-  it('视频卡整块是入口且内部链接保持独立', { timeout: 60_000 }, async () => {
+  for (const medium of ['video', 'comic'] as const) it(`${medium} 卡整块是入口且内部链接保持独立`, { timeout: 60_000 }, async () => {
     const opened = await openCatalogFixture(browser, (payload) => {
-      payload.items[0] = { ...payload.items[0], tags: ['演示标签'] };
+      payload.items[0] = { ...payload.items[0], medium, tags: ['演示标签'] };
     });
     try {
       const card = opened.page.locator('#grid [data-media-card][data-id]').first();

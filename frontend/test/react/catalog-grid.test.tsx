@@ -328,7 +328,7 @@ describe('作品卡', () => {
     tagLabel: (tag) => `#${tag}`,
   };
   const actionsFor = (): MediaCardActions => ({
-    open: vi.fn(), openResource: vi.fn(), openShort: vi.fn(), openShorts: vi.fn(), openMix: vi.fn(),
+    open: vi.fn(), openComic: vi.fn(), openResource: vi.fn(), openShort: vi.fn(), openShorts: vi.fn(), openMix: vi.fn(),
     openEntity: vi.fn(), openUnowned: vi.fn(), toggleTag: vi.fn(), toggleSelection: vi.fn(),
     watchLater: vi.fn(async (_it: MediaItem, onChange: (on: boolean) => void) => onChange(true)),
     rate: vi.fn(async () => {}),
@@ -373,6 +373,32 @@ describe('作品卡', () => {
     await click(unowned.host.querySelector('[data-open-unowned]'));
     expect(unowned.actions.openUnowned).toHaveBeenCalledTimes(1);
     expect(unowned.onOpen).not.toHaveBeenCalled();
+  });
+
+  it('漫画卡的标签与署名单独导航，正文打开阅读器，详情键打开详情', async () => {
+    const comic = await render(item(70, { medium: 'comic', creator: '作者', tags: ['漫画标签'] }));
+    await click(comic.host.querySelector('[data-media-tag]'));
+    expect(comic.actions.toggleTag).toHaveBeenCalledWith('漫画标签');
+    await click(comic.host.querySelector('[data-media-who]'));
+    expect(comic.actions.openEntity).toHaveBeenCalledWith('creator', '作者');
+    expect(comic.actions.openComic).not.toHaveBeenCalled();
+    await click(comic.host.querySelector('[data-media-title]'));
+    expect(comic.actions.openComic).toHaveBeenCalledWith(expect.objectContaining({ id: 70 }));
+    expect(comic.onOpen).not.toHaveBeenCalled();
+    await click(comic.host.querySelector('[data-open-detail]'));
+    expect(comic.onOpen).toHaveBeenCalledWith(expect.objectContaining({ id: 70 }), comic.card);
+  });
+
+  it.each([
+    [{ medium: 'video', name: '作品.mp4' }, true],
+    [{ name: '作品.mp4' }, true],
+    [{ medium: 'comic' }, false],
+    [{ medium: 'image' }, false],
+    [{ medium: 'video', location: 'online' }, false],
+    [{ medium: 'video', name: '作品.ISO' }, false],
+  ] as [Partial<MediaItem>, boolean][])('播放教程只选可用的视频卡 %j', async (fields, available) => {
+    const { card } = await render(item(71, fields));
+    expect(card.hasAttribute('data-guide-video')).toBe(available);
   });
 
   it('多选模式或按着修饰键时，点哪里都是切换选中；Shift 是连选', async () => {
