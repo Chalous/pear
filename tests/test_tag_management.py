@@ -56,6 +56,27 @@ class TagManagementTests(unittest.TestCase):
         contract.followups.stop()
         return contract
 
+    def test_catalog_tag_index_counts_comics_and_preserves_visibility(self):
+        self.c.execute("UPDATE asset SET medium='comic',name='book',path='R:\\demo\\book' WHERE id=1")
+        self.c.execute("UPDATE asset SET disposal='vanished' WHERE id=3")
+        self.c.execute("UPDATE asset SET medium='image' WHERE id=4")
+        comic = self.tag('漫画标记', (1,))
+        self.tag('共同标记', (1, 2))
+        self.tag('视频标记', (2,))
+        self.tag('已消失标记', (3,))
+        self.tag('照片标记', (4,))
+        self.execute('rename', [comic], name='漫画精选')
+        self.c.commit()
+        contract = self.management_contract()
+        rows = lambda: {row['k']: row['n'] for row in q_index(contract, 'tags')['items']}
+        self.assertEqual(rows(), {'漫画精选': 1, '共同标记': 2, '视频标记': 1})
+        self.execute('hide', [comic])
+        self.c.commit()
+        self.assertNotIn('漫画精选', rows())
+        self.execute('restore', [comic])
+        self.c.commit()
+        self.assertEqual(rows()['漫画精选'], 1)
+
     def test_management_pages_filter_aliases_width_categories_and_state_before_slicing(self):
         original = self.tag('Original', (1, 2))
         self.execute('rename', [original], name='Alpha')
