@@ -72,9 +72,11 @@ async function serveLongItems(page: Page): Promise<void> {
     await route.fulfill({ status: 200, contentType: 'application/json',
       body: JSON.stringify({ ...baseline, total: CLONES, has_more: false, items }) });
   });
-  await page.route((url) => original.has(Number(url.searchParams.get('id'))), async (route) => {
+  const identity = (url: URL) => url.pathname === '/comic-cover' ? 'asset' : 'id';
+  await page.route((url) => original.has(Number(url.searchParams.get(identity(url)))), async (route) => {
     const url = new URL(route.request().url());
-    url.searchParams.set('id', String(original.get(Number(url.searchParams.get('id')))));
+    const key = identity(url);
+    url.searchParams.set(key, String(original.get(Number(url.searchParams.get(key)))));
     await route.continue({ url: url.toString() });
   });
 }
