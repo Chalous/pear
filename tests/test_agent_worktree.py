@@ -5,7 +5,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager, redirect_stdout
@@ -81,7 +80,7 @@ def working_process(cwd: Path):
     cwd.mkdir(parents=True, exist_ok=True)
     child = subprocess.Popen(
         [sys.executable, "-c", "import os,sys; print(os.getpid(), flush=True); sys.stdin.read()"],
-        cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+        cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, encoding="utf-8")
     try:
         yield int(child.stdout.readline())
     finally:
