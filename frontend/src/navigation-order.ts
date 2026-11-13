@@ -1,6 +1,7 @@
 /** 导航保存稳定 ID；显示名称、默认次序与固定首项集中维护。 */
 export const NAVIGATION_GROUPS = {
   review: { label: '复核分类', items: [
+    ['comic_source_tags', '漫画来源标签'],
     ['metadata_fields', '元数据字段'], ['creator_tags', '创作者标签'], ['code_creators', '番号目录存疑'],
     ['western_identity', '西方身份回配'], ['performer_avatars', '女优头像'], ['studio_logos', '厂牌 Logo'],
     ['fc2_markings', 'FC2 评论标记'], ['fc2_similarity', 'FC2 跨号相似'], ['video_endcards', '片尾/出处证据'],

@@ -72,7 +72,7 @@ class SettingsContract(Protocol):
 
 DEFAULT_MANAGE_ORDER = ('stats', 'taste', 'cleanup', 'follow', 'activity', 'configuration')
 NAVIGATION_ORDERS = {
-    'review': ('metadata_fields', 'creator_tags', 'code_creators', 'western_identity', 'performer_avatars',
+    'review': ('comic_source_tags', 'metadata_fields', 'creator_tags', 'code_creators', 'western_identity', 'performer_avatars',
                'studio_logos', 'fc2_markings', 'fc2_similarity', 'video_endcards'),
     'configuration': ('library', 'sources', 'downloads', 'network', 'maintenance', 'diagnostics'),
     'favorites': ('all', 'filters', 'performer', 'creator', 'tag', 'series', 'studio', 'agency'),

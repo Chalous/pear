@@ -23,6 +23,7 @@ from .web_activity import (
 )
 from .web_batch import q_ads, q_duplicates, w_batch, w_empty_trash
 from .web_comics import q_comic_events, q_comic_pages, w_comic_event, w_comic_event_undo, w_comic_progress
+from .comic_source_tags import queue as q_comic_tag_queue, submit as w_comic_source_tags
 from .web_performer_delete import q_performer_delete_candidates, q_performer_delete_plan, w_performer_delete
 from .web_tags import q_tag_management, w_tag_management, w_tag_preview
 from .taste_history import history_source_count
@@ -351,6 +352,7 @@ def _post_face_models(contract, _body):
 
 
 GET_HANDLERS = {
+    "/api/comic-tag-queue": q_comic_tag_queue,
     "/api/tag-management": q_tag_management,
     "/api/media-processing": q_media_processing,
     "/api/folders": q_folders,
@@ -431,6 +433,7 @@ GET_HANDLERS = {
 }
 
 POST_HANDLERS = {
+    "/api/comic-source-tags": w_comic_source_tags,
     "/api/tag-management": w_tag_management,
     "/api/tag-management/preview": w_tag_preview,
     "/api/media-processing": w_media_processing,

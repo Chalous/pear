@@ -1,7 +1,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "5d498bbb-cbe2-4073-b1f1-ac846bad269e", e._sentryDebugIdIdentifier = "sentry-dbid-5d498bbb-cbe2-4073-b1f1-ac846bad269e");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "747ce14a-9c1f-499d-8019-16313bf6d1ed", e._sentryDebugIdIdentifier = "sentry-dbid-747ce14a-9c1f-499d-8019-16313bf6d1ed");
 	} catch {}
 })();
 import { $ea3928288112382f$export$439d29a4e110a164 as e, $fe21c36db05242bb$export$a98f0dcb43a68a25 as t, $fe21c36db05242bb$export$d7b12c4107be0d61 as n, Button as r, ButtonLink as i, Checkbox as a, CheckboxGlyph as o, Chip as s, CollapseChevron as c, CollapseRegion as l, DEFAULT_CATEGORY as u, DataTableFooter as d, ENTITY_REVIEW_KINDS as f, Ea as p, EmptyState as m, ExternalLink as h, FIELDSET_FOOT as ee, FilterGlassRows as g, Gg as _, InputBase as v, LinkButton as te, Note as y, REVIEW_CATEGORIES as b, REVIEW_DECISION_LABELS as ne, REVIEW_KEY as re, REVIEW_LABELS as x, REVIEW_QUEUES as ie, REVIEW_QUEUE_LABELS as S, Select as C, SelectItem as w, SelectionActions as T, SelectionDock as ae, SortableBoardTabs as E, TextField as D, Wt as O, __toESM as k, apiGet as A, apiSend as j, avatarInner as M, busyProps as N, canApprove as oe, cardClass as P, commonReviewSources as F, composingKey as se, confirmModal as I, currentReviewRow as ce, cx as L, decisionPayload as le, decisionReceipt as ue, defaultChoice as de, errorMessage as R, fetchReview as fe, filterReviewRows as pe, groupReviewRows as me, isReviewCategory as he, l7 as z, localTime as ge, m7 as _e, mirrorText as ve, pendingGenres as ye, queryClient as be, recordGenre as xe, reloadReview as Se, require_jsx_runtime as Ce, require_react as B, reviewGroupingOptions as we, reviewQueueData as Te, reviewQueueOf as Ee, reviewWindow as De, rowEvidence as Oe, rowFieldName as ke, rowSubject as Ae, rowTags as V, rowTitle as H, selectReviewRange as je, settleReviewRows as Me, spinnerHtml as U, submitDecision as Ne, useMutation as Pe, useNavigationOrder as Fe, useOverlayScrollbar as Ie, useQuery as Le, useViewGlide as Re } from "./peach-app.js";
@@ -1068,8 +1068,8 @@ function Lt({ source: e }) {
 		})]
 	});
 }
-function Rt({ asset: t, openItem: n }) {
-	let i = t.name || "";
+function Rt({ asset: t, openItem: n, label: i = "打开原视频" }) {
+	let a = t.name || "";
 	return /* @__PURE__ */ (0, X.jsxs)("div", {
 		className: "flex min-w-0 items-center gap-3",
 		children: [/* @__PURE__ */ (0, X.jsxs)("button", {
@@ -1084,19 +1084,19 @@ function Rt({ asset: t, openItem: n }) {
 			}) : /* @__PURE__ */ (0, X.jsx)("span", {
 				className: "text-caption-1-regular text-text-secondary",
 				children: "无封面"
-			}), /* @__PURE__ */ (0, X.jsx)(e, { children: `打开原视频 ${i}` })]
+			}), /* @__PURE__ */ (0, X.jsx)(e, { children: `${i} ${a}` })]
 		}), /* @__PURE__ */ (0, X.jsxs)("div", {
 			className: "flex min-w-0 flex-col items-start gap-1",
 			children: [/* @__PURE__ */ (0, X.jsx)("b", {
-				title: i,
+				title: a,
 				className: "w-full truncate text-body-medium text-text-primary",
-				children: t.code || i || "原视频"
+				children: t.code || a || "原视频"
 			}), /* @__PURE__ */ (0, X.jsx)(r, {
 				variant: "secondary",
 				size: "small",
 				leadingIcon: _,
 				onClick: () => n(t.id),
-				children: "打开原视频"
+				children: i
 			})]
 		})]
 	});
@@ -1288,6 +1288,7 @@ function Kt(e) {
 		} : null, null, ie)
 	}) : n.asset_id ? /* @__PURE__ */ (0, X.jsx)(Rt, {
 		openItem: v.openItem,
+		label: t === "comic_source_tags" ? "打开漫画" : void 0,
 		asset: {
 			id: n.asset_id,
 			name: n.asset_name,
@@ -1303,6 +1304,11 @@ function Kt(e) {
 			candidateKey: e
 		}),
 		locked: u
+	}) : t === "comic_source_tags" ? /* @__PURE__ */ (0, X.jsx)("a", {
+		href: n.source_url,
+		target: "_blank",
+		rel: "noreferrer",
+		children: "查看标签来源网页"
 	}) : t === "creator_tags" ? A.length ? /* @__PURE__ */ (0, X.jsx)(Vt, {
 		assets: A,
 		picked: i.assets,
@@ -1828,4 +1834,4 @@ function Jt(e) {
 }
 export { Jt as ReviewPage };
 
-//# debugId=5d498bbb-cbe2-4073-b1f1-ac846bad269e
+//# debugId=747ce14a-9c1f-499d-8019-16313bf6d1ed

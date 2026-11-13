@@ -123,6 +123,7 @@ def _as_read_back(row: Mapping[str, object], fields: list[str], fill_missing: bo
 # `...japanese-official-tags-20260827...` 就曾被更旧的 `...windows-p0-proof-20260822...`
 # 盖住，导致新官方标签在复核页完全不可见。
 CANDIDATE_PREFIX = {
+    "comic_source_tags": "comic-source-tags-candidate-",
     "metadata_fields": "metadata-field-candidates-",
     "creator_tags": "creator-tags-candidate-",
     "studio_logos": "studio-logo-candidate-",
@@ -142,6 +143,7 @@ ADDITIONAL_CANDIDATE_FILES = {
 # 每类候选的稳定主键列。缺这一列的行直接跳过并计数，绝不退化成行号——
 # 行号会在 CSV 重排后把历史决定悄悄挪到别的条目上。
 CANDIDATE_KEY = {
+    "comic_source_tags": "item_key",
     "metadata_fields": "item_key",
     "creator_tags": "board",
     "studio_logos": "studio",

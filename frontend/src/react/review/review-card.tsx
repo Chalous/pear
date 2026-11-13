@@ -114,7 +114,7 @@ export function ReviewCard(props: ReviewCardProps) {
               : null,
             null, subjectKind)} />
       : row.asset_id
-        ? <OriginAsset openItem={handlers.openItem}
+        ? <OriginAsset openItem={handlers.openItem} label={category === 'comic_source_tags' ? '打开漫画' : undefined}
             asset={{ id: row.asset_id, name: row.asset_name, code: row.code, preview_url: row.asset_preview_url }} />
         : null;
 
@@ -123,6 +123,8 @@ export function ReviewCard(props: ReviewCardProps) {
   const preview = metadata
     ? <CandidateChoices row={row} fieldName={fieldName} value={choice.candidateKey}
         onChange={(next) => onChoice({ ...choice, candidateKey: next })} locked={locked} />
+    : category === 'comic_source_tags'
+      ? <a href={row.source_url} target="_blank" rel="noreferrer">查看标签来源网页</a>
     : category === 'creator_tags'
       ? (assets.length
         ? <AssetPicker assets={assets} picked={choice.assets} locked={locked}

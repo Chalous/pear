@@ -35,6 +35,7 @@ import { CatalogPicture } from './catalog-picture';
 import { fetchJavDetail, javDetailKey } from '../jav-detail/jav-detail';
 import { busyProps } from '../settings/use-action';
 import { openComicReader } from '../comics/comic-reader';
+import { ComicSourceTags } from '../comics/comic-source-tags';
 import { ExternalPlayback } from './external-playback';
 import { isPlayerGuidePreview } from '../../player/guide-preview';
 import { CoverCrop } from '../cover-crop/cover-crop-page';
@@ -117,7 +118,7 @@ function Detail(props: ItemDetailProps & { item: DetailItem; queue: DetailQueue 
   /* 漫画一本：媒体格里是首图当封面，侧栏有标题、页数、「开始阅读」与标记历史。播放器、
      外部播放与补预览那些视频控件都不出。 */
   if (String(item.medium) === 'comic') {
-    return <ComicDetail item={item} actions={actions} helpers={helpers} />;
+    return <ComicDetail key={item.id} item={item} actions={actions} helpers={helpers} write={write} />;
   }
   return (
     <>
@@ -154,8 +155,8 @@ const comicRangeText = (event: ComicEventRow): string => {
 
 /** 漫画详情：媒体格里是首图当封面，侧栏有标题、页数、「开始阅读」与标记历史。
  *  播放器、外部播放与补预览那些视频控件都不出。标记历史点一条回到那一页。 */
-function ComicDetail({ item, actions, helpers }: {
-  item: DetailItem; actions: ItemDetailActions; helpers: ItemDetailHelpers;
+function ComicDetail({ item, actions, helpers, write }: {
+  item: DetailItem; actions: ItemDetailActions; helpers: ItemDetailHelpers; write: DetailWrite;
 }) {
   const [busy, setBusy] = useState(false);
   const pages = Number(item.comic_pages ?? 0);
@@ -186,15 +187,17 @@ function ComicDetail({ item, actions, helpers }: {
       <div data-stage-side="" data-item-side="">
         <div data-stage-side-content="">
           <DetailTitle item={item} queue={null} helpers={helpers} actions={actions} onStatus={() => {}} />
+          <Tags item={item} write={write} helpers={helpers} actions={actions} />
+          <ComicSourceTags assetId={item.id} />
           <div className="mono" data-stage-meta="" data-reveal-line="">
             <span data-spec-item=""><Glyph name="image" />
               <span>{pages > 0 ? `共 ${pages} 页` : '尚未建立页清单'}</span></span>
             <span data-spec-item=""><Glyph name="hard-drive" /><span>{sizeText(item.size)}</span></span>
           </div>
           <div data-stage-actions="" data-comic-read="">
-            <button type="button" data-comic-read-btn="" disabled={busy || pages === 0} onClick={() => void open()}>
+            <Button variant="primary" className="w-full" data-comic-read-btn="" disabled={busy || pages === 0} onClick={() => void open()}>
               {busy ? spinnerHtml('正在打开') : <><Glyph name="chevron-right" /><span>开始阅读</span></>}
-            </button>
+            </Button>
           </div>
           {events.length > 0 ? (
             <div data-comic-marks="">
