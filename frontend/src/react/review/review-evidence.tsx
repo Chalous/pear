@@ -54,7 +54,7 @@ function RequestedSourceImage({ source }: { source: string }) {
 
 /** 一条原视频：封面、文件名、打开。 */
 export function OriginAsset(
-  { asset, openItem }: { asset: ReviewAsset; openItem(id: number): void },
+  { asset, openItem, label = '打开原视频' }: { asset: ReviewAsset; openItem(id: number): void; label?: string },
 ) {
   const name = asset.name || '';
   return (
@@ -64,14 +64,14 @@ export function OriginAsset(
         {asset.preview_url
           ? <img src={asset.preview_url} alt="" loading="lazy" className="size-full object-cover" />
           : <span className="text-caption-1-regular text-text-secondary">无封面</span>}
-        <VisuallyHidden>{`打开原视频 ${name}`}</VisuallyHidden>
+        <VisuallyHidden>{`${label} ${name}`}</VisuallyHidden>
       </button>
       <div className="flex min-w-0 flex-col items-start gap-1">
         <b title={name} className="w-full truncate text-body-medium text-text-primary">
           {asset.code || name || '原视频'}
         </b>
         <Button variant="secondary" size="small" leadingIcon={RiPlayLine}
-          onClick={() => openItem(asset.id)}>打开原视频</Button>
+          onClick={() => openItem(asset.id)}>{label}</Button>
       </div>
     </div>
   );

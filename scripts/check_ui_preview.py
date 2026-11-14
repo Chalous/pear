@@ -74,7 +74,7 @@ def verify_sample(source_data: Path, sample_data: Path) -> dict:
     with closing(readonly(source_db)) as source, closing(readonly(sample_db)) as sample:
         for table, columns in FACTS.items():
             rows = list(sample.execute(f"SELECT {','.join(columns)} FROM {table} ORDER BY id"))
-            if not rows:
+            if not rows and table == 'asset':
                 raise ValueError(f'真实样本缺少 {table} 记录')
             originals = {row[0]:row for row in source_rows(source, table, columns, [row[0] for row in rows])}
             for row in rows:

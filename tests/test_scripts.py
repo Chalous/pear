@@ -6401,6 +6401,17 @@ class RealPreviewSourceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '来源清单未取得'):
             self.checker.verify_sample(self.source, self.sample)
 
+    def test_scanned_comic_without_entities_is_a_valid_subset(self):
+        for db in (self.db, self.sample / 'database/ledger.db'):
+            with closing(sqlite3.connect(db)) as connection, connection:
+                connection.execute('DELETE FROM asset_entity')
+                connection.execute('DELETE FROM entity')
+                connection.execute("UPDATE asset SET medium='comic'")
+        manifest = {'source': str(self.db), 'counts': {'asset': 1, 'entity': 0, 'asset_entity': 0}}
+        (self.sample / 'sample-manifest.json').write_text(json.dumps(manifest), encoding='utf-8')
+        result = self.checker.verify_sample(self.source, self.sample)
+        self.assertEqual(result['counts'], manifest['counts'])
+
     def test_invented_title_is_rejected(self):
         with closing(sqlite3.connect(self.sample / 'database/ledger.db')) as connection, connection:
             connection.execute("UPDATE asset SET catalog_title='样本标题' WHERE id=1")

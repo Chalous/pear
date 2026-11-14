@@ -413,6 +413,18 @@ def _review_members(contract: ReviewContract, category: str):
         str(contract.candidate_root), candidate_root_version(contract.candidate_root), tables=REVIEW_TABLES)
 
 
+def _review_asset_preview(category, row, has_cover):
+    """按候选对象选择本地漫画封面、番号封面或已有抽帧。"""
+    if category == 'comic_source_tags':
+        return f"/comic-cover?asset={row['asset_id']}"
+    code = str(row.get('asset_code') or row.get('code') or '')
+    if code and has_cover(code):
+        return f"/cover?code={quote(code)}"
+    if row.get('asset_has_snapshot'):
+        return f"/poster?id={row['asset_id']}&c=4"
+    return ''
+
+
 def _review_rows(contract: ReviewContract, category: str, *, queue: str | None = 'pending') -> tuple[list[dict], str | None, int]:
     # 计数和卡片共用精确成员；卡片附加字段只能改自己的副本。
     members, source, skipped = _review_members(contract, category)
@@ -449,14 +461,8 @@ def _review_rows(contract: ReviewContract, category: str, *, queue: str | None =
         if category == "cover_sources" and row.get("result") == "取得":
             # 封面已经在本机，直接看落盘的那张，不要回源站再拉一次。
             row["preview_url"] = f"/cover?code={quote(str(row.get('code') or ''))}"
-        asset_code = str(row.get("asset_code") or row.get("code") or "")
         if row.get("asset_id"):
-            if asset_code and has_cover(asset_code):
-                row["asset_preview_url"] = f"/cover?code={quote(asset_code)}"
-            elif row.get("asset_has_snapshot"):
-                row["asset_preview_url"] = f"/poster?id={row['asset_id']}&c=4"
-            else:
-                row["asset_preview_url"] = ""
+            row['asset_preview_url'] = _review_asset_preview(category, row, has_cover)
         for comparison in row.get("comparison_assets") or []:
             comparison_code = str(comparison.get("code") or "")
             if comparison_code and has_cover(comparison_code):
@@ -1002,7 +1008,8 @@ def _restore_review_decision(contract: ReviewContract, category: str, item_key: 
             'status': 'pending', 'applied_assets': 0}
 
 
-def w_review_decision(contract: ReviewContract, body):
+def _review_decision_identity(body):
+    """校验复核对象与用户请求的处理状态。"""
     category = str(body.get("category", "")).strip()
     item_key = str(body.get("item_key", "")).strip()
     status = str(body.get("status", "")).strip()
@@ -1012,10 +1019,16 @@ def w_review_decision(contract: ReviewContract, body):
         "metadata_fields", "creator_tags", "studio_logos", "performer_avatars",
         "western_identity", "code_creators", "cover_sources", "fc2_markings",
         "fc2_similarity", "video_endcards",
+        "comic_source_tags",
     }:
         raise ValueError("invalid review category")
     if not item_key or status not in {"approved", "rejected", "skipped", "restore"}:
         raise ValueError("invalid review decision")
+    return category, item_key, status
+
+
+def w_review_decision(contract: ReviewContract, body):
+    category, item_key, status = _review_decision_identity(body)
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     if status == 'restore':
         return _restore_review_decision(contract, category, item_key, now)
@@ -1036,7 +1049,10 @@ def w_review_decision(contract: ReviewContract, body):
         )
         applied = 0
         if status == "approved":
-            if category == "metadata_fields":
+            if category == "comic_source_tags":
+                from .comic_source_tags import approve
+                applied = approve(contract, connection, item_key, now)
+            elif category == "metadata_fields":
                 candidate_key = str(body.get("candidate_key") or "").strip()
                 if not candidate_key:
                     raise ValueError("批准资料字段时，请先选择要采用的来源")

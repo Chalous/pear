@@ -326,6 +326,7 @@ AUTO_SCOPE_PREFIXES: tuple[tuple[str, str | tuple[str, ...]], ...] = (
     # 漫画聚合在扫描域落库、catalog 域读取（`web_router` 转发）。
     ("src/peach/comics.py", "tooling"),
     ("src/peach/web_comics.py", "catalog"),
+    ("src/peach/comic_source_tags.py", "catalog"),
     ("src/peach/desktop_startup.py", "tooling"),
     ("src/peach/desktop_uninstall.py", "tooling"),
     ("src/peach/peach_proxy.py", "tooling"),

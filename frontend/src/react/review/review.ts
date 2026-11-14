@@ -23,6 +23,7 @@ export const REVIEW_KEY = ['review'] as const;
 
 /** 复核分类与它们在界面上的名字。次序就是页签次序。 */
 export const REVIEW_LABELS = {
+  comic_source_tags: '漫画来源标签',
   metadata_fields: '元数据字段',
   creator_tags: '创作者标签',
   code_creators: '番号目录存疑',
@@ -83,6 +84,7 @@ export interface ReviewAsset {
  *  形状，用不上的项缺席。 */
 export interface ReviewRow {
   item_key: string;
+  source_url?: string;
   queue_order?: number;
   decision?: string;
   status?: string;

@@ -37,6 +37,87 @@ from peach.field_owners import (
 from support.ledger import fresh_ledger
 
 
+class ComicSourceTagTests(unittest.TestCase):
+    """来源采集与复核使用独立账本，只有批准动作写入标签。"""
+
+    def setUp(self):
+        from peach import comic_source_tags
+        self.tags = comic_source_tags
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        root = Path(self.tmp.name).resolve()
+        self.db = fresh_ledger(root)
+        with contextlib.closing(sqlite3.connect(self.db)) as connection:
+            for aid in (1, 2):
+                connection.execute("INSERT INTO asset(id,location,path,name,medium) VALUES(?,'local',?,?,'comic')",
+                                   (aid, rf'R:\books\{aid}', f'漫画 {aid}'))
+            connection.commit()
+        self.contract = rm_web.WebContract(self.db, candidate_root=root / 'candidates')
+        self.body = {'id': 1, 'source_url': 'https://example.org/gallery/1',
+                     'tags': ['female:glasses', 'female:twintails'], 'evidence': '标题与页数一致'}
+
+    def decision(self, key, status):
+        return rm_review.w_review_decision(self.contract, {
+            'category': self.tags.CATEGORY, 'item_key': key, 'status': status})
+
+    def test_submission_is_idempotent_and_visible_without_landing(self):
+        first = self.tags.submit(self.contract, self.body)
+        repeat = self.tags.submit(self.contract, {**self.body, 'tags': list(reversed(self.body['tags']))})
+        self.assertEqual(first['item_key'], repeat['item_key'])
+        rows = rm_candidates.read_rows(self.tags.candidate_path(self.contract))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['source_url'], self.body['source_url'])
+        self.assertEqual(rm_review.q_review_counts(self.contract)['counts'][self.tags.CATEGORY], 1)
+        card = rm_review.q_review(self.contract)['sections'][self.tags.CATEGORY][0]
+        self.assertEqual(card['asset_preview_url'], '/comic-cover?asset=1')
+        self.assertEqual(card['evidence'], self.body['evidence'])
+        with self.contract.read_connection() as connection:
+            self.assertEqual(connection.execute('SELECT count(*) FROM asset_tag').fetchone()[0], 0)
+        pending = self.tags.queue(self.contract, {})
+        self.assertEqual([item['id'] for item in pending['items']], [2])
+        self.assertEqual(pending['items'][0]['detail_url'], '/assets/2')
+
+    def test_approval_keeps_source_evidence_and_other_asset_unchanged(self):
+        receipt = self.tags.submit(self.contract, self.body)
+        self.decision(receipt['item_key'], 'approved')
+        self.decision(receipt['item_key'], 'approved')
+        with self.contract.read_connection() as connection:
+            rows = connection.execute('SELECT asset_id,source,metadata_json FROM asset_entity').fetchall()
+            self.assertEqual(len(rows), 2)
+            for row in rows:
+                self.assertEqual(row['asset_id'], 1)
+                self.assertTrue(row['source'].startswith('review:comic-source:'))
+                self.assertEqual(json.loads(row['metadata_json'])['source_url'], self.body['source_url'])
+            self.assertEqual(connection.execute('SELECT count(*) FROM asset_tag WHERE asset_id=2').fetchone()[0], 0)
+        self.assertEqual(rm_review.q_review_counts(self.contract)['counts'][self.tags.CATEGORY], 0)
+
+    def test_rejection_and_missing_candidate_do_not_land(self):
+        key = self.tags.submit(self.contract, self.body)['item_key']
+        self.decision(key, 'rejected')
+        with self.assertRaises(ValueError):
+            self.decision('missing', 'approved')
+        with self.contract.read_connection() as connection:
+            self.assertEqual(connection.execute('SELECT count(*) FROM asset_tag').fetchone()[0], 0)
+            self.assertIsNone(connection.execute("SELECT 1 FROM review_decision WHERE item_key='missing'").fetchone())
+
+    def test_invalid_inputs_leave_no_candidates(self):
+        for change in ({'id': 999}, {'source_url': 'javascript:alert(1)'},
+                       {'source_url': 'https://user:password@example.org/'},
+                       {'tags': []}, {'tags': ['a|b']}, {'tags': [None]}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                self.tags.submit(self.contract, {**self.body, **change})
+        self.assertFalse(self.tags.candidate_path(self.contract).exists())
+
+    def test_sources_remain_separate_and_removed_asset_cannot_be_approved(self):
+        first = self.tags.submit(self.contract, self.body)
+        second = self.tags.submit(self.contract, {**self.body, 'source_url': 'https://example.net/book/1'})
+        self.assertNotEqual(first['item_key'], second['item_key'])
+        with self.contract.write_transaction() as connection:
+            connection.execute("UPDATE asset SET disposal='trash' WHERE id=1")
+        with self.assertRaises(ValueError):
+            self.decision(first['item_key'], 'approved')
+
+
 class ReviewQueueTests(unittest.TestCase):
     """复核队列：候选来源、稳定主键、批准的权威值与写入边界。"""
 
