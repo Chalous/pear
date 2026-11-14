@@ -18,13 +18,13 @@ from .web_activity import (
     w_feedback,
     w_play,
     w_preference,
-    w_quality_goal,
     w_watch_later,
 )
-from .web_batch import q_ads, q_duplicates, w_batch, w_empty_trash
-from .web_comics import q_comic_events, q_comic_pages, w_comic_event, w_comic_event_undo, w_comic_progress
+from .comic_recommendations import q_comic_recommendations
+from .comic_duplicates import q_comic_duplicates
+from .web_batch import q_ads, w_batch, w_empty_trash
+from .web_comics import w_comic_page_like, q_comic_stats, q_comic_visits, w_comic_visit, q_comic_taste, q_comic_events, q_comic_pages, w_comic_event, w_comic_event_undo, w_comic_progress
 from .comic_source_tags import queue as q_comic_tag_queue, submit as w_comic_source_tags
-from .web_performer_delete import q_performer_delete_candidates, q_performer_delete_plan, w_performer_delete
 from .web_tags import q_tag_management, w_tag_management, w_tag_preview
 from .taste_history import history_source_count
 from .web_catalog import (
@@ -58,48 +58,13 @@ from .web_entity import (
 )
 from .web_downloads import (q_downloads, w_download_cancel, w_download_postprocess,
                             w_download_submit)
-from .web_resource_search import q_resource_search
 from .web_search import q_search_recommendations
-from .web_jav_detail import q_jav_detail, q_jav_resources, q_jav_reviews, w_jav_cover
-from .web_jav_discovery import q_jav_discoveries, q_jav_releases
-from .web_feeds import (
-    q_feed_check,
-    q_feed_discoveries,
-    q_feed_lookup,
-    q_feed_schedule,
-    q_feeds,
-    w_feed_check,
-    w_feed_discovery,
-    w_feed_schedule_run,
-    w_feed_source,
-)
 from .web_follow import (
-    q_follow,
-    q_follow_authors,
-    q_follow_check,
     q_follow_credentials,
-    q_follow_schedule,
     q_follow_suggest,
-    q_follow_tags,
-    w_follow_activity,
-    w_follow_author_alias,
-    w_follow_check,
-    w_follow_creator,
-    w_follow_credential,
-    w_follow_image_dims,
-    w_follow_media_hide,
-    w_follow_play,
-    w_follow_resolve,
-    w_follow_save,
-    w_follow_schedule,
-    w_follow_schedule_run,
-    w_follow_source,
-    w_follow_status,
-    w_follow_tag,
 )
 from .web_links import w_links, w_links_check, w_links_prune
 from .web_library_processing import q_library_processing, q_library_processing_issues, w_library_processing
-from .web_media_repair import q_media_repair, w_media_repair
 from .web_organize import (
     q_organize, q_organize_example, w_organize_apply, w_organize_preview, w_organize_rollback,
 )
@@ -114,23 +79,18 @@ from .web_library_shortcuts import q_library_shortcuts, w_library_shortcuts
 from .web_tutorial import q_tutorial_progress, w_tutorial_progress
 from .web_folders import q_folders, w_folder_preview, w_folder_rule
 from .web_scraping import (
-    q_scraping, q_scraping_amane_bridge, w_scraping_amane_check, w_scraping_amane_rebuild,
-    w_scraping_check, w_scraping_check_all, w_scraping_cover, w_scraping_settings,
+    q_scraping,
 )
 from .web_state import WebContract, path_version, revision_snapshot
 from .web_tasks import q_result_updates, q_tasks
 from .web_timeline_thumbnails import (
-    q_media_processing, q_thumbnail_jobs, q_timeline, w_media_processing, w_thumbnail_jobs,
+    q_media_processing, w_media_processing,
 )
-from .web_wants import q_wants, q_want_magnets, w_wants
 from .web_stats import (
-    q_quality_goals,
     q_search_history,
     q_stats,
     taste_snapshot,
     w_search_history,
-    w_taste_refresh,
-    w_taste_source,
 )
 
 
@@ -359,63 +319,34 @@ GET_HANDLERS = {
     "/api/tasks": q_tasks,
     "/api/result-updates": q_result_updates,
     "/api/downloads": q_downloads,
-    "/api/resources/search": q_resource_search,
-    "/api/jav/detail": q_jav_detail,
-    "/api/jav/reviews": q_jav_reviews,
-    "/api/jav/resources": q_jav_resources,
-    "/api/jav/discoveries": q_jav_discoveries,
-    "/api/jav/releases": q_jav_releases,
     "/api/library-processing": q_library_processing,
     "/api/library-processing/issues": q_library_processing_issues,
-    "/api/thumbnail-jobs": q_thumbnail_jobs,
-    "/api/timeline": q_timeline,
-    "/api/scraping": q_scraping,
-    "/api/scraping/cover": lambda contract, args: contract.scraping_cover_job.snapshot() or {"status": "idle"},
-    "/api/scraping/amane-bridge": q_scraping_amane_bridge,
-    "/api/scraping/check-all": lambda contract, args: contract.source_check_job.snapshot() or {"status": "idle"},
     "/api/settings": q_settings,
     "/api/library-shortcuts": q_library_shortcuts,
     "/api/tutorial-progress": q_tutorial_progress,
-    "/api/feeds": q_feeds,
-    "/api/feeds/check": q_feed_check,
-    "/api/feeds/discoveries": q_feed_discoveries,
-    "/api/feeds/lookup": q_feed_lookup,
-    "/api/feeds/schedule": q_feed_schedule,
-    "/api/follow": q_follow,
-    "/api/follow/credentials": q_follow_credentials,
-    "/api/follow/tags": q_follow_tags,
-    "/api/follow/authors": q_follow_authors,
-    "/api/follow/schedule": q_follow_schedule,
-    "/api/follow/check": q_follow_check,
-    "/api/follow/suggest": _get_follow_suggest,
-    "/api/follow/resolve": lambda contract, args: contract.follow_resolve_job.snapshot() or {"status": "idle"},
-    "/api/taste/refresh": lambda contract, args: contract.taste_refresh_job.snapshot() or {"status": "idle"},
     "/api/links/prune": lambda contract, args: contract.link_prune_job.snapshot() or {"status": "idle"},
     "/api/resource-sync/apply": lambda contract, args: contract.resource_apply_job.snapshot() or {"status": "idle"},
-    "/api/media-repair": q_media_repair,
     "/api/orphan-records": q_orphan_records,
     "/api/organize": q_organize,
     "/api/organize/example": q_organize_example,
     "/api/items": q_items,
     "/api/item": _get_item,
+    "/api/comic-visits": q_comic_visits,
+    "/api/comic-recommendations": q_comic_recommendations,
+    "/api/comic-taste": q_comic_taste,
     "/api/comic-pages": q_comic_pages,
     "/api/comic-events": q_comic_events,
     "/api/parts": q_parts,
     "/api/editions": q_editions,
     "/api/entity": q_entity,
-    "/api/performer/delete-plan": q_performer_delete_plan,
-    "/api/performer/delete-candidates": q_performer_delete_candidates,
     "/api/entity/shapes": _get_entity_shapes,
     "/api/entity/latest": q_entity_latest,
     "/api/links": w_links,
     "/api/photos": q_entity_photos,
     "/api/photo-set": q_photo_set,
     "/api/index": _get_index,
-    "/api/duplicates": q_duplicates,
-    "/api/quality-goals": q_quality_goals,
-    "/api/wants": q_wants,
-    "/api/wants/magnets": q_want_magnets,
-    "/api/stats": _get_stats,
+    "/api/duplicates": q_comic_duplicates,
+    "/api/stats": q_comic_stats,
     "/api/tops": _get_tops,
     "/api/ads": _get_ads,
     "/api/related": _get_related,
@@ -426,7 +357,6 @@ GET_HANDLERS = {
     "/api/suggest": _get_suggest,
     "/api/search-history": _get_search_history,
     "/api/search/recommendations": q_search_recommendations,
-    "/api/taste": _get_taste,
     "/api/review": _get_review,
     "/api/review/auto-landings": q_auto_landings,
     "/api/post-setup-tutorial": _get_post_setup_tutorial,
@@ -443,35 +373,10 @@ POST_HANDLERS = {
     "/api/downloads/cancel": w_download_cancel,
     "/api/downloads/postprocess": w_download_postprocess,
     "/api/library-processing": w_library_processing,
-    "/api/thumbnail-jobs": w_thumbnail_jobs,
-    "/api/scraping/settings": w_scraping_settings,
-    "/api/scraping/cover": w_scraping_cover,
-    "/api/jav/cover": w_jav_cover,
-    "/api/scraping/check": w_scraping_check,
-    "/api/scraping/check-all": w_scraping_check_all,
-    "/api/scraping/amane-bridge/check": w_scraping_amane_check,
-    "/api/scraping/amane-bridge/rebuild": w_scraping_amane_rebuild,
-    "/api/feeds/check": w_feed_check,
-    "/api/feeds/source": w_feed_source,
-    "/api/feeds/discovery": w_feed_discovery,
-    "/api/feeds/schedule/run": w_feed_schedule_run,
-    "/api/follow/check": w_follow_check,
-    "/api/follow/schedule": w_follow_schedule,
-    "/api/follow/schedule/run": w_follow_schedule_run,
-    "/api/follow/source": w_follow_source,
-    "/api/follow/author-alias": w_follow_author_alias,
-    "/api/follow/creator": w_follow_creator,
-    "/api/follow/resolve": w_follow_resolve,
-    "/api/follow/credential": w_follow_credential,
-    "/api/follow/status": w_follow_status,
-    "/api/follow/tag": w_follow_tag,
-    "/api/follow/media/hide": w_follow_media_hide,
-    "/api/follow/image-dims": w_follow_image_dims,
-    "/api/follow/save": w_follow_save,
-    "/api/follow/play": w_follow_play,
-    "/api/follow/activity": w_follow_activity,
     "/api/activity": w_activity,
     "/api/play": w_play,
+    "/api/comic-visit": w_comic_visit,
+    "/api/comic-page-like": w_comic_page_like,
     "/api/comic-progress": w_comic_progress,
     "/api/comic-event": w_comic_event,
     "/api/comic-event-undo": w_comic_event_undo,
@@ -480,13 +385,9 @@ POST_HANDLERS = {
     "/api/custom-metadata": w_custom_metadata,
     "/api/playlist": w_playlist,
     "/api/preference": w_preference,
-    "/api/quality-goal": w_quality_goal,
-    "/api/wants": w_wants,
     "/api/item-tag": w_item_tag,
     "/api/batch": w_batch,
     "/api/search-history": w_search_history,
-    "/api/taste/refresh": w_taste_refresh,
-    "/api/taste/source": w_taste_source,
     "/api/trash/empty": _post_empty_trash,
     "/api/organize/preview": w_organize_preview,
     "/api/organize/apply": w_organize_apply,
@@ -497,7 +398,6 @@ POST_HANDLERS = {
     "/api/links/prune": w_links_prune,
     "/api/resource-sync/scan": w_resource_sync_scan,
     "/api/resource-sync/apply": w_resource_sync_apply,
-    "/api/media-repair": w_media_repair,
     "/api/review/decision": w_review_decision,
     "/api/review/genre": w_review_genre,
     "/api/review/auto-landings/revert": w_auto_landing_revert,
@@ -505,9 +405,7 @@ POST_HANDLERS = {
     "/api/library-shortcuts": w_library_shortcuts,
     "/api/tutorial-progress": w_tutorial_progress,
     "/api/entity-name": w_entity_name,
-    "/api/performer/delete": w_performer_delete,
     "/api/entity-alias": w_entity_alias,
-    "/api/face-models": _post_face_models,
 }
 
 

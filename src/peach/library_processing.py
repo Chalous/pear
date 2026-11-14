@@ -42,7 +42,7 @@ from . import sample_followup
 from .metadata_policy import SOURCE_SPECS, preferred_tag_source
 from .platform import translate_ledger_path as _local_ledger_path
 from .review_csv import read_rows_shared, write_rows
-from .scan import scan_location
+from .scan import scan_comics as scan_location
 from .fsutil import atomic_write_text
 from . import artifact_rules, upgrade_rules
 from .ffmpeg import FFmpegResolver
@@ -2170,7 +2170,6 @@ def _scan_sources(config, db_path, *, locations, asset_ids, stage, guard, update
     chosen_paths = _chosen_asset_paths(db_path, asset_ids)
     scan = asset_ids is None and stage in (ALL_STAGES, SCAN_STAGE)
     mounts = {key: tuple(str(value) for value in values) for key, values in config.mounts.items()}
-    ffprobe = _ffprobe_path(config) if stage == SCAN_STAGE else None
     for source, roots in locations.items():
         if stage == PREVIEWS_STAGE and source != 'local':
             continue
@@ -2182,7 +2181,7 @@ def _scan_sources(config, db_path, *, locations, asset_ids, stage, guard, update
                 continue
             result.online_roots.append(translated_root)
             if scan:
-                key = f'{source}:{PureWindowsPath(root)}'.casefold()
+                key = f'comic:{source}:{PureWindowsPath(root)}'.casefold()
                 def remember(value, key=key):
                     scan_checkpoints[key] = value
                     save_checkpoint()
@@ -2200,13 +2199,6 @@ def _scan_sources(config, db_path, *, locations, asset_ids, stage, guard, update
                 result.scanned_bytes += registered.total_bytes
                 result.junk_isolated += registered.junk_isolated
                 result.new_ids += registered.new_ids
-                if stage == SCAN_STAGE:
-                    result.probed += probe_unmeasured(
-                        db_path, ffprobe, source, root, config=config,
-                        on_junk=count_junk,
-                        asset_ids=[*registered.new_ids, *registered.relocated_ids] if incremental else None,
-                        report=lambda done, total: update(stage='读取时长与分辨率',
-                            checked=result.probed + done, total=result.probed + total, probed=result.probed + done))
                 reattach_in(db_path, registered.new_ids)
                 update(scanned=result.scanned, probed=result.probed)
     return result
@@ -2944,6 +2936,12 @@ def _prepare_library_scope(config, db_path, stage, asset_ids, retry_ids, databas
     return config, library_id, selected_ids
 
 
+def _comic_processing_stage(stage):
+    if stage not in (ALL_STAGES, SCAN_STAGE):
+        raise ValueError('漫画库支持漫画目录扫描；来源标签在漫画详情中提交')
+    return SCAN_STAGE
+
+
 def process_library(config, db_path, candidate_root, cover_root, *, location='configured',
                     report=lambda state: None, provider_factory=None, job_id=None,
                     retry_ids=None, active=lambda: True, stage=ALL_STAGES,
@@ -2971,6 +2969,7 @@ def process_library(config, db_path, candidate_root, cover_root, *, location='co
     可重试的「外部资料未取得」、补人物资料整段跳过，本地那几步照常做完；之后每一行读它的快照。
     不给就不判，命令行走这条。
     """
+    stage = _comic_processing_stage(stage)
     config, library_id, selected_ids = _prepare_library_scope(
         config, db_path, stage, asset_ids, retry_ids, database, library_id, resume_state)
     from .repository import LedgerDatabase
@@ -3095,8 +3094,6 @@ def process_library(config, db_path, candidate_root, cover_root, *, location='co
             if incremental and not scope_ids:
                 _settle_collection_state(state, {}, [], update)
                 return state
-            _prepare_processing_media(config, db_path, judgement_database, locations, sources,
-                                      scope_ids, protected_ids, stage, state, update)
             finish_step('inspect')
             if stage == SCAN_STAGE:
                 # `checked`／`total` 在探时长时借给进度条用过；只扫描这一段没有采集，读数归零。

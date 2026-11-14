@@ -4444,6 +4444,87 @@ class ComicWebTests(unittest.TestCase):
             follow_state_root=self.root / 'state', allowed_media_roots=(self.root,)))
         self.addCleanup(self.app.state.http_transport.close)
 
+    def test_reading_history_keeps_book_switches_revisits_and_spreads(self):
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("INSERT INTO asset(id,location,path,name,medium,size) VALUES(2,'local','B','B','comic',1)")
+            connection.execute("INSERT INTO comic_page(id,asset_id,relative_path,ordinal) VALUES(3,2,'1.jpg',1)")
+        with route_client(self.app) as client:
+            for event, asset, pages, stamp in [('a',1,[1,2],11), ('c',1,[2],13),
+                                               ('b',2,[3],12), ('b',2,[3],12)]:
+                result = client.post('/api/comic-visit', json=dict(id=event, asset=asset, pages=pages,
+                                     session=str(asset), viewed_at=stamp)).json()
+                self.assertEqual(result, {'ok': True})
+            visits = client.get('/api/comic-visits?start=11&end=14').json()['visits']
+            self.assertEqual([(v['asset_id'], v['first_page'], v['last_page']) for v in visits],
+                             [(1,1,2),(2,1,1),(1,2,2)])
+            self.assertEqual(client.get('/api/comic-visits?start=14&end=15').json(),
+                             {'visits': [], 'previous': 13, 'next': None})
+
+    def test_comic_recommendations_follow_feedback_and_reading_interval(self):
+        from peach.comic_recommendations import recommend
+        now = 86400000 * 100
+        books = [dict(id=i, name=f'漫画{i}', creator='甲' if i < 4 else '乙',
+                      last_read=now if i==2 else None) for i in range(1,6)]
+        tags = {1:{'奇幻'}, 2:{'奇幻'}, 3:{'奇幻'}, 4:{'日常'}, 5:{'奇幻'}}
+        events = [dict(asset_id=1, kind='like', first_page_id=None)]
+        ranked = recommend(books,tags,events,now=now,weights=(60,15,20,5))
+        ids = [row['id'] for row in ranked]
+        self.assertLess(ids.index(3), ids.index(4))
+        self.assertEqual(ids[-1],2)
+        self.assertTrue(any('奇幻' in reason for reason in ranked[0]['reasons']))
+        repeated = events + [dict(asset_id=1, kind='o', first_page_id=1)] * 100
+        capped = events + [dict(asset_id=1, kind='o', first_page_id=1)] * 2
+        self.assertEqual(recommend(books,tags,repeated,now=now), recommend(books,tags,capped,now=now))
+        self.assertEqual(recommend(books,tags,[],now=now), recommend(books,tags,[],now=now))
+
+    def test_comic_recommendations_validate_weights_and_exclude_disposed_books(self):
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("INSERT INTO asset(id,location,path,name,medium,size,disposal) "
+                               "VALUES(2,'local','gone','gone','comic',0,'trash')")
+        with route_client(self.app) as client:
+            result = client.get('/api/comic-recommendations').json()
+            self.assertEqual([row['id'] for row in result['items']], [1])
+            self.assertEqual(client.get('/api/comic-recommendations?tags=nan').json(), {'error':'invalid'})
+            self.assertEqual(client.get('/api/comic-recommendations?tags=0&author=0&interval=0&explore=0').json(),
+                             {'error':'invalid'})
+
+    def test_comic_duplicates_compare_title_and_author(self):
+        from peach.comic_duplicates import possible_pairs
+        def book(i, name, creator):
+            return dict(id=i, name=name, creator=creator, path=str(i), location='local')
+        a = book(1, '作品 第1话 [汉化组A]', '作者甲')
+        b = book(2, '作品 第1话 [DL版]', '作者甲')
+        c = book(3, '作品 第2话', '作者甲')
+        d = book(4, '作品 第1话', '作者乙')
+        e = book(5, '[汉化组B]作品 第1话', '')
+        pairs = possible_pairs([a,b,c,d,e])
+        identities = [tuple(book['id'] for book in pair['files']) for pair in pairs]
+        self.assertIn((1,2), identities)
+        self.assertIn((1,5), identities)
+        self.assertNotIn((1,3), identities)
+        self.assertNotIn((1,4), identities)
+        self.assertEqual(possible_pairs([book(1,'[汉化]',''), book(2,'[DL版]','')]), [])
+
+    def test_comic_statistics_and_retired_video_endpoints(self):
+        with route_client(self.app) as client:
+            result = client.get('/api/stats').json()
+            self.assertEqual(result['books'], 1)
+            self.assertEqual(result['pages'], 2)
+            self.assertEqual(result['read_books'], 0)
+            for path in ['/api/jav/releases', '/api/scraping', '/api/taste', '/api/stream-plan']:
+                self.assertNotEqual(client.get(path).status_code, 200, path)
+
+    def test_comic_taste_counts_distinct_books_and_active_events(self):
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("UPDATE asset SET creator='作者甲' WHERE id=1")
+            connection.execute("INSERT INTO asset_tag(asset_id,tag,confidence,source) VALUES(1,'奇幻',1,'manual')")
+            connection.executemany("INSERT INTO comic_event(id,asset_id,kind,occurred_at,undone_at) "
+                                   "VALUES(?,1,?,1,?)", [('a','like',None), ('b','o',None), ('c','like',2)])
+        with route_client(self.app) as client:
+            result = client.get('/api/comic-taste').json()
+        self.assertEqual(result, dict(read_books=0, feedback_books=1, likes=1, orgasms=1,
+                                      tags=[dict(name='奇幻', books=1)], authors=[dict(name='作者甲', books=1)]))
+
     def test_page_list_orders_pages_and_never_exposes_paths(self):
         with route_client(self.app) as client:
             payload = client.get('/api/comic-pages?id=1').json()

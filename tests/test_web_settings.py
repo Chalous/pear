@@ -38,13 +38,13 @@ class SidebarOrderNormalisationTests(unittest.TestCase):
         """不认识的键可能来自旧版本或手改的载荷，留着会渲染出点不开的入口。"""
         self.assertEqual(
             normalise_sidebar_order(["", "tags", "nope", "performers"]),
-            ["", "tags", "performers"],
+            ["", "tags", "creators"],
         )
 
     def test_duplicates_collapse_and_order_is_kept(self):
         self.assertEqual(
             normalise_sidebar_order(["tags", "", "tags", "performers", ""]),
-            ["tags", "", "performers"],
+            ["tags", "", "creators"],
         )
 
     def test_an_empty_result_falls_back_to_the_default(self):
@@ -322,7 +322,7 @@ class ContractRegistrationTests(unittest.TestCase):
         # 是从别处发起的动作，只在可加清单里。
         self.assertEqual(
             DEFAULT_SIDEBAR_ORDER,
-            ("", "follow", "jav", "performers", "tags", "studios", "flagged", "manage"))
+            ("", "follow", "creators", "tags", "flagged", "manage"))
         self.assertNotIn("playlists", DEFAULT_SIDEBAR_ORDER)
         self.assertIn("playlists", web_settings.OPTIONAL_SIDEBAR_KEYS)
         self.assertIn("immerse", web_settings.OPTIONAL_SIDEBAR_KEYS)

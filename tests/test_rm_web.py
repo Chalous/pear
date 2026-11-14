@@ -1732,6 +1732,11 @@ class WebDataTests(unittest.TestCase):
             1,
         )
         con.close()
+        restored = rm_web.w_item_tag(self.contract, {'id': 1, 'operation': 'restore', 'tag': '足交'})
+        self.assertIn('足交', restored['tags'])
+        with closing(sqlite3.connect(self.db_path)) as con:
+            self.assertIsNone(con.execute("SELECT 1 FROM asset_entity ae JOIN entity e ON e.id=ae.entity_id "
+                                          "WHERE ae.asset_id=1 AND e.canonical_name='足交' AND ae.source='web-user'").fetchone())
 
     def test_item_tag_alias_uses_the_canonical_name_and_can_be_hidden(self):
         first = rm_web.w_item_tag(self.contract, {
@@ -2419,7 +2424,8 @@ class WebDataTests(unittest.TestCase):
         )["total"], 0)
 
         creators = rm_web.q_index(self.contract, "creators", limit=10)
-        self.assertEqual(creators["items"], [])
+        self.assertEqual([(row['k'], row['n']) for row in creators['items']],
+                         [('Canonical Creator', 2)])
         performers = rm_web.q_index(self.contract, "performers", limit=10)
         artists = {row["k"]: row for row in performers["items"]}
         self.assertEqual(set(artists), {"Canonical Creator", "Canonical Alice"})

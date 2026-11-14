@@ -480,7 +480,7 @@ def _init_interactive(
         scan_now = False
     if scan_now:
         for root in onboarding.scan_roots(prepared):
-            result = scan.scan_location(
+            result = scan.scan_comics(
                 prepared.directory("database") / "ledger.db", onboarding.LOCAL_LOCATION,
                 root, declared_roots=prepared.locations,
                 mounts=prepared.mounts, report=print, windows=windows,
@@ -510,7 +510,7 @@ def _scan(args: argparse.Namespace) -> int:
                     if not root_online(translate_ledger_path(root)):
                         print(f"{location}：挂载点离线，未扫描", flush=True)
                         continue
-                    scan.scan_location(args.db, location, root, declared_roots=config.locations,
+                    scan.scan_comics(args.db, location, root, declared_roots=config.locations,
                                        mounts=mounts, report=lambda line: print(line, flush=True))
             return 0
         if args.root is None:
@@ -523,7 +523,7 @@ def _scan(args: argparse.Namespace) -> int:
             roots = (scan.ledger_root_for(
                 args.location, args.root, declared_roots=config.locations, mounts=mounts),)
         for root in roots:
-            scan.scan_location(args.db, args.location, root, declared_roots=config.locations,
+            scan.scan_comics(args.db, args.location, root, declared_roots=config.locations,
                                mounts=mounts, report=lambda line: print(line, flush=True))
     except scan.ScanTargetError as exc:
         raise SystemExit(str(exc)) from None

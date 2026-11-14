@@ -174,7 +174,6 @@ def opencode_go_models(request: Request, args: dict[str, str] = Depends(require_
     return {"ok": True, "provider": "opencode-go", "models": models}
 
 
-@router.post("/api/taste/import")
 async def taste_import(
     request: Request,
     _args: dict[str, str] = Depends(require_auth),

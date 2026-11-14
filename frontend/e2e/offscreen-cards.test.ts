@@ -57,7 +57,7 @@ async function serveLongItems(page: Page): Promise<void> {
     }
     url.searchParams.delete('performer');
     baseline ??= await (await route.fetch({ url: url.toString() })).json() as CatalogPayload;
-    const source = baseline.items.filter((item) => !item.part_group && !item.edition_group);
+    const source = baseline.items.filter((item) => item.medium === 'video' && !item.part_group && !item.edition_group);
     const items = Array.from({ length: CLONES }, (_, index) => {
       const item = structuredClone(source[index % source.length]);
       original.set(CLONE_BASE + index, Number(item.id));

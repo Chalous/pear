@@ -961,16 +961,19 @@ class ProcessingControlTests(unittest.TestCase):
         first, second = self.root / 'first', self.root / 'second'
         first.mkdir()
         second.mkdir()
-        (first / 'copy.mp4').write_bytes(b'copy')
-        (first / 'new.mp4').write_bytes(b'new')
-        (second / 'other.mp4').write_bytes(b'other')
+        for parent, name, content in ((first, 'copy', b'copy'), (first, 'new', b'new'),
+                                      (second, 'other', b'other')):
+            (parent / name).mkdir()
+            (parent / name / '1.jpg').write_bytes(content)
+        (first / 'ignored.mp4').write_bytes(b'video')
+        (second / 'ignored.zip').write_bytes(b'archive')
         config = PeachConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': ('R:\\Media', 'S:\\Other')},
                              mounts={'local': (str(first), str(second))})
         with closing(sqlite3.connect(self.db)) as connection, connection:
-            for path in ('R:\\Media\\copy.mp4', 'r:\\MEDIA\\COPY.MP4'):
+            for path in ('R:\\Media\\copy', 'r:\\MEDIA\\COPY'):
                 connection.execute("INSERT INTO asset(location,path,name,medium) "
-                                   "VALUES('local',?,'copy.mp4','video')", (path,))
+                                   "VALUES('local',?,'copy','comic')", (path,))
         issues = []
         with patch('peach.library_processing._online_source_root', return_value=first), \
                 patch('peach.library_processing._ffprobe_path', return_value=None), \
@@ -984,4 +987,5 @@ class ProcessingControlTests(unittest.TestCase):
         self.assertEqual(issues[0][1]['action'], 'scanning_files')
         with closing(sqlite3.connect(self.db)) as connection:
             self.assertEqual(connection.execute('SELECT count(*) FROM asset').fetchone()[0], 4)
-            self.assertIsNotNone(connection.execute("SELECT id FROM asset WHERE path='S:\\Other\\other.mp4'").fetchone())
+            self.assertIsNotNone(connection.execute("SELECT id FROM asset WHERE path='S:\\Other\\other'").fetchone())
+            self.assertEqual(connection.execute("SELECT count(*) FROM asset WHERE medium!='comic'").fetchone()[0], 0)

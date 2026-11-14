@@ -210,7 +210,7 @@ describe('名册', () => {
     expect(host.querySelectorAll('[role="tablist"]')).toHaveLength(1);
     await click(tab(host,'creators'));
     await settle();
-    expect(host.querySelector('[data-index-title]')?.textContent).toBe('卖家');
+    expect(host.querySelector('[data-index-title]')?.textContent).toBe('作者');
     expect(host.querySelector('[aria-label="身份分类"]')).toBeNull();
     await click(tab(host,'online'));
     await settle();

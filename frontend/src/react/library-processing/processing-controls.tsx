@@ -36,8 +36,8 @@ export function ProcessingControls({ state, disabled = false }: {
     if (!jobId || disabled || action.busy || confirming.current) return;
     confirming.current = true;
     void confirmModal({
-      title: '取消任务「扫描与采集」',
-      body: '将停止这一轮剩余的处理。已登记的影片、取得的资料和预览会保留。这一轮取消后不能继续，需要时重新同步。',
+      title: '取消任务「漫画扫描」',
+      body: '将停止这一轮剩余的处理。已登记的漫画和页码会保留。这一轮取消后不能继续，需要时重新同步。',
       confirmLabel: '取消任务',
       danger: true,
     }).then(({ confirmed }) => { if (confirmed) change({ action: 'cancel', job_id: jobId }) })

@@ -45,7 +45,7 @@ const ROUTE_ENTRIES = {
   // 旧直达地址，改写到数据管理页的锚点，没有自己的管理身份。
   '/resource-sync': { title: '数据管理' },
   '/performers': { nav: 'performers', title: '艺人', reload: 'reopen' },
-  '/creators': { title: '卖家', reload: 'reopen' },
+  '/creators': { title: '作者', nav: 'creators', reload: 'reopen' },
   '/studios': { nav: 'studios', title: '厂牌', reload: 'reopen' },
   '/agencies': { title: '事务所', reload: 'reopen' },
   '/series': { nav: 'studios', title: '系列', reload: 'reopen' },
@@ -63,7 +63,7 @@ const ROUTE_ENTRIES = {
   '/': {},
   '/unseen': { nav: 'fresh', title: '没看过' },
   '/watch-later': { nav: 'later', title: '稍后看' },
-  '/flagged': { nav: 'flagged', title: '已标记' },
+  '/flagged': { nav: 'flagged', title: '喜欢' },
   '/junk-files': { nav: 'ads', title: '垃圾文件' },
   '/trash': { section: 'trash' },
   // 覆盖：详情、四种队列与关注详情。分卷与版本队列没有自己的标签。

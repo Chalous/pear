@@ -275,8 +275,11 @@ class WebE2ESmokeTests(unittest.TestCase):
             cached.parent.mkdir(parents=True, exist_ok=True)
             cached.write_bytes(mark)
         seed_metadata_cache(media, config.directory('sources'))
-        result = process_library(config, cls.db, generated, generated / "covers",
-                                 provider_factory=refuse_network)
+        # 既有视频播放用例显式导入合成视频，不改变应用的漫画扫描入口。
+        from peach.scan import scan_location
+        with mock.patch('peach.library_processing.scan_location', scan_location):
+            result = process_library(config, cls.db, generated, generated / "covers",
+                                     provider_factory=refuse_network)
         if result["status"] != "complete":
             raise AssertionError(f"演示库 process 没有完成：{result}")
         # 普通页面用已看过邀请的账本；首次邀请由教程专用用例独立验证。

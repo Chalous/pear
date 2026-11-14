@@ -408,6 +408,7 @@ export async function openCatalogFixture(
       baselines.set(key, baseline);
     }
     const payload = structuredClone(baseline);
+    payload.items = payload.items.filter(item => item.medium === 'video');
     change(payload, url);
     await route.fulfill({
       status: 200,

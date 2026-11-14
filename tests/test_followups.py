@@ -1566,7 +1566,9 @@ class ProcessLibraryTests(LedgerTestCase):
 
     @windows_ledger_roots
     def test_a_scrape_declares_dispatches_and_runs_its_avatar_followups(self):
+        from peach.scan import scan_location
         _media, config = self.sample()
+        self.enterContext(mock.patch('peach.library_processing.scan_location', scan_location))
         seed = seed_pack.load(self.seed())
         with mock.patch('peach.library_processing._generate_previews', return_value=0):
             result = process_library(config, self.db, self.root / 'generated',

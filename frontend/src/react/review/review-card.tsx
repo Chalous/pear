@@ -188,6 +188,7 @@ export function ReviewCard(props: ReviewCardProps) {
               </p>
             : null}
           {!asEntity && origin ? origin : null}
+          {category === 'comic_source_tags' && row.creator ? <p className="text-body-2-regular text-text-secondary">作者：{row.creator}</p> : null}
           {metadata && (evidence || row.current_value !== undefined) ? <div role="region" aria-label="当前信息"
             className="flex min-w-0 flex-col gap-1 border-b border-separator-border pb-4">
             <div className="flex flex-wrap items-center gap-2">

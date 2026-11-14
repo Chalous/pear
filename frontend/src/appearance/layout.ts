@@ -10,6 +10,9 @@ import { allowedSetting, appSettingsStore, type AppSettings } from './settings';
 export const JAV_LAYOUTS: readonly (readonly [value: string, label: string, icon: string])[] = [
   ['big', '大图', 'maximize'], ['small', '小图', 'layout-grid'],
 ];
+export const COMIC_LAYOUTS: readonly (readonly [value: string, label: string, icon: string])[] = [
+  ['big', '标准', 'maximize'], ['small', '紧凑', 'layout-grid'],
+];
 /* 图片墙是等宽网格，改的是列数。默认小图——一套图几十上百张，先看得见全貌，挑中哪一张再点开看大的。 */
 type Choice = readonly [value: string, label: string, icon: string];
 export const PHOTO_SIZES: readonly [big: Choice, small: Choice] = [

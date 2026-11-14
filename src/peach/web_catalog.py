@@ -44,7 +44,7 @@ from .web_state import WebContract
 from .western_artwork import artwork_key
 
 
-GROUP_TABLES = ('asset', 'asset_entity', 'entity')
+GROUP_TABLES = ('asset', 'asset_entity', 'entity', 'comic_event')
 
 
 def _download_source_names(contract: WebContract) -> tuple[tuple[int, tuple[str, ...]], ...]:
@@ -1346,7 +1346,8 @@ def state_predicate(state: str) -> str:
     if state == "played":
         return "(a.play_count > 0)"
     if state == "flagged":
-        return ("(COALESCE(a.o_count,0)>0 OR EXISTS(SELECT 1 FROM asset_preference p "
+        return ("(EXISTS(SELECT 1 FROM comic_event e WHERE e.asset_id=a.id "
+                "AND e.kind='like' AND e.undone_at IS NULL) OR EXISTS(SELECT 1 FROM asset_preference p "
                 f"WHERE p.asset_id=a.id AND p.profile_id='{DEFAULT_PROFILE_ID}' AND p.liked=1))")
     if state == "later":
         return ("(EXISTS(SELECT 1 FROM watch_queue w WHERE w.asset_id=a.id "
@@ -1507,7 +1508,7 @@ def q_facets(
         out["locations"] = [dict(r) for r in c.execute(
             "SELECT a.location AS k, count(*) AS n, "
             "SUM(CASE WHEN a.play_count>0 THEN 1 ELSE 0 END) AS played "
-            "FROM asset a WHERE a.medium='video' " + scope +
+            "FROM asset a WHERE a.medium IN ('video','comic') " + scope +
             "GROUP BY a.location ORDER BY n DESC", scope_params)]
         out['years'] = _release_year_facets(contract, c, scope, scope_params, state, filters, asset_id)
         if filters is not None and asset_id is None:
@@ -1523,7 +1524,7 @@ def q_facets(
             "WHERE a.medium='video' " + scope + "GROUP BY k ORDER BY n DESC",
             scope_params))
         # 先独立筛选资产，避免错误统计让每对实体与视频都执行资产谓词。
-        facet_assets = "SELECT a.id FROM asset a WHERE a.medium='video' " + scope
+        facet_assets = "SELECT a.id FROM asset a WHERE a.medium IN ('video','comic') " + scope
         out["creators"] = [dict(r) for r in c.execute(
             "SELECT e.canonical_name AS k,count(DISTINCT ae.asset_id) AS n "
             "FROM asset_entity ae JOIN entity e ON e.id=ae.entity_id "
@@ -1556,12 +1557,10 @@ def q_facets(
             "SELECT count(*) total, COALESCE(sum(size),0) bytes, "
             "SUM(CASE WHEN duration IS NOT NULL THEN 1 ELSE 0 END) duration, "
             "SUM(CASE WHEN play_count>0 THEN 1 ELSE 0 END) played, "
-            "SUM(CASE WHEN COALESCE(o_count,0)>0 OR EXISTS(SELECT 1 FROM asset_preference p "
-            f"WHERE p.asset_id=a.id AND p.profile_id='{DEFAULT_PROFILE_ID}' AND p.liked=1) "
-            "THEN 1 ELSE 0 END) flagged, "
+            f"SUM(CASE WHEN {state_predicate('flagged')} THEN 1 ELSE 0 END) flagged, "
             "SUM(EXISTS(SELECT 1 FROM asset_entity ae JOIN entity e ON e.id=ae.entity_id "
             "WHERE ae.asset_id=a.id AND e.kind='creator')) attributed "
-            "FROM asset a WHERE a.medium='video' AND a.disposal IS NULL "
+            "FROM asset a WHERE a.medium IN ('video','comic') AND a.disposal IS NULL "
             + scope, scope_params).fetchone()
         out["stats"] = dict(st)
         saved = [dict(row) for row in c.execute(
@@ -1584,8 +1583,8 @@ def w_item_tag(contract: WebContract, body):
     aid = int(body["id"])
     operation = str(body.get("operation", "")).strip()
     tag = str(body.get("tag", "")).strip()
-    if operation not in {"add", "remove"}:
-        raise ValueError("operation must be add or remove")
+    if operation not in {"add", "remove", "restore"}:
+        raise ValueError("operation must be add, remove or restore")
     if not tag or len(tag) > 80 or tag.startswith("演员:"):
         raise ValueError("tag must be 1 to 80 characters and cannot be a performer marker")
     if operation == "add":
@@ -1618,6 +1617,7 @@ def w_item_tag(contract: WebContract, body):
                 f"DELETE FROM asset_tag_preference WHERE profile_id='{DEFAULT_PROFILE_ID}' "
                 "AND asset_id=? AND normalized_tag=?", (aid, normalized),
             )
+        if operation == "add":
             c.execute(
                 "INSERT OR IGNORE INTO asset_tag(asset_id,tag,confidence,source) "
                 "VALUES(?,?,1.0,'web-user')", (aid, tag),

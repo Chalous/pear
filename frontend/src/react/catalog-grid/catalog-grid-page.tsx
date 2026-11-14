@@ -1,3 +1,4 @@
+
 /* 馆藏卡片网格：目录与回收站（由路由树画进 `#grid`）、资料页作品区、详情页的接着看。
  *
  * 取数、排法与续页都在这里；打开、选择、稍后看与回收站操作是壳递进来的动作。换筛选或壳要求
@@ -37,9 +38,11 @@ export function CatalogGridPage(props: CatalogGridProps) {
   const key = props.mode === 'entity'
     ? `entity:${props.entityKey || ''}:${props.revision}`
     : `catalog:${catalogParams(props.filters || {}, !!props.excludeVertical)}:${props.batchSize || 60}:${props.revision}`;
-  if (view === 'list' && !props.wall) return <CatalogListPage key={key} {...props} />;
-  const scope = props.mode === 'entity' ? 'entity' : `catalog:${!!props.wall}`;
-  return <GridBody key={scope} {...props} />;
+  const scope = props.mode === 'entity' ? 'entity' : 'catalog:' + !!props.wall;
+  return <>
+    {view === 'list' && !props.wall ? <CatalogListPage key={key} {...props} /> : <GridBody key={scope} {...props} />}
+  </>;
+
 }
 
 function Icon({ name }: { name: string }) {
@@ -184,7 +187,7 @@ function GridBody(props: CatalogGridProps) {
     }
     return (
       <>
-        <div data-media-sections="" data-select-mode={props.selectMode ? '' : undefined}>
+        <div data-media-sections="" data-cover-density={layout.size === 'small' ? 'compact' : 'standard'} data-select-mode={props.selectMode ? '' : undefined}>
           {splitSections(tiles, cuts).map((section) => (
             <Fragment key={section.start}>
               <MediaGrid>{section.tiles.map(card)}</MediaGrid>

@@ -201,7 +201,6 @@ def _hls_plan(state, asset_id: int, session: str = "", conversion: bool | None =
     return None if not plan else (asset, source, plan, False)
 
 
-@router.post("/api/external-playback")
 def external_playback(request: Request, id: int, args: dict[str, str] = Depends(require_auth)):
     from .external_playback import TTL_SECONDS, issue
     from .routes_auth import _named_origin, _origin_key, _tunnel_origin
@@ -228,7 +227,6 @@ def external_playback(request: Request, id: int, args: dict[str, str] = Depends(
                         headers={"Cache-Control": "no-store"})
 
 
-@router.get('/api/local-players')
 def local_players(request: Request, args=Depends(require_auth)):
     from . import local_playback
     players = []
@@ -244,7 +242,6 @@ def _local_playback_client(request: Request) -> bool:
         key.startswith('x-forwarded-') or key in {'forwarded', 'cf-connecting-ip'} for key in request.headers)
 
 
-@router.post('/api/local-playback')
 def local_playback(request: Request, id: int, player: str = 'default', args=Depends(require_auth)):
     from . import local_playback as launcher
     from .routes_auth import same_origin
@@ -292,7 +289,6 @@ def _external_asset(request: Request, asset_id: int, ticket: str, origin: str):
     return state.media_engine.filesystem.file_for(asset, thumbnail=False)
 
 
-@router.api_route("/external-stream/{id}", methods=["GET", "HEAD"])
 def external_stream(request: Request, id: int, ticket: str, origin: str = ''):
     path = _external_asset(request, id, ticket, origin)
     from . import strm, strm_stream
@@ -305,7 +301,6 @@ def external_stream(request: Request, id: int, ticket: str, origin: str = ''):
     return BufferedFileResponse(path, headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"})
 
 
-@router.get("/external-playlist/{id}.m3u")
 def external_playlist(request: Request, id: int, ticket: str, origin: str = ''):
     _external_asset(request, id, ticket, origin)
     url = origin + f"/external-stream/{id}?ticket={ticket}&origin={quote(origin, safe='')}"
@@ -314,7 +309,6 @@ def external_playlist(request: Request, id: int, ticket: str, origin: str = ''):
                                       "Cache-Control": "no-store", "Referrer-Policy": "no-referrer"})
 
 
-@router.api_route("/stream", methods=["GET", "HEAD"])
 def stream(request: Request, id: int, session: str = "", args: dict[str, str] = Depends(require_auth)):
     state = request.app.state
     from .error_reporting import local_event
@@ -364,7 +358,6 @@ def stream(request: Request, id: int, session: str = "", args: dict[str, str] = 
     return response
 
 
-@router.get("/api/stream-plan")
 def stream_plan(request: Request, id: int, session: str = "", mode: str = "", args: dict[str, str] = Depends(require_auth)):
     state = request.app.state
     if session and len(session) > 128:
@@ -426,7 +419,6 @@ def _record_stream_plan(state, asset_id: int, source: Path, plan: dict) -> dict:
     return plan
 
 
-@router.api_route('/strm-resource/{id}/{key}', methods=['GET', 'HEAD'])
 def strm_resource(request: Request, id: int, key: str, session: str = '',
                   ticket: str = '', origin: str = ''):
     from . import strm, strm_stream
@@ -440,7 +432,6 @@ def strm_resource(request: Request, id: int, key: str, session: str = '',
     return strm_stream.proxy(request, id, path, session, key)
 
 
-@router.get("/stream/hls/{id}/index.m3u8")
 def hls_playlist(request: Request, id: int, session: str = "", args: dict[str, str] = Depends(require_auth)):
     state = request.app.state
     # 分片必须带 session 才能被取消，播放列表这层就要求它；
@@ -464,7 +455,6 @@ def hls_playlist(request: Request, id: int, session: str = "", args: dict[str, s
     return response
 
 
-@router.get("/stream/hls/{id}/{index}.ts")
 async def hls_segment(request: Request, id: int, index: int, session: str = "", args: dict[str, str] = Depends(require_auth)):
     state = request.app.state
     if not session or len(session) > 128:
@@ -526,7 +516,6 @@ async def _hls_segment(request: Request, id: int, index: int, session: str):
     return response
 
 
-@router.post("/api/stream-cancel")
 async def stream_cancel(request: Request, session: str, args: dict[str, str] = Depends(require_auth)):
     if not session or len(session) > 128:
         return JSONResponse({"error": "invalid session"}, status_code=400)
@@ -597,7 +586,6 @@ def _subtitle_note(state, asset, row) -> str:
     return ""
 
 
-@router.get("/api/assets/{id}/subtitles")
 def asset_subtitles(request: Request, id: int, args: dict[str, str] = Depends(require_auth)):
     """这个资产有哪些字幕轨，以及每一条能不能播。
 
@@ -625,7 +613,6 @@ def asset_subtitles(request: Request, id: int, args: dict[str, str] = Depends(re
     return {"id": id, "subtitles": tracks}
 
 
-@router.api_route("/api/assets/{id}/subtitles/{index}", methods=["GET", "HEAD"])
 def asset_subtitle_track(request: Request, id: int, index: int,
                          track: str = "",
                          args: dict[str, str] = Depends(require_auth)):
@@ -706,14 +693,12 @@ def _sample_response(request: Request, code: str, n: int, *, thumb: bool):
     return _image_response(request, path, media_type="image/jpeg")
 
 
-@router.api_route("/sample-thumb", methods=["GET", "HEAD"])
 def sample_thumb(request: Request, code: str = "", n: int = 0,
                  args: dict[str, str] = Depends(require_auth)):
     """照片墙上那一档样张缩略图，宽度与 `/photo-thumb` 相同。"""
     return _sample_response(request, code, n, thumb=True)
 
 
-@router.api_route("/sample-image", methods=["GET", "HEAD"])
 def sample_image(request: Request, code: str = "", n: int = 0,
                  args: dict[str, str] = Depends(require_auth)):
     """灯箱里看的样张原图。"""
@@ -758,7 +743,6 @@ def comic_cover(request: Request, asset: int = 0, args: dict[str, str] = Depends
     return _comic_page_response(request, int(row[0]) if row else 0)
 
 
-@router.api_route("/timeline", methods=["GET", "HEAD"])
 def timeline(request: Request, id: int, s: int = 0, source: str = '', args: dict[str, str] = Depends(require_auth)):
     """时间轴预览的一张接触印相。只发已经铺好的，这里不现抽。
 
@@ -857,7 +841,6 @@ async def cover_crop(request: Request, args: dict[str, str] = Depends(require_au
                          "poster_box": jav_poster_crop.projection(record)})
 
 
-@router.api_route("/endcard-frame", methods=["GET", "HEAD"])
 def endcard_frame(request: Request, id: int, name: str, args: dict[str, str] = Depends(require_auth)):
     """Serve only generated OCR evidence frames, never a client-provided path."""
     if (id <= 0 or not name.endswith(".png") or "/" in name or "\\" in name
@@ -1147,7 +1130,6 @@ def _follow_media_size(state, item, target: ResolvedFollowMedia) -> int | None:
     return size or None
 
 
-@router.api_route("/follow-qualities", methods=["GET"])
 def follow_qualities(request: Request, id: int, args: dict[str, str] = Depends(require_auth)):
     """这条关注视频有哪些清晰度可选，以及默认档有多少字节。
 
@@ -1182,7 +1164,6 @@ def follow_qualities(request: Request, id: int, args: dict[str, str] = Depends(r
     ], "size": _follow_media_size(state, item, resolved)}
 
 
-@router.api_route("/follow-stream", methods=["GET", "HEAD"])
 def follow_stream(request: Request, id: int, media: int | None = None,
                   quality: int | None = None, download: int = 0,
                   args: dict[str, str] = Depends(require_auth)):
@@ -1295,7 +1276,6 @@ def cover_image(request: Request, code: str, args: dict[str, str] = Depends(requ
 _JAV_IMAGE_TYPES = frozenset({"image/jpeg", "image/png", "image/gif", "image/webp", "image/avif"})
 
 
-@router.api_route("/jav-image", methods=["GET", "HEAD"])
 def jav_image(request: Request, code: str, image: str = "cover", args: dict[str, str] = Depends(require_auth)):
     """库外作品的来源图片（样张、来源封面、来源头像），以图片本身回给 `<img>`。
 
@@ -1326,7 +1306,6 @@ def _jav_preview_target(url: str) -> ResolvedFollowMedia:
                                                   "ygp.blxr5es.com"), public_hosts=True)
 
 
-@router.api_route("/jav-preview/{code}/{ref}", methods=["GET", "HEAD"])
 def jav_preview(request: Request, code: str, ref: str, args: dict[str, str] = Depends(require_auth)):
     from .web_jav_detail import detail_code
     from .preview_transport import open_preview_upstream
@@ -1670,7 +1649,6 @@ def _picker_online(request: Request, connection, entity_id: int):
     return resolve
 
 
-@router.get("/api/avatar-choices")
 def avatar_choices(request: Request, kind: str = "performer", id: int = 0,
                    args: dict[str, str] = Depends(require_auth)):
     """这个人还能换成哪些图。只读本地缓存，不等联网。
@@ -1695,7 +1673,6 @@ def avatar_choices(request: Request, kind: str = "performer", id: int = 0,
     return JSONResponse(listing)
 
 
-@router.api_route("/avatar-choice", methods=["GET", "HEAD"])
 def avatar_choice(request: Request, kind: str = "performer", id: int = 0,
                   ref: str = "", args: dict[str, str] = Depends(require_auth)):
     """候选的预览图。
@@ -1753,7 +1730,6 @@ def _picker_crop(raw: object) -> object:
     return raw
 
 
-@router.post("/api/avatar-frame")
 async def avatar_frame(request: Request, args: dict[str, str] = Depends(require_auth)):
     """一张图进框选之前：量出转正后的尺寸，检出脸给默认框。不装。
 
@@ -1806,7 +1782,6 @@ async def avatar_frame(request: Request, args: dict[str, str] = Depends(require_
     return JSONResponse(choice.as_dict())
 
 
-@router.post("/api/avatar-pick")
 async def avatar_pick(request: Request, args: dict[str, str] = Depends(require_auth)):
     """换头像。几种来源共用这一个出口，区别只在字节从哪来。
 
@@ -1902,7 +1877,6 @@ def _official_cover(contract, key: str) -> bytes:
     return data
 
 
-@router.post("/api/avatar-code-cover")
 async def avatar_code_cover(request: Request, args: dict[str, str] = Depends(require_auth)):
     """按番号拿一张封面给换头像框选，番号不必在馆藏里。
 

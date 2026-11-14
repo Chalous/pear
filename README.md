@@ -1,92 +1,80 @@
-<p align="center"><img src="resources/peach-logo-128.png" alt="Peach" width="88"></p>
+# Pear
 
-# Peach
+Pear 是基于 [Peach](https://github.com/peach-mitao/peach) 改造的单人自托管漫画阅读器，面向图片文件夹漫画库，可部署到 Docker 和 NAS。
 
-A local-first video metadata scraper and media manager.
+运行源码需要 Python 3.14 或更高版本。[简体中文说明](README.zh-CN.md)。
 
-[Website](https://peach.video) · [Download](#download-and-use) · [Live demo](https://demo.peach.video) · [Documentation](#documentation) · [简体中文](README.zh-CN.md)
+## 漫画阅读
 
-[![Release](https://img.shields.io/github/v/release/peach-mitao/peach?include_prereleases&sort=semver&label=release&logo=github)](https://github.com/peach-mitao/peach/releases)
-[![CI pipelines](https://img.shields.io/github/actions/workflow/status/peach-mitao/peach/test.yml?branch=master&label=CI&logo=githubactions&logoColor=white)](https://github.com/peach-mitao/peach/actions/workflows/test.yml)
-[![License](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue?logo=gnu&logoColor=white)](LICENSE)
-[![Windows x64](https://img.shields.io/badge/Windows-x64-0078D4)](docs/TESTING_DESKTOP.md)
-[![macOS DMG](https://img.shields.io/badge/macOS-DMG-555555?logo=apple&logoColor=white)](docs/OPERATIONS.md#macos-独立测试包)
-[![Age restrictions](https://img.shields.io/badge/age-18%2B-555555)](#license)
+- 扫描目录，将直接包含支持图片的文件夹登记为一本漫画。
+- 使用竖版封面浏览馆藏，支持紧凑模式、搜索、作者和标签筛选。
+- 支持单页、双页阅读和续读，记录每次显示的页码及换书顺序。
+- 可喜欢整本漫画或单独的页；双页模式下，两页各自保留喜欢状态。
+- 「喜欢」汇总留下喜欢标记的漫画，「统计」展示馆藏、阅读和喜欢的本数与页数。
+- 阅读痕迹按日期查询，列表限高、每批加载 200 条，可点击记录回到起始页。
+- 沉浸阅读按标签口味、作者偏好和阅读间隔推荐漫画，下一本从推荐作品第一页开始。
 
-## Screenshots
-
-[![Video library with search, filters and posters](https://peach.video/assets/screenshots/home-wide-20261025-2-1280.webp)](https://peach.video/assets/screenshots/home-wide-20261025-2.png)
-
-Movie demo data; see [asset credits and licenses](https://peach.video/en/credits/).
-
-<details>
-<summary>More screenshots</summary>
-
-**People and works**
-
-[![Charlie Chaplin's profile and films](https://peach.video/assets/screenshots/profile-wide-20261025-2-1280.webp)](https://peach.video/assets/screenshots/profile-wide-20261025-2.png)
-
-**Creator updates**
-
-[![Creator follows and new works](https://peach.video/assets/screenshots/follow-wide-20261025-2-1280.webp)](https://peach.video/assets/screenshots/follow-wide-20261025-2.png)
-
-**Library statistics**
-
-[![Library, storage and viewing statistics](https://peach.video/assets/screenshots/stats-wide-20261025-3-1280.webp)](https://peach.video/assets/screenshots/stats-wide-20261025-3.png)
-
-**Player**
-
-[![Big Buck Bunny player](https://peach.video/assets/screenshots/play-wide-20261025-2-1280.webp)](https://peach.video/assets/screenshots/play-wide-20261025-2.png)
-
-</details>
-
-## Features
-
-- **Metadata scraping**: recognize video codes, read NFO files and fill titles, performers, studios and covers from multiple sources while keeping your edits.
-- **Local and cloud libraries**: browse local drives, SMB, mounted cloud storage and PikPak libraries together.
-- **Playback and history**: web and external players, subtitles, playback speed, rotation, resume and timeline previews.
-- **Follows and discovery**: track performer and creator updates, discover titles and manage a want list.
-- **Cloud download**: search by video code or submit a magnet link, then organize completed downloads into your library.
-- **Library management**: manage tags, duplicates, versions and parts; permanently delete videos by performer while keeping profiles and photos. Metadata and watch history are stored locally.
-- **Task center**: pause, resume or cancel local background tasks and view their CPU, GPU and download activity where available.
-
-## Download and use
-
-| Method | Get started |
+| 快捷键 | 操作 |
 | --- | --- |
-| Windows x64 | [Installer](https://github.com/peach-mitao/peach/releases/download/v0.50.0/Peach-0.50.0-windows-x64-setup.exe) · [Portable](https://github.com/peach-mitao/peach/releases/download/v0.50.0/Peach-0.50.0-windows-x64.zip) |
-| macOS | [Apple Silicon / ARM64](https://github.com/peach-mitao/peach/releases/download/v0.50.0/Peach-0.50.0-macos-arm64.dmg) · [Intel / x86_64](https://github.com/peach-mitao/peach/releases/download/v0.50.0/Peach-0.50.0-macos-x86_64.dmg) |
-| Docker / NAS | [Deployment guide](docs/DOCKER.md) |
-| Source | [Setup instructions](docs/OPERATIONS.md#从源码运行windowsmacos); requires Git, uv and Python 3.14+ |
+| A / D、左右方向键 | 左右翻页 |
+| B | 切换单页和双页 |
+| S / Z | 喜欢或取消喜欢当前显示的页 |
+| 空格 | 按推荐打开下一本 |
+| Esc | 关闭阅读器或信息面板 |
 
-Choose your media folders after installation, then scan to start browsing and playing. Desktop test builds are unsigned, and macOS builds are not notarized. See the [Windows](docs/TESTING_DESKTOP.md) and [macOS](docs/OPERATIONS.md#macos-独立测试包) guides.
+输入框和输入法正在组词时，字母快捷键会暂停响应。
 
-## Documentation
+## 标签和推荐
 
-[Operations](docs/OPERATIONS.md) · [Sources](docs/SOURCING.md) · [External players](docs/EXTERNAL_PLAYERS.md) · [Diagnostics and data sharing](docs/DIAGNOSTICS.md) · [Changelog](CHANGELOG.md)
+可在封面上直接编辑标签，也可在详情页填写来源网页、作者、标签和匹配说明。AI 使用 Ego 浏览器查找来源后提交待审核资料，由使用者复核后生效。操作见[漫画来源标签](docs/COMIC_TAGGING.md)。
 
-Development: [Contributing](CONTRIBUTING.md) · [Development guide](AGENTS.md) · [Testing](docs/TESTING.md)
+推荐默认权重为标签相关性 60%、作者偏好 15%、阅读间隔 20%、探索 5%。整本喜欢、单页喜欢和高潮反馈建立口味，普通翻页影响阅读间隔。推荐采用反馈封顶、近期阅读靠后和作者分散规则。
 
-## Reporting problems
+重复检测按正文名与作者列出可能重复的配对，忽略方括号内容，保留卷话数字，供人工核对。
 
-[Report a bug or suggest a feature](https://github.com/peach-mitao/peach/issues/new/choose) with your version, steps and error message. Use demo data in public screenshots and redact private information; do not upload videos or databases. Report vulnerabilities privately through the [security policy](SECURITY.md).
+## Docker / NAS
 
-## Related projects
+当前提供本地构建和导入 tar 的使用方式。镜像按 Linux amd64 构建，导入时使用实际取得的镜像标签。
 
-Thanks to [amane](https://github.com/sqzw-x/amane), [Gfriends](https://github.com/gfriends/gfriends) and [CloudDrive2](https://www.clouddrive2.com/). See the [reuse inventory](docs/REUSE.md) for full credits.
+    docker load -i pear-image.tar
 
-## Star History
+创建 Compose 项目，将存储位置选为项目目录。将下面的 image 替换为导入的标签，漫画路径替换为 NAS 实际目录。
 
-<a href="https://github.com/peach-mitao/peach/tree/star-history">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/peach-mitao/peach/star-history/star-history-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/peach-mitao/peach/star-history/star-history-light.svg">
-    <img alt="Peach cumulative stars, linear scale" src="https://raw.githubusercontent.com/peach-mitao/peach/star-history/star-history-light.svg">
-  </picture>
-</a>
+    services:
+      pear:
+        image: pear:your-imported-tag
+        pull_policy: never
+        container_name: pear
+        restart: unless-stopped
+        ports:
+          - "18900:8900"
+        volumes:
+          - ./data:/data
+          - /path/to/comics:/media:ro
+        logging:
+          driver: json-file
+          options:
+            max-size: "20m"
+            max-file: "1"
 
-## License
+容器以 UID/GID 1000 运行，宿主机 data 目录需要允许该用户读写。部分 NAS 在创建或重建容器后会重置属主，出现 /data/state 权限错误时，在创建容器后修复专用数据目录权限。
 
-[AGPL-3.0-or-later](LICENSE) · Copyright (C) 2026 The Peach contributors. Third-party components retain their own licenses. Use of the Peach name and logo follows the [name and logo policy](docs/TRADEMARKS.md).
+    mkdir -p ./data
+    sudo chown 1000:1000 ./data
+    docker compose up -d
 
-Manage only media you own or are authorized to use, subject to laws, copyright and source-platform access, age and regional restrictions. Peach does not provide video resources or access to paid content.
+访问宿主机映射端口，完成初始化，将扫描路径设为 /media。应用数据保存在 /data，漫画目录只读挂载。升级前备份整个 data 目录，再更新镜像标签并重新部署。健康检查路径为 /healthz。
+
+源码构建使用仓库 Dockerfile。前端修改后先在 frontend 目录执行 npm ci 和 npm run build，再运行 docker build -t pear:local .。开发环境与测试入口见[测试文档](docs/TESTING.md)和[运行文档](docs/OPERATIONS.md)。
+
+## 数据与限制
+
+阅读痕迹从启用该功能后开始积累，早期仅保存的续读位置无法还原完整翻页历史。目录重扫保留仍存在的页的身份。漫画扫描采用图片目录识别，需要将扫描范围指向漫画库。
+
+漫画版收起了部分视频和 AV 专属入口，仓库仍包含继承的底层模块和旧文档。已验证范围以对应 PR 和实际镜像为准。网页来源需要自行满足登录、验证和访问条件。
+
+## 反馈与许可
+
+通过 [Issues](https://github.com/Chalous/pear/issues) 反馈问题，附上版本、操作步骤和脱敏错误信息。
+
+基于 Peach 开发，沿用 [AGPL-3.0-or-later](LICENSE)。第三方组件保留各自许可，相关复用见[复用清单](docs/REUSE.md)。仅管理有权使用的漫画资料，公开反馈请使用合规演示内容并遮盖私有路径和凭据。

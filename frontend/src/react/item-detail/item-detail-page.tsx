@@ -36,6 +36,7 @@ import { fetchJavDetail, javDetailKey } from '../jav-detail/jav-detail';
 import { busyProps } from '../settings/use-action';
 import { openComicReader } from '../comics/comic-reader';
 import { ComicSourceTags } from '../comics/comic-source-tags';
+import { ComicTagEditor } from '../comics/comic-tag-editor';
 import { ExternalPlayback } from './external-playback';
 import { isPlayerGuidePreview } from '../../player/guide-preview';
 import { CoverCrop } from '../cover-crop/cover-crop-page';
@@ -160,6 +161,7 @@ function ComicDetail({ item, actions, helpers, write }: {
 }) {
   const [busy, setBusy] = useState(false);
   const pages = Number(item.comic_pages ?? 0);
+  const [editingTags, setEditingTags] = useState(false);
   const marks = useQuery({
     queryKey: ['comic-events', item.id],
     queryFn: () => apiGet<{ id: number; error?: string; events?: ComicEventRow[] }>(
@@ -183,12 +185,16 @@ function ComicDetail({ item, actions, helpers, write }: {
       <div data-stage-media="" data-item-media="none" data-comic-cover="">
         <CloseStage onClose={actions.close} />
         <img src={comicCoverUrl(item)} alt="" loading="eager" decoding="async" />
+        <Button variant="secondary" className="absolute bottom-3 right-3 z-10" onClick={() => setEditingTags(true)}>
+          <Glyph name="tags" />编辑标签
+        </Button>
       </div>
       <div data-stage-side="" data-item-side="">
         <div data-stage-side-content="">
           <DetailTitle item={item} queue={null} helpers={helpers} actions={actions} onStatus={() => {}} />
           <Tags item={item} write={write} helpers={helpers} actions={actions} />
           <ComicSourceTags assetId={item.id} />
+          {editingTags ? <ComicTagEditor assetId={item.id} label={helpers.tagLabel} close={() => setEditingTags(false)} /> : null}
           <div className="mono" data-stage-meta="" data-reveal-line="">
             <span data-spec-item=""><Glyph name="image" />
               <span>{pages > 0 ? `共 ${pages} 页` : '尚未建立页清单'}</span></span>

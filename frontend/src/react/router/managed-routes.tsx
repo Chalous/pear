@@ -13,7 +13,6 @@
 import type { ReactElement } from 'react';
 import type { ConfigurationPath } from '@peach/history';
 
-import { javDisplayName, javTitleHtml } from '@peach/legacy/jav-title';
 import { tagLabel } from '@peach/legacy/tags';
 
 import { prefetchTasks } from '../activity/tasks';
@@ -31,21 +30,17 @@ import { prefetchDuplicates } from '../duplicates/duplicates';
 import { prefetchDiagnostics } from '../diagnostics/diagnostics';
 import { prefetchFeedNew } from '../feed-new/feed-new';
 import { FeedNewPage } from '../feed-new/feed-new-page';
-import { prefetchFollowFeed } from '../follow-feed/follow-feed';
-import { FollowFeedPage } from '../follow-feed/follow-feed-page';
 import { prefetchFollowManage } from '../follow-manage/follow-manage';
 import { GlowPickerSurface } from '../glow-picker/glow-picker-island';
 import { ImmerseSurface } from '../immerse/immerse-island';
 import { prefetchIndex } from '../index/index-data';
 import { IndexPage } from '../index/index-page';
 import { JunkQueuePage } from '../junk-queue/junk-queue-page';
-import { prefetchJav } from '../jav/jav';
 import { prefetchLibraryProcessing } from '../library-processing/library-processing';
 import { LibraryProcessingCard } from '../library-processing/library-processing-card';
 import { LibraryProcessingNotice } from '../library-processing/library-processing-notice';
 import { ManageHeaderSurface } from '../manage-header/manage-header-island';
 import { prefetchPlaylists } from '../playlists/playlists';
-import { prefetchQualityGoals } from '../quality-goals/quality-goals';
 import { prefetchReview } from '../review/review';
 import { prefetchScraping } from '../scraping/scraping';
 import { SearchPage } from '../search/search-page';
@@ -53,10 +48,10 @@ import { prefetchConfiguration } from '../settings/configuration';
 import { SettingsPanelSurface } from '../settings-panel/settings-panel';
 import { SidebarSurface } from '../sidebar/sidebar-island';
 import { StageSurface } from '../stage/stage';
-import { prefetchStats } from '../stats/stats';
-import { DEFAULT_WINDOW, prefetchTaste } from '../taste/taste';
+
+
 import { CatalogMatch } from './pages/catalog';
-import { FollowMatch, PlaylistsMatch } from './pages/follow';
+import { PlaylistsMatch } from './pages/follow';
 import { ImmerseMatch } from './pages/immerse';
 import { EntityMatch, IndexMatch } from './pages/index-entity';
 import { ManagedMatch, ResourceSyncRedirect } from './pages/managed';
@@ -93,13 +88,11 @@ async function withPage(chunk: RouteChunk<unknown>, data: Promise<void>): Promis
   if (code.status === 'rejected') throw code.reason;
 }
 
-const javPage = routeChunk(() => import('../jav/jav-page'));
-const statsPage = routeChunk(() => import('../stats/stats-page'));
-const tastePage = routeChunk(() => import('../taste/taste-page'));
+const statsPage = routeChunk(() => import('../stats/comic-stats-page'));
+const tastePage = routeChunk(() => import('../taste/comic-taste-page'));
 const reviewPage = routeChunk(() => import('../review/review-page'));
 const dataCleanupPage = routeChunk(() => import('../data-cleanup/data-cleanup-page'));
-const duplicatesPage = routeChunk(() => import('../duplicates/duplicates-page'));
-const qualityGoalsPage = routeChunk(() => import('../quality-goals/quality-goals-page'));
+const duplicatesPage = routeChunk(() => import('../duplicates/comic-duplicates-page'));
 const scrapingPage = routeChunk(() => import('../scraping/scraping-page'));
 const configurationPage = routeChunk(async () => {
   const [{ ConfigurationPage }, { DiagnosticsPage }] = await Promise.all([
@@ -147,37 +140,26 @@ const cleanupRoutes = CLEANUP_TOOLS.reduce((routes, tool) => {
   return routes;
 }, {} as Pick<ManagedRouteTable, CleanupToolPath>);
 
+const retiredRoute = { element: <div />, prefetch: async () => {}, page: () => <p>漫画馆藏请使用作者、标签和阅读记录。<a href="/">返回馆藏</a></p> };
 export const MANAGED_ROUTES: ManagedRouteTable = {
+  '/jav': retiredRoute, '/quality-goals': retiredRoute,
   ...cleanupRoutes,
-  '/jav': {
-    element: <ManagedMatch path="/jav" />,
-    prefetch: (open, signal) => withPage(javPage, prefetchJav(open.tab, signal)),
-    page: (open, actions) => {
-      const { JavPage } = javPage.get();
-      return <JavPage {...open} navigate={actions.navigate} receipt={message => actions.receipt(message)} />;
-    },
-  },
   '/stats': {
     element: <ManagedMatch path="/stats" />,
-    prefetch: (_open, signal) => withPage(statsPage, prefetchStats(signal)),
-    /* 点一个内容标签是「回目录并按它筛选」，整页换成目录仍归壳。 */
-    page: (_open, actions) => {
-      const { StatsPage } = statsPage.get();
-      return <StatsPage tagLabel={tagLabel} onTag={actions.openTag} />;
+    prefetch: async () => { await statsPage.preload(); },
+    page: () => {
+      const { ComicStatsPage } = statsPage.get();
+      return <ComicStatsPage />;
     },
   },
   '/taste': {
     element: <ManagedMatch path="/taste" />,
-    /* 首屏取的是「全部时间」那一份：分析范围是组件状态，每次进这一页都从它开始。 */
-    prefetch: (_open, signal) => withPage(tastePage, prefetchTaste(DEFAULT_WINDOW, signal)),
-    /* 总结里的下一步动作按路径走（`taste_history.py` 给的），路由树里没有的交壳的路由表。 */
-    page: (open, actions, go) => {
-      const { TastePage } = tastePage.get();
-      return <TastePage onSignal={actions.openTasteSignal} navigate={go} toast={(message) => actions.receipt(message)}
-        onboarding={open.onboarding} />;
+    prefetch: async () => { await tastePage.preload(); },
+    page: () => {
+      const { ComicTastePage } = tastePage.get();
+      return <ComicTastePage />;
     },
   },
-  /* ADR-0018 的确定项已由扫描与资料处理任务落库；复核页只读取剩下的判断题。 */
   '/review': {
     element: <ManagedMatch path="/review" />,
     prefetch: (_open, signal) => withPage(reviewPage, prefetchReview(signal)),
@@ -205,15 +187,6 @@ export const MANAGED_ROUTES: ManagedRouteTable = {
       const { DuplicatesPage } = duplicatesPage.get();
       return <DuplicatesPage openItem={actions.openItem} failure={actions.failure}
         toast={(message, { undo } = {}) => actions.receipt(message, undo ? { undo } : {})} />;
-    },
-  },
-  '/quality-goals': {
-    element: <ManagedMatch path="/quality-goals" />,
-    prefetch: (_open, signal) => withPage(qualityGoalsPage, prefetchQualityGoals(signal)),
-    page: (_open, actions) => {
-      const { QualityGoalsPage } = qualityGoalsPage.get();
-      return <QualityGoalsPage openItem={actions.openItem} javTitleHtml={javTitleHtml} javDisplayName={javDisplayName}
-        toast={(message) => actions.receipt(message)} srcBadge={actions.srcBadge} />;
     },
   },
   '/sources': {
@@ -262,7 +235,7 @@ export const REDIRECT_ROUTES: Readonly<Record<string, { element: ReactElement }>
 
 /** 沉浸模式：页面组按匹配挂上元素（`pages/immerse.tsx`），元素交壳打开常驻组件 `immerse`，自己不画。 */
 export const IMMERSE_ROUTES: Readonly<Record<string, { element: ReactElement }>> = {
-  '/immerse': { element: <ImmerseMatch /> },
+  "/immerse": { element: <ImmerseMatch /> },
 };
 
 /* 两页都由元素按匹配打开（`pages/follow.tsx`）。播放列表页：首屏每次都向服务端重取（首页刚存的 Mix 进来就要
@@ -271,6 +244,7 @@ export const IMMERSE_ROUTES: Readonly<Record<string, { element: ReactElement }>>
    关注页：首屏是列表第一页与凭据两趟并行，挂上就是最终样子；之后换筛选、换一批、选择模式与照片版式都由
    壳经 `updateManagedRoute` 推进来，页面按新键只重取列表、不重挂。 */
 export const BROWSE_ROUTES: BrowseRouteTable = {
+  '/follow': retiredRoute,
   '/playlists': {
     element: <PlaylistsMatch />,
     prefetch: (_open, signal) => withPage(playlistsPage, prefetchPlaylists(signal)),
@@ -279,11 +253,6 @@ export const BROWSE_ROUTES: BrowseRouteTable = {
       return <PlaylistsPage revision={open.revision} openPlaylist={actions.openPlaylist} openEntity={actions.openEntity}
         canFlip={actions.canFlip} toast={(message, { undo } = {}) => actions.receipt(message, undo ? { undo } : {})} />;
     },
-  },
-  '/follow': {
-    element: <FollowMatch />,
-    prefetch: (open, signal) => prefetchFollowFeed(open, signal),
-    page: (open) => <FollowFeedPage {...open} />,
   },
 };
 const isBrowsePath = (path: string): path is BrowseRoutePath => Object.hasOwn(BROWSE_ROUTES, path);
@@ -301,7 +270,8 @@ const indexRoute: ManagedRoute<IndexOpenProps> = {
   ),
 };
 export const INDEX_ROUTES: IndexRouteTable = {
-  '/performers': indexRoute, '/creators': indexRoute, '/studios': indexRoute, '/agencies': indexRoute, '/tags': indexRoute,
+  '/performers': retiredRoute, '/studios': retiredRoute, '/agencies': retiredRoute,
+  '/creators': indexRoute, '/tags': indexRoute,
   '/series': indexRoute,
 };
 
@@ -316,8 +286,9 @@ const entityRoute: ManagedRoute<EntityPageProps> = {
   page: (open) => <EntityPage {...open} />,
 };
 export const ENTITY_ROUTES: EntityRouteTable = {
-  '/performers/*': entityRoute, '/studios/*': entityRoute, '/creators/*': entityRoute, '/series/*': entityRoute,
-  '/agencies/*': entityRoute, '/tags/*': entityRoute,
+  '/performers/*': retiredRoute, '/studios/*': retiredRoute, '/agencies/*': retiredRoute,
+  '/creators/*': entityRoute, '/series/*': entityRoute,
+  '/tags/*': entityRoute,
 };
 
 /* 画进 `#grid` 的两页。目录网格：首页、四个筛选态里除垃圾文件外的三个，和回收站，画的都是这一张网格，

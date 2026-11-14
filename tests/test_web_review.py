@@ -100,6 +100,43 @@ class ComicSourceTagTests(unittest.TestCase):
             self.assertEqual(connection.execute('SELECT count(*) FROM asset_tag').fetchone()[0], 0)
             self.assertIsNone(connection.execute("SELECT 1 FROM review_decision WHERE item_key='missing'").fetchone())
 
+    def test_approved_comic_tags_are_visible_in_home_facets(self):
+        from peach.web_catalog import q_facets
+        receipt = self.tags.submit(self.contract, self.body)
+        self.decision(receipt['item_key'], 'approved')
+        facets = q_facets(self.contract)
+        self.assertEqual({row['k'] for row in facets['tags']}, set(self.body['tags']))
+        self.assertEqual(facets['stats']['total'], 2)
+
+    def test_author_only_candidate_lands_after_review_and_is_indexed(self):
+        from peach.web_entity import q_index
+        receipt = self.tags.submit(self.contract, {**self.body, 'tags': [], 'creator': '漫画作者'})
+        with self.contract.read_connection() as connection:
+            self.assertIsNone(connection.execute('SELECT creator FROM asset WHERE id=1').fetchone()[0])
+        self.decision(receipt['item_key'], 'approved')
+        self.decision(receipt['item_key'], 'approved')
+        with self.contract.read_connection() as connection:
+            self.assertEqual(connection.execute('SELECT creator FROM asset WHERE id=1').fetchone()[0], '漫画作者')
+            owners = json.loads(connection.execute('SELECT field_owners FROM asset WHERE id=1').fetchone()[0])
+            self.assertEqual(owners['creator'], 'review:comic-source-' + receipt['item_key'])
+            relation = connection.execute("SELECT e.canonical_name FROM asset_entity ae JOIN entity e ON e.id=ae.entity_id WHERE ae.asset_id=1 AND ae.role='creator'").fetchone()
+            self.assertEqual(relation[0], '漫画作者')
+        repeated = self.tags.submit(self.contract, {**self.body, 'tags': [], 'creator': '漫画作者'})
+        self.assertEqual(repeated['item_key'], receipt['item_key'])
+        self.assertEqual(len(rm_candidates.read_rows(self.tags.candidate_path(self.contract))), 1)
+        result = q_index(self.contract, 'creators')
+        self.assertEqual([(row['k'], row['n']) for row in result['items']], [('漫画作者', 1)])
+
+    def test_author_candidate_does_not_overwrite_a_new_manual_author(self):
+        from peach.field_owners import write_owned_fields
+        receipt = self.tags.submit(self.contract, {**self.body, 'creator': '来源作者'})
+        with self.contract.write_transaction() as connection:
+            write_owned_fields(connection, [1], {'creator': '人工作者'}, 'user:manual')
+        with self.assertRaisesRegex(ValueError, '作者已变化'):
+            self.decision(receipt['item_key'], 'approved')
+        with self.contract.read_connection() as connection:
+            self.assertEqual(connection.execute('SELECT count(*) FROM asset_tag').fetchone()[0], 0)
+
     def test_invalid_inputs_leave_no_candidates(self):
         for change in ({'id': 999}, {'source_url': 'javascript:alert(1)'},
                        {'source_url': 'https://user:password@example.org/'},

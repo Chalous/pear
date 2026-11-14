@@ -181,14 +181,14 @@ describe('页面滚动定位', () => {
             }, { top, behavior: reduced ? 'instant' : 'smooth' });
           };
           await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'instant' }));
-          await move('JAV', '/?jav=1', 0);
+          await move('标签', '/tags', 0);
           await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'instant' }));
           await move('首页', '/', 700);
           await move('首页', '/', 0, true);
           await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'instant' }));
-          await move('JAV', '/?jav=1', 1000);
+          await move('标签', '/tags', 1000);
           await move('首页', '/', 700);
-          await move('艺人', '/performers', 0);
+          await move('作者', '/creators', 0);
           assert.deepEqual(opened.problems, []);
         } finally { await opened.close() }
       });

@@ -865,11 +865,11 @@ describe('设计决定：关注详情、作品详情、播放器与侧栏', () =
       assert.deepEqual(current.glide, current.button, '玻璃没有垫在当前项下面');
       assert.deepEqual(current.fill, ['rgba(0, 0, 0, 0)', 'none', 'none'], '当前项自己铺了底，静止时就是两层底叠着');
       assert.equal(current.color, await tokenColor(page, '#drawer', '--glass-text'), '当前项的字色不是玻璃上的字色');
-      const idle = await read('studios');
+      const idle = await read('creators');
       assert.equal(idle.color, await tokenColor(page, '#drawer', '--color-text-secondary'), '未选中项的字色不是次要文字色');
 
-      await page.locator('#drawer [data-sidebar-nav] [data-nav="studios"]').hover();
-      const hovered = await read('studios');
+      await page.locator('#drawer [data-sidebar-nav] [data-nav="creators"]').hover();
+      const hovered = await read('creators');
       assert.deepEqual(hovered.glide, hovered.button, '悬停时玻璃没有跟到指着的那一项');
       assert.deepEqual(hovered.fill, ['rgba(0, 0, 0, 0)', 'none', 'none'], '悬停的那一项自己铺了底');
       await page.mouse.move(900, 420);

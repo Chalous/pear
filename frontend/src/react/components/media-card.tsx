@@ -34,6 +34,7 @@ import { CardDate, CardTags, Icon, WhoLabel } from './card-meta';
 import { RecommendationReason } from './recommendation-reason';
 import { useLibraryTints } from './library-tint';
 import { suppressShiftTextSelection } from './row-click';
+import { ComicTagEditor } from '../comics/comic-tag-editor';
 
 /** 竖屏一律同一个比例，不按每条视频的实际宽高：竖屏条与竖屏网格才高低一致。 */
 const PORTRAIT_RATIO = 9 / 16;
@@ -94,6 +95,7 @@ function ResourceAction({ item, actions }: { item: MediaItem; actions: MediaCard
 /** 一个列表里的画面框等高：竖屏带一律竖屏比例，其余按版式取外观应用层那一份（`@peach/appearance`
  *  的 `cardRatio`，骨架读的也是它）。 */
 export function cardRatio(_item: MediaItem, variant: MediaCardVariant, layout: MediaCardLayout): number {
+  if (_item.medium === 'comic') return 2 / 3;
   return variant === 'short' ? PORTRAIT_RATIO : layoutRatio(layout);
 }
 
@@ -164,8 +166,8 @@ function PreviewCounter() {
 
 /** 「稍后看」写 ledger，只由点击触发；做完给一颗撤销键，撤销回来时按钮跟着回去。
  *  按下态先认这张卡上刚写成的结果，没写过就认条目本身：同一条被重取之后照新值画。 */
-function LaterButton({ item, actions, on, onChange }: {
-  item: MediaItem; actions: MediaCardActions; on: boolean; onChange(on: boolean): void;
+function LaterButton({ item, actions, on, onChange, onEditTags }: {
+  item: MediaItem; actions: MediaCardActions; on: boolean; onChange(on: boolean): void; onEditTags(): void;
 }) {
   const [busy, setBusy] = useState(false);
   const click = (event: MouseEvent) => {
@@ -176,6 +178,8 @@ function LaterButton({ item, actions, on, onChange }: {
   };
   return (
     <div data-media-later="">
+      {item.medium === 'comic' ? <button type="button" data-edit-comic-tags="" title="编辑标签" aria-label="编辑标签"
+        onClick={event => { event.stopPropagation(); onEditTags() }}><Icon name="tags" /></button> : null}
       <button type="button" data-later="" aria-pressed={on} title="稍后看" aria-label="稍后看" onClick={click}
         aria-busy={busy || undefined} aria-disabled={busy || undefined}>
         <Icon name={on ? 'check' : 'bookmark-plus'} />
@@ -196,6 +200,7 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
   useEntityNames();
   const card = useRef<HTMLElement | null>(null);
   const [written, setWritten] = useState<{ id: number; on: boolean } | null>(null);
+  const [editingTags, setEditingTags] = useState(false);
   const later = written?.id === item.id ? written.on : !!item.watch_later;
   const tints = useLibraryTints();
   const library = item.library_id && tints.get(item.library_id)?.color ? item.library_id : undefined;
@@ -303,7 +308,8 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
           </div>
         )
         : null}
-      {!selectMode ? <LaterButton item={item} actions={actions} on={later} onChange={on => setWritten({ id: item.id, on })} /> : null}
+      {!selectMode ? <LaterButton item={item} actions={actions} on={later} onChange={on => setWritten({ id: item.id, on })}
+        onEditTags={() => setEditingTags(true)} /> : null}
       {!selectMode ? <div data-media-seek="">
         <button type="button" onClick={(event) => { event.stopPropagation(); seekPreview(card.current, -seekSeconds) }}
           title={`后退 ${seekSeconds} 秒`} aria-label={`后退 ${seekSeconds} 秒`}><Icon name="rotate-ccw" /></button>
@@ -315,7 +321,7 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
   );
 
   return (
-    <article ref={attach} data-media-card="" data-id={item.id} data-variant={variant}
+    <><article ref={attach} data-media-card="" data-id={item.id} data-variant={variant} data-medium={item.medium}
       data-guide-video={(item.medium || 'video') === 'video' && item.location !== 'online'
         && !String(item.name || '').toLowerCase().endsWith('.iso') ? '' : undefined}
       data-watch-later={later ? '' : undefined} data-library={library}
@@ -349,6 +355,7 @@ function VideoCard({ item, variant, layout, selected, selectMode, seekSeconds, h
         </div>
       </div>
     </article>
+    {editingTags ? <ComicTagEditor key={item.id} assetId={item.id} label={helpers.tagLabel} close={() => setEditingTags(false)} /> : null}</>
   );
 }
 

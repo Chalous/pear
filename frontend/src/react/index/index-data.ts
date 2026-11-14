@@ -28,7 +28,7 @@ export const INDEX_URL = '/api/index';
 
 /** 页头标题与名册口径。 */
 export const INDEX_TITLES: Record<IndexKind, string> = {
-  performers: '艺人', creators: '卖家', studios: '厂牌', agencies: '事务所', series: '系列', tags: '标签',
+  performers: '艺人', creators: '作者', studios: '厂牌', agencies: '事务所', series: '系列', tags: '标签',
 };
 
 /** 索引格对应的实体类型，资料页与取图链都按它分。 */
