@@ -262,7 +262,8 @@ class EntityClassificationTests(unittest.TestCase):
         page = q_index(WebContract(self.db),'performers',category='animation')
         self.assertEqual([row['entity_id'] for row in page['items']],[animator])
         self.assertEqual(page['categories'],{'animation':1})
-        self.assertEqual(q_index(WebContract(self.db),'creators')['items'],[])
+        self.assertCountEqual([row['entity_id'] for row in q_index(WebContract(self.db),'creators')['items']],
+                              [animator, artist])
 
     def test_real_accounts_share_artist_directory_and_keep_avatars_and_profile_routes(self):
         _, actor = self.entity('Actor', kind='performer')
@@ -276,7 +277,7 @@ class EntityClassificationTests(unittest.TestCase):
         self.assertCountEqual([row['entity_id'] for row in artists['items']],[actor,blogger,animator])
         self.assertEqual({row['entity_id']:row['entity_kind'] for row in artists['items']},{actor:'performer',blogger:'creator',animator:'creator'})
         separate = q_index(WebContract(self.db),'creators')
-        self.assertCountEqual([row['entity_id'] for row in separate['items']],[seller])
+        self.assertCountEqual([row['entity_id'] for row in separate['items']],[seller,blogger,animator])
 
     def test_person_account_can_belong_to_blogger_and_seller_directories(self):
         _, person = self.entity('Person Account')

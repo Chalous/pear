@@ -684,3 +684,26 @@
     transition: none;
   }
 }
+
+.peach-react [data-photo-marks] button[data-mark-btn="book"] {
+  width: auto;
+  padding-inline: 10px;
+  gap: 6px;
+}
+.peach-react [data-photo-marks] button[aria-pressed="true"][data-mark-btn="book"] {
+  color: #ff4d6a;
+}
+.peach-react [data-photo-marks] button[aria-pressed="true"][data-mark-btn="book"] svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+.peach-react [data-photo-marks] button[aria-label="下一本"] {
+  width: auto;
+  padding-inline: 10px;
+  white-space: nowrap;
+}
+.peach-react [data-photo-marks] button[data-mark-btn="book"] {
+  display: flex;
+  border-radius: 16px;
+  white-space: nowrap;
+}

@@ -42,6 +42,9 @@ export const spreadStart = (index: number): number =>
  *  一条；`snapshot` 按下标给按钮状态。记账口径在漫画阅读器（`comic-reader.ts`），
  *  灯箱只管按钮的亮灭与按压态。 */
 export interface LightboxMarks {
+  next?(): Promise<void>;
+  book?(): Promise<boolean>;
+  bookLiked?(): boolean;
   mark(kind: 'like' | 'o'): Promise<boolean>;
   undo(): Promise<boolean>;
   snapshot(index: number): { like: boolean; o: boolean; canUndo: boolean };
@@ -51,7 +54,7 @@ export interface LightboxMarks {
 let current: {
   slides: LightboxSlide[]; index: number; Swiper: SwiperConstructor; host: LightboxHost | null;
   spreadAllowed: boolean; spread: boolean;
-  onPageChange?: (index: number) => void; onClose?: () => void; marks?: LightboxMarks;
+  onPageChange?: (index: number, spread: boolean) => void; onClose?: () => void; marks?: LightboxMarks;
 } | null = null;
 
 function renderLightbox(): void {
@@ -92,7 +95,7 @@ function lightboxRoot(): Root {
  *  真正关掉时回一次——切双页/单页整棵重挂不算关。`marks` 给出当场标记的钩子
  *  （漫画阅读用）：底部多一枚标记药丸，撤销键在最近一次标记后点亮。 */
 export async function openPhotoLightbox(index: number, slides: LightboxSlide[], actions?: LightboxHost,
-    options?: { spreadAllowed?: boolean; onPageChange?: (index: number) => void;
+    options?: { spreadAllowed?: boolean; onPageChange?: (index: number, spread: boolean) => void;
                 onClose?: () => void; marks?: LightboxMarks }): Promise<void> {
   if (!slides.length || index < 0 || index >= slides.length) return;
   let Swiper: SwiperConstructor;
@@ -126,7 +129,7 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
   slides: LightboxSlide[]; index: number; Swiper: SwiperConstructor; host: LightboxHost | null;
   spreadAllowed: boolean; spread: boolean;
   onSpread(next: boolean, page: number): void;
-  onPage?: (index: number) => void;
+  onPage?: (index: number, spread: boolean) => void;
   marks?: LightboxMarks;
 }) {
   const many = slides.length > 1;
@@ -134,15 +137,22 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
      （台账在灯箱外，React 看不见它变）。发的时候防手抖连点。 */
   const [, bumpMarks] = useState(0);
   const marksBusy = useRef(false);
-  const mark = async (kind: 'like' | 'o') => {
+  const mark = async (kind: 'like' | 'o' | 'book') => {
     if (!marks || marksBusy.current) return;
     marksBusy.current = true;
     try {
-      await marks.mark(kind);
+      if (kind === 'book') await marks.book?.();
+      else await marks.mark(kind);
       bumpMarks((seen) => seen + 1);
     } finally {
       marksBusy.current = false;
     }
+  };
+  const nextBook = async () => {
+    if (!marks?.next || marksBusy.current) return;
+    marksBusy.current = true;
+    try { await marks.next(); }
+    finally { marksBusy.current = false; }
   };
   const undoLast = async () => {
     if (!marks || marksBusy.current) return;
@@ -211,10 +221,11 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
         slideChange(this: SwiperInstance) {
           setActive(this.activeIndex);
           centerThumb(this.activeIndex);
-          onPage?.(this.activeIndex);
+          onPage?.(this.activeIndex, spread);
         },
       },
     });
+    onPage?.(main.activeIndex ?? start, spread);
     mainSwiper.current = main;
     centerThumb(start, 0);
     zoom.current = photoZoom(dialog, main, setPercent);
@@ -241,6 +252,26 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
     const resize = new ResizeObserver(() => { main.update(); strip.update(); zoom.current?.resize() });
     resize.observe(dialog);
     const keys = (event: KeyboardEvent) => {
+      const pageKey = spreadAllowed && (event.code === 'KeyA' || event.code === 'KeyD');
+      const spreadKey = spreadAllowed && event.code === 'KeyB';
+      const likeKey = !!marks && (event.code === 'KeyS' || event.code === 'KeyZ');
+      const nextKey = !!marks?.next && event.code === 'Space';
+      if (pageKey || spreadKey || likeKey || nextKey) {
+        const target = event.target;
+        if (event.isComposing || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey
+            || (target instanceof Element && target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'))) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (pageKey) {
+          if (event.code === 'KeyA') back.current?.click();
+          else fwd.current?.click();
+        } else if (!event.repeat) {
+          if (spreadKey) onSpread(!spread, main.activeIndex);
+          else if (nextKey) void nextBook();
+          else void mark('like');
+        }
+        return;
+      }
       if (event.key !== 'Escape') return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -349,19 +380,24 @@ function PhotoLightbox({ slides, index, Swiper, host: actions, spreadAllowed, sp
           {many ? <div ref={pagination} data-photo-pagination="" aria-label="选择图片" /> : null}
         </div>
         {spreadAllowed ? <button type="button" data-photo-spread="" aria-pressed={spread}
-          title={spread ? '切回单页' : '双页并排'} aria-label={spread ? '切回单页' : '切到双页'}
+          title={spread ? '切回单页（B）' : '双页并排（B）'} aria-keyshortcuts="B" aria-label={spread ? '切回单页' : '切到双页'}
           onClick={() => onSpread(!spread, active)}>{spread ? '单页' : '双页'}</button> : null}
         {/* 标记药丸只在给了钩子时画（漫画阅读）：单击落一条事件、已标再点即取消
             （按压态点亮），撤销键撤本轮最近一次。与缩放药丸一起在第二行整组居中。 */}
         <div data-photo-tools="">
           {marks ? <div data-photo-marks="" role="group" aria-label="页标记">
-            <button type="button" data-mark-btn="like" aria-label="喜欢当前页" title="喜欢当前页"
+            {marks.book ? <button type="button" data-mark-btn="book" aria-label="喜欢本书" title="喜欢本书"
+              aria-pressed={Boolean(marks.bookLiked?.())} onClick={() => void mark('book')}><span dangerouslySetInnerHTML={{ __html: icon('heart') }} />喜欢本书</button> : null}
+            <button type="button" data-mark-btn="like"  aria-label={spread && active + 1 < slides.length ? '喜欢当前两页' : '喜欢当前页'}
+              title={spread && active + 1 < slides.length ? '喜欢当前两页（S / Z）' : '喜欢当前页（S / Z）'} aria-keyshortcuts="S Z"
               aria-pressed={markState.like} onClick={() => void mark('like')}
               dangerouslySetInnerHTML={{ __html: icon('heart') }} />
             <button type="button" data-mark-btn="o" aria-label="标记高潮" title="标记高潮"
               aria-pressed={markState.o} onClick={() => void mark('o')}
               dangerouslySetInnerHTML={{ __html: icon('flame') }} />
-            <button type="button" data-mark-undo="" aria-label="撤销标记" title="撤销标记"
+            {marks.next ? <button type="button" aria-label="下一本" title="下一本（空格键）" aria-keyshortcuts="Space"
+              onClick={() => void nextBook()}>下一本</button> : null}
+            <button type="button" data-mark-undo=""  aria-label="撤销标记" title="撤销标记"
               disabled={!markState.canUndo} onClick={() => void undoLast()}
               dangerouslySetInnerHTML={{ __html: icon('rotate-ccw') }} />
           </div> : null}

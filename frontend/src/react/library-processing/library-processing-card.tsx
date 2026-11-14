@@ -1,4 +1,4 @@
-/* 数据管理页上的「扫描与采集」卡片。
+/* 数据管理页上的「漫画扫描」卡片。
  *
  * 卡片里讲的是那颗按钮此刻在做什么（进度或等待点）；结果和故障讲的是这一趟任务的下场，
  * 挂在卡片外面，和链接管理、资源同步那两块同一个写法。
@@ -227,7 +227,7 @@ export function LibraryProcessingCard(props: LibraryProcessingProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Fieldset layout="stack" label="扫描与采集" footer={
+      <Fieldset layout="stack" label="漫画扫描" footer={
         <>
           <LinkButton href="/sources" size="small" trailingIcon={RiArrowRightLine}>来源和凭证</LinkButton>
           <LinkButton href="/settings/diagnostics" size="small" trailingIcon={RiArrowRightLine}>诊断与日志</LinkButton>
@@ -242,7 +242,7 @@ export function LibraryProcessingCard(props: LibraryProcessingProps) {
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <FieldsetTitle>扫描与采集</FieldsetTitle>
+              <FieldsetTitle>漫画扫描</FieldsetTitle>
               {state.new_asset_count ? <Chip variant="caption" color="blue">
                 <span className="tabular-nums">{libraryId ? '所有媒体库 · ' : ''}{state.new_asset_count.toLocaleString()} 部待补全</span>
               </Chip> : null}

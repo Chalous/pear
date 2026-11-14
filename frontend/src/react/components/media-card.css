@@ -20,6 +20,16 @@
 }
 /* 同一网格行里的卡片共享完整高度。 */
 .peach-react [data-media-grid] > [data-media-card] { align-self: stretch; }
+.peach-react [data-media-sections]:has([data-medium="comic"]):not(:has([data-medium="video"])) [data-media-grid] { --tile: 200px; gap: 20px; }
+.peach-react [data-cover-density="compact"]:has([data-medium="comic"]):not(:has([data-medium="video"])) [data-media-grid] { --tile: 140px; gap: 12px; }
+.peach-react [data-medium="comic"] [data-media-art] img { object-fit: contain; }
+.peach-react [data-medium="comic"] :is([data-media-duration], [data-media-preview], [data-media-seek]) { display: none; }
+.peach-react [data-cover-density="compact"] [data-medium="comic"] [data-media-avatar] { display: none; }
+.peach-react [data-cover-density="compact"] [data-medium="comic"] [data-media-meta] { gap: 4px; }
+@media (max-width: 640px) {
+  .peach-react [data-media-sections]:has([data-medium="comic"]):not(:has([data-medium="video"])) [data-media-grid] { --tile: 140px; gap: 12px; }
+  .peach-react [data-cover-density="compact"]:has([data-medium="comic"]):not(:has([data-medium="video"])) [data-media-grid] { --tile: 100px; gap: 8px; }
+}
 body[data-surface="/trash"] .peach-react [data-media-grid] > [data-media-card] { align-self: stretch; }
 /* 详情页接着看那一排：岛根挂在作品详情的横排 `[data-related-row]` 里，卡片在这一层横着排，卡距同那一排。 */
 .peach-react [data-media-next-row] { display: flex; gap: 16px; }
@@ -525,6 +535,10 @@ body[data-peach-copy-mode] .peach-react [data-media-card] [data-media-duration][
 .peach-react [data-media-later] button { width: var(--control-h-compact); height: var(--control-h-compact); padding: 0; }
 .peach-react [data-media-later] svg { width: 18px; height: 18px; }
 .peach-react [data-media-later] button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+@media (hover: none) {
+  .peach-react [data-media-later]:has([data-edit-comic-tags]) { opacity: 1; }
+  .peach-react [data-media-later]:has([data-edit-comic-tags]) button { pointer-events: auto; }
+}
 
 /* ── 元信息区 ── */
 .peach-react [data-media-meta] { display: flex; gap: 10px; min-width: 0; }

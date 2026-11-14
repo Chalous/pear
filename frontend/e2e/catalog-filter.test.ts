@@ -313,8 +313,7 @@ describe('首页筛选条', () => {
       const { page, counts } = opened;
       const before = counts.items.length;
       const homeIds = await page.locator('#grid [data-media-card]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-id')));
-      if (viewport.mobile) await page.locator('#filterBtn').click();
-      await page.locator('button[data-nav="jav"]:visible').first().click();
+      await page.goto(new URL('/?jav=1', page.url()).href);
       await page.waitForFunction(() => location.pathname === '/' && new URLSearchParams(location.search).get('jav') === '1');
       await page.getByRole('tab', { name: '馆藏', exact: true, selected: true }).waitFor();
       await page.locator('#grid [data-media-card]').first().waitFor();

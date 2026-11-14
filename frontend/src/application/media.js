@@ -2,7 +2,7 @@
 import { loadSourceStatus, preferencesState, wireDrag } from './preferences.js';
 import { receiptsState } from './receipts.js';
 import { followState, followViewPath, openFollowDetail } from './follow.js';
-import { immerseApi, loadImmerse, loadStage, stageApi } from '../react/application-residents';
+import { immerseApi, loadStage, stageApi } from '../react/application-residents';
 import { cancelQueueRequest, navigationState, openRoutedPage, requestOverlay } from './navigation.js';
 import { activeQueue, barsContext, detailOriginAbove, detailOriginAnchor, detailReturnBarsContext, detailReturnNeedsRestore, detailReturnPath, pageOpens, pendingQueueRoute, presentedItem, queueOpens, selectMode, selected, state, writeShell } from './../shell/index';
 import { scheduleStickySurfaces } from './layout.js';
@@ -166,10 +166,12 @@ export async function openJavMovie(code,push=true){
   scheduleStickySurfaces();
 }
 
-export async function openTok(startId=null,push=true){
-  if(push){mediaState.requestedImmerseId=startId;navigationState.route('/immerse');return}
-  stageApi()?.closeMiniplayer();
-  await (await loadImmerse(mediaState.immerseHost)).open(startId);
+export async function openTok(_startId=null,_push=true){
+  const {startRecommendedReading} = await import('../react/comics/comic-reader');
+  await startRecommendedReading({
+    toast:message=>receiptsState.toast({text:message}),
+    failure:(action,error)=>receiptsState.actionFailure(action,error),
+  });
 }
 
 export function installMedia10() {

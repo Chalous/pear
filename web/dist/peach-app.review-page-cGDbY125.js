@@ -1,7 +1,7 @@
 (function() {
 	try {
 		var e = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, t = new e.Error().stack;
-		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "747ce14a-9c1f-499d-8019-16313bf6d1ed", e._sentryDebugIdIdentifier = "sentry-dbid-747ce14a-9c1f-499d-8019-16313bf6d1ed");
+		t && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[t] = "6823132e-8f3c-4251-9452-dac901d74b48", e._sentryDebugIdIdentifier = "sentry-dbid-6823132e-8f3c-4251-9452-dac901d74b48");
 	} catch {}
 })();
 import { $ea3928288112382f$export$439d29a4e110a164 as e, $fe21c36db05242bb$export$a98f0dcb43a68a25 as t, $fe21c36db05242bb$export$d7b12c4107be0d61 as n, Button as r, ButtonLink as i, Checkbox as a, CheckboxGlyph as o, Chip as s, CollapseChevron as c, CollapseRegion as l, DEFAULT_CATEGORY as u, DataTableFooter as d, ENTITY_REVIEW_KINDS as f, Ea as p, EmptyState as m, ExternalLink as h, FIELDSET_FOOT as ee, FilterGlassRows as g, Gg as _, InputBase as v, LinkButton as te, Note as y, REVIEW_CATEGORIES as b, REVIEW_DECISION_LABELS as ne, REVIEW_KEY as re, REVIEW_LABELS as x, REVIEW_QUEUES as ie, REVIEW_QUEUE_LABELS as S, Select as C, SelectItem as w, SelectionActions as T, SelectionDock as ae, SortableBoardTabs as E, TextField as D, Wt as O, __toESM as k, apiGet as A, apiSend as j, avatarInner as M, busyProps as N, canApprove as oe, cardClass as P, commonReviewSources as F, composingKey as se, confirmModal as I, currentReviewRow as ce, cx as L, decisionPayload as le, decisionReceipt as ue, defaultChoice as de, errorMessage as R, fetchReview as fe, filterReviewRows as pe, groupReviewRows as me, isReviewCategory as he, l7 as z, localTime as ge, m7 as _e, mirrorText as ve, pendingGenres as ye, queryClient as be, recordGenre as xe, reloadReview as Se, require_jsx_runtime as Ce, require_react as B, reviewGroupingOptions as we, reviewQueueData as Te, reviewQueueOf as Ee, reviewWindow as De, rowEvidence as Oe, rowFieldName as ke, rowSubject as Ae, rowTags as V, rowTitle as H, selectReviewRange as je, settleReviewRows as Me, spinnerHtml as U, submitDecision as Ne, useMutation as Pe, useNavigationOrder as Fe, useOverlayScrollbar as Ie, useQuery as Le, useViewGlide as Re } from "./peach-app.js";
@@ -1400,6 +1400,10 @@ function Kt(e) {
 							children: `对照文件：${Number(n.video_count || n.assets || 0).toLocaleString()}`
 						}) : null,
 						!C && P ? P : null,
+						t === "comic_source_tags" && n.creator ? /* @__PURE__ */ (0, X.jsxs)("p", {
+							className: "text-body-2-regular text-text-secondary",
+							children: ["作者：", n.creator]
+						}) : null,
 						x && (E || n.current_value !== void 0) ? /* @__PURE__ */ (0, X.jsxs)("div", {
 							role: "region",
 							"aria-label": "当前信息",
@@ -1834,4 +1838,4 @@ function Jt(e) {
 }
 export { Jt as ReviewPage };
 
-//# debugId=747ce14a-9c1f-499d-8019-16313bf6d1ed
+//# debugId=6823132e-8f3c-4251-9452-dac901d74b48

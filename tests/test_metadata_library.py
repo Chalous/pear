@@ -90,6 +90,7 @@ def _archive_pages(url):
 
 
 class LibraryNfoTests(unittest.TestCase):
+    """既有视频账本的元数据处理；扫描夹具使用通用导入器。"""
     def _fc2_metadata_session(self, name, *, known=False, mirror=True, catalog='r18dev'):
         from peach.entities import normalize_entity_name
         from peach.library_processing import _MissCache, _RemoteSession
@@ -682,6 +683,8 @@ class LibraryNfoTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name).resolve()
+        from peach.scan import scan_location
+        self.enterContext(patch('peach.library_processing.scan_location', scan_location))
 
     @windows_ledger_roots
     def test_amane_preparation_failure_preserves_the_unprocessed_selection_for_retry(self):
@@ -3029,6 +3032,9 @@ class LibraryWatchdogTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name).resolve()
+        # 此组以视频作为长跑夹具，漫画应用的扫描范围由 ComicScanTests 验证。
+        from peach.scan import scan_location
+        self.enterContext(patch('peach.library_processing.scan_location', scan_location))
 
     def _config(self, media):
         return PeachConfig(self.root, self.root / 'config.toml', present=True,

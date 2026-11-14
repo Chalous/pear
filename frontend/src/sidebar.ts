@@ -1,12 +1,10 @@
-/* 侧栏默认给的那八个入口和它们的次序。首页之后先是关注——它是每天有新东西的那一屏；JAV 是主库最常用的
-   浏览模式，排在三个索引（艺人、标签、厂牌）前面；已标记是回头找，管理垫底。播放列表和沉浸模式默认不在：
-   两者都是从一条作品或一个索引里发起的动作，常驻一格换来的是每次都要跳过它。要它们的人在设置里加回来，
-   键仍在壳的 `NAV_CATALOG` 里。两份清单与 `src/peach/web_settings.py` 的同名常量逐字比对（test_web_settings.py）。 */
-export const DEFAULT_SIDEBAR_ORDER: readonly string[] = ['', 'follow', 'jav', 'performers', 'tags', 'studios', 'flagged', 'manage'];
-export const OPTIONAL_SIDEBAR_KEYS: readonly string[] = ['playlists', 'immerse', 'stats', 'review', 'data-cleanup', 'trash', 'follow-manage', 'quality'];
+/* 漫画导航：作者与标签是馆藏索引，已标记用于回看，管理承载维护操作。
+   与 `src/peach/web_settings.py` 保持一致；旧艺人入口映射至作者，视频专用入口不再显示。 */
+export const DEFAULT_SIDEBAR_ORDER: readonly string[] = ['', 'creators', 'tags', 'flagged', 'immerse', 'manage'];
+export const OPTIONAL_SIDEBAR_KEYS: readonly string[] = ['playlists', 'stats', 'review', 'data-cleanup', 'trash'];
 const KNOWN_SIDEBAR_KEYS = new Set([...DEFAULT_SIDEBAR_ORDER, ...OPTIONAL_SIDEBAR_KEYS]);
 /* 垃圾文件与重复文件两页并进了数据管理，存过的旧键换成它。 */
-const sidebarKeyAlias = (key: string) => (key === 'ads' || key === 'dupes' ? 'data-cleanup' : key);
+const sidebarKeyAlias = (key: string) => (key === 'ads' || key === 'dupes' ? 'data-cleanup' : key === 'performers' ? 'creators' : key);
 
 /** 当前可见入口按默认次序重排，额外入口接在其后。 */
 export function resetSidebarOrder(order: readonly string[]): string[] {

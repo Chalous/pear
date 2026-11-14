@@ -101,9 +101,9 @@ describe('侧栏岛', () => {
       const line = await page.locator('#drawer [data-sidebar-drop-line]').boundingBox();
       assert.ok(line && line.width > 0, '插入线没有显示');
       assert.equal(await page.locator('#drawer [data-nav="follow"]').evaluate(node => node.style.getPropertyValue('--sidebar-nudge')), '10px');
-      assert.equal(await page.locator('#drawer [data-nav="jav"]').evaluate(node => node.style.getPropertyValue('--sidebar-delay')), '24ms');
+      assert.equal(await page.locator('#drawer [data-nav="creators"]').evaluate(node => node.style.getPropertyValue('--sidebar-delay')), '24ms');
       await page.mouse.up();
-      const moved = ['', 'tags', 'follow', 'jav', 'performers', 'studios', 'flagged', 'manage'];
+      const moved = ['', 'tags', 'follow', 'creators', 'flagged', 'manage'];
       await page.waitForFunction((want) => JSON.stringify([...document.querySelectorAll('#drawer [data-sidebar-nav] [data-nav]')]
         .map((node) => node.getAttribute('data-nav'))) === want, JSON.stringify(moved), { timeout: 5_000 });
       const posts = server.posts.filter((post) => post.path === '/api/settings' && 'sidebarOrder' in post.body);
@@ -317,7 +317,7 @@ describe('侧栏岛', () => {
       await page.locator('#drawer [data-sidebar-group]').first().waitFor({ state: 'attached', timeout: 15_000 });
       await settle(page);
       await page.emulateMedia({ reducedMotion: 'no-preference' });
-      for (const key of ['performers', 'tags', '']) {
+      for (const key of ['creators', 'tags', '']) {
         const run = await page.evaluate(async (target) => {
           const glide = document.querySelector<HTMLElement>('#drawer > [data-sidebar-glide]')!;
           (glide as unknown as { __mark: boolean }).__mark = true;

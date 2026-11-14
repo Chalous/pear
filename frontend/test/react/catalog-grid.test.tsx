@@ -306,6 +306,12 @@ describe('比例', () => {
   const ratio = (target: MediaItem, variant: MediaCardVariant, layout: Partial<MediaCardLayout>) =>
     cardRatio(target, variant, { ...SMALL, ...layout });
 
+  it('漫画在标准和紧凑布局都保留竖版封面', () => {
+    const comic = item(3, { medium: 'comic' });
+    expect(ratio(comic, 'grid', { size: 'big' })).toBeCloseTo(2 / 3);
+    expect(ratio(comic, 'grid', { size: 'small' })).toBeCloseTo(2 / 3);
+  });
+
   it('一个列表里的卡等高：比例只由语境决定，不看单条视频的宽高', () => {
     expect(ratio(item(2, { width: 1080, height: 1920 }), 'grid', {})).toBeCloseTo(16 / 9);
     expect(ratio(item(2), 'short', {})).toBeCloseTo(9 / 16);

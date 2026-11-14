@@ -318,10 +318,8 @@ class InteractiveInitTests(unittest.TestCase):
             self.assertTrue((self.data_root / key).is_dir(), key)
         self.certs.assert_called_once()
         # 账本里的路径就是本机路径：b.jpg 是根这本漫画的一页，行记在目录上，每一行都真实存在。
-        self.assertEqual(self._ledger_paths(),
-                         sorted([str(self.media), str(self.media / "sub" / "a.mp4"),
-                                 str(second / "c.mp4")]))
-        self.assertIn("✓ local: 2 文件", output)
+        self.assertEqual(self._ledger_paths(), [str(self.media)])
+        self.assertIn("✓ local: 0 文件", output)
         self.assertIn("✓ local: 1 文件", output)
         self.assertIn("下一步", output)
         self.assertEqual(output.count("扫描结果："), 2, "每个目录各报一行")
@@ -339,7 +337,7 @@ class InteractiveInitTests(unittest.TestCase):
         self.assertIn("媒体目录", output)
         paths = self._ledger_paths()
         # b.jpg 是根这本漫画的一页，行记在目录上。
-        self.assertEqual(paths, [r"R:\media", r"R:\media\sub\a.mp4"])
+        self.assertEqual(paths, [r"R:\media"])
         # 读取文件时，将数据库路径前缀之后的层级拼到本机媒体目录。
         for path in paths:
             tail = PureWindowsPath(path).relative_to(PureWindowsPath(r"R:\media")).parts
@@ -511,14 +509,14 @@ class ScanCommandTests(unittest.TestCase):
     def test_root_defaults_to_the_declared_root(self):
         code, output = self._run(["scan", "local", "--db", str(self.db)])
         self.assertEqual(code, 0)
-        self.assertIn("✓ local: 2 文件", output)
-        self.assertEqual(self._count(), 2)
+        self.assertIn("✓ local: 1 文件", output)
+        self.assertEqual(self._count(), 1)
 
     def test_configured_scan_uses_each_online_source_id(self):
         fixed = replace(settings_file.active(), locations={'115': ('B:/',), 'pikpak': ('A:/',)})
         with mock.patch.object(settings_file, 'active', return_value=fixed), \
              mock.patch('peach.platform.root_online', side_effect=[False, True]), \
-             mock.patch.object(cli.scan, 'scan_location') as scanner:
+             mock.patch.object(cli.scan, 'scan_comics') as scanner:
             code, output = self._run(['scan', 'configured', '--db', str(self.db)])
         self.assertEqual(code, 0)
         self.assertIn('115', output)
@@ -528,7 +526,7 @@ class ScanCommandTests(unittest.TestCase):
     def test_an_explicit_subdirectory_is_scanned_alone(self):
         code, _ = self._run(["scan", "local", str(self.media / "sub"), "--db", str(self.db)])
         self.assertEqual(code, 0)
-        self.assertEqual(self._count(), 1)
+        self.assertEqual(self._count(), 0)
 
     def test_an_undeclared_source_is_refused_and_lists_the_known_ones(self):
         with self.assertRaises(SystemExit) as caught:

@@ -297,7 +297,7 @@ def q_entity(contract: WebContract, args):
             (" AND " + solo_performer_clause("a2.id", "ae2.entity_id") if kind == "performer" else "") +
             " ORDER BY a2.size DESC LIMIT 1) "
             "FROM asset_entity ae JOIN asset a ON a.id=ae.asset_id "
-            "WHERE " + scope + " AND " + COUNTED_VIDEO, (d["id"], d["id"]),
+            "WHERE " + scope + " AND " + COUNTED_CATALOG, (d["id"], d["id"]),
         ).fetchone()
         d["asset_count"] = count
         d["representative_asset_id"] = rep
@@ -310,7 +310,7 @@ def q_entity(contract: WebContract, args):
             "JOIN asset a ON a.id=scope.asset_id "
             "WHERE " + scope_predicate(kind, "scope.entity_id") +
             _tag_scope_visibility(kind, "scope.entity_id", "a.id") +
-            " AND " + COUNTED_VIDEO + " AND tag.kind='tag' "
+            " AND " + COUNTED_CATALOG + " AND tag.kind='tag' "
             "AND " + tag_is_not_a_performer_name("tag.normalized_name") + " "
             f"AND tag.canonical_name NOT IN ({','.join('?' for _ in LENGTH_TAGS)}) "
             "AND " + tag_not_hidden("scope.asset_id", "tag.normalized_name") + " "
@@ -797,6 +797,8 @@ def _index_rows(contract: WebContract, kind, q, limit, offset, category):
             rows = rows[:limit]
         elif kind in INDEX_ENTITY_KINDS:
             entity_kind = INDEX_ENTITY_KINDS[kind]
+            visible = COUNTED_CATALOG if entity_kind == 'creator' else COUNTED_VIDEO
+            identity_scope = "e.kind='creator'" if entity_kind == 'creator' else entity_classification.index_scope(c,entity_kind)
             sql = ("SELECT e.id entity_id,e.kind entity_kind,e.canonical_name k,count(DISTINCT " + video_work_key(contract, c) + ") n,"
                    "(SELECT a2.id FROM asset_entity ae2 JOIN asset a2 ON a2.id=ae2.asset_id "
                    " WHERE ae2.entity_id=e.id AND a2.medium='video' AND a2.snapshot_path IS NOT NULL " +
@@ -805,7 +807,7 @@ def _index_rows(contract: WebContract, kind, q, limit, offset, category):
                    " COALESCE(a2.width,0)*COALESCE(a2.height,0) DESC,a2.size DESC LIMIT 1) rep "
                    "FROM asset_entity ae JOIN entity e ON e.id=ae.entity_id "
                    "JOIN asset a ON a.id=ae.asset_id "
-                   "WHERE " + COUNTED_VIDEO + " AND " + entity_classification.index_scope(c,entity_kind) + ' ')
+                   "WHERE " + visible + " AND " + identity_scope + ' ')
             par = []
             if q: sql += "AND e.canonical_name LIKE ? "; par.append(f"%{q}%")
             clause, values = entity_classification.filter_sql(category,connection=c)

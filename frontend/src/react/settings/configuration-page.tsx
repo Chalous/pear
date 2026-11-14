@@ -19,11 +19,8 @@ import { DownloadGroup } from './download-settings';
 import { GeneralSettings } from './general-settings';
 import { MaintenanceSettings } from './maintenance-settings';
 import { MediaSettings } from './media-settings';
-import { MediaProcessingSettings, PlaybackTranscodeSettings } from './media-processing-settings';
 import { TaskSpeedSettings } from './service-preferences';
-import { CodePatternSettings } from './code-pattern-settings';
 import { NetworkSettings } from './network-settings';
-import { SourceSettings } from './source-settings';
 import { groupRoot } from './configuration-panel';
 import { downloadsShape, maintenanceShape, networkShape } from './configuration-shape';
 import { rememberShape } from '../../configuration-skeleton';
@@ -114,11 +111,8 @@ function ConfigurationGroups(
     { id: 'library', title: '媒体库与入库', body: (panel) => <div {...groupRoot(panel)}>
       {issues(['media_sources', 'library_count', 'mount_dependencies'])}
       {!data.section_errors?.media_sources && !data.section_errors?.library_count ? <MediaSettings {...group} /> : null}
-      <CodePatternSettings receipt={receipt} />
-      <MediaProcessingSettings receipt={receipt} />
       <TaskSpeedSettings receipt={receipt} />
     </div> },
-    { id: 'sources', title: '来源与订阅', body: (panel) => <SourceSettings {...group} panel={panel} issues={issues(['entry_links'])} /> },
     ...(downloads || data.section_errors?.downloads ? [{
       id: 'downloads', title: '下载渠道',
       body: (panel: ConfigurationPanel) => <DownloadGroup initial={downloads} receipt={receipt} panel={panel} issues={issues(['downloads'])} />,
@@ -129,7 +123,6 @@ function ConfigurationGroups(
       body: (panel) => <div {...groupRoot(panel)}>
         {issues(['startup', 'uninstall', 'storage', 'remote_reporting', 'library_sharing', 'updates', 'update_job', 'automatic_updates', 'facts'])}
         <GeneralSettings {...group} />
-        <PlaybackTranscodeSettings receipt={receipt} />
         <MaintenanceSettings {...group} reopenTutorial={reopenTutorial} />
       </div>,
     },

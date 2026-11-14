@@ -12,6 +12,7 @@ import { apiGet, apiSend } from '../../api';
 import { clampPage, pageCount } from '../../pagination';
 import { selectRange } from '../../selection';
 import { queryClient } from '../query';
+import { dropBars } from '../../catalog-bars';
 import { localTime } from '../time';
 
 export const REVIEW_URL = '/api/review';
@@ -264,6 +265,7 @@ export function canApprove(category: ReviewCategory, row: ReviewRow): boolean {
 /** 这一行的标题读作「问的是什么」。字段名是问题本身，作品标识只是它问的对象。 */
 export function rowSubject(category: ReviewCategory, row: ReviewRow): string {
   if (category === 'metadata_fields') return String(row.query || row.code || '');
+  if (category === 'comic_source_tags') return String(row.name || row.item_key);
   return String(row.creator || row.studio || row.current_name || row.name || row.item_key);
 }
 
@@ -391,6 +393,12 @@ export function dropReviewRows(category: ReviewCategory, keys: string[]): void {
 export function settleReviewRows(category: ReviewCategory, keys: string[], status: DecisionStatus): void {
   const gone = new Set(keys);
   if (!gone.size) return;
+  if (category === 'comic_source_tags' && status === 'approved') {
+    dropBars();
+    for (const key of ['catalog-grid', 'item', 'index', 'tag-management']) {
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    }
+  }
   queryClient.setQueryData<ReviewData>(REVIEW_KEY, (data) => {
     if (!data) return data;
     const moved = REVIEW_QUEUES.flatMap(key => reviewQueueData(data, key).sections[category] || [])

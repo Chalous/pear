@@ -22,7 +22,7 @@ import { applicationEffects } from './effects';
 import { managedEntry, managedTaken, openManagedRoute, releaseManagedRoute, updateManagedRoute } from './../history/managed';
 import { catalogFilterSkeletonHtml } from './../catalog-filter-skeleton';
 import { catalogContentSkeletonHtml } from '../catalog-content-skeleton';
-import { JAV_LAYOUTS, cardRatio, gridLayout, javLayout } from './../appearance/layout';
+import { JAV_LAYOUTS, COMIC_LAYOUTS, cardRatio, gridLayout, javLayout } from './../appearance/layout';
 import { entityFaceImg, facePos, logoUrl } from './../card-art/markup';
 import { sidebarHasCatalogContent } from './../sidebar';
 import { rememberRepresentatives } from './../card-art/representatives';
@@ -248,7 +248,7 @@ export function catalogFilterActions(){
 
 export function catalogLayoutProp(){
   if(javActive())return {name:'jav-layout',label:'JAV 卡片版式',value:javLayout(),options:JAV_LAYOUTS};
-  if(homeLayoutActive())return {name:'home-layout',label:'首页卡片版式',value:cardLayout(),options:JAV_LAYOUTS};
+  if(homeLayoutActive())return {name:'home-layout',label:'漫画封面密度',value:cardLayout(),options:COMIC_LAYOUTS};
   return null;
 }
 
@@ -613,7 +613,7 @@ catalogState.topsQueryParams = (context,page=0)=>{
 };
 catalogState.facetCountsSeq = 0;
 catalogState.VIEW_PILLS = [{k:'',label:'全部'},{k:'fresh',label:'没看过'},
-                  {k:'later',label:'稍后看'},{k:'flagged',label:'已标记'}];
+                  {k:'later',label:'稍后看'},{k:'flagged',label:'喜欢'}];
 catalogState.catalogViews = ()=>catalogState.VIEW_PILLS.map(v=>({...v,href:v.k?STATE_ROUTES[v.k]:'/'}));
 catalogState.TAGS_FIRST = 26;
 applicationEffects.listen($('#catalogFilter'), 'click', event=>{

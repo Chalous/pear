@@ -37,7 +37,7 @@ from starlette.middleware.gzip import DEFAULT_EXCLUDED_CONTENT_TYPES, GZipMiddle
 
 from . import (__version__, browser_transport, distribution, feeds, ledger_backups, tunnel, web_contract,
                web_feeds, web_follow, web_settings)
-from . import routes_api, routes_auth, routes_configuration, routes_jav_browser, routes_media, routes_pages, routes_subtitles
+from . import routes_api, routes_auth, routes_configuration, routes_media, routes_pages
 from .buildinfo import frozen_build
 from .config import LOCATION_ROOT_DECLARATIONS, MEDIA_ROOT_DECLARATIONS, PeachSettings
 from .ffmpeg import FFmpegResolver
@@ -227,10 +227,10 @@ def _restore_task_center(contract) -> None:
 #: 十几秒，都按账本版本号缓存（`WebContract.cached_until_changed`），算好一次就一直用到
 #: 账本或文件真的变了。排在前面的是每页都碰到的几份：形状名单、作品分组快照（目录、
 #: 索引、筛选项都建在它上面）、统计与搜索推荐池，重启后第一个打开页面的人不再等它们一起冷算。
-WARM_AGGREGATES = (("/api/entity/shapes", {}), ("/api/items", {"limit": "60"}), ("/api/stats", {}),
+WARM_AGGREGATES = (("/api/entity/shapes", {}), ("/api/items", {"limit": "60"}),
                    ("/api/search/recommendations", {}),
-                   ("/api/taste", {"window": "all"}), ("/api/review", {}), ("/api/ads", {}),
-                   ("/api/follow", {}))
+                   ("/api/review", {}), ("/api/ads", {}),
+                   )
 
 
 def _start_ledger_services(settings: PeachSettings, contract, services) -> bool:
@@ -499,9 +499,6 @@ def create_app(
         push_discovery=push_discovery, available=_writer(sync),
         after_ingest=lambda task: enqueue_download_postprocess(contract, task))
     contract.downloads = downloads
-    from .jav_browser import JavBrowser
-    from .web_resource_search import q_resource_search
-    jav_browser = JavBrowser(contract, search=q_resource_search)
     contract.follow_scheduler = follow_scheduler
     # 订阅源拉取（ADR-0042）用同一个调度实现，只换 job id、状态文件与默认间隔。
     # 默认 6 小时：一位女优的 JavDB 演员页一天更新几条，比这更密只是把 JavDB 的配额
@@ -563,7 +560,7 @@ def create_app(
         # 握手要等 cloudflared 连上边缘，断网时会等满 `wait_timeout`；放在后台，本机访问
         # 不等公网入口。连接进度由 `tunnel_manager.snapshot()` 报告。
         tunnel_startup = asyncio.create_task(asyncio.to_thread(_start_tunnel, settings, tunnel_manager))
-        services = (follow_scheduler, feed_scheduler, push_discovery, downloads, recovery_service, jav_browser, upgrade_repairs)
+        services = (recovery_service, upgrade_repairs)
         activation = _LedgerActivation(_app, settings, contract, services, automatic_updates, sharing)
         _app.state.ledger_activation = activation
         ledger_ready = await activation.start()
@@ -594,7 +591,6 @@ def create_app(
             await asyncio.to_thread(upgrade_repairs.stop)
             await asyncio.to_thread(sharing.stop)
             push_discovery.stop()
-            await asyncio.to_thread(jav_browser.stop)
             downloads.stop()
             mount_reachability.stop()
             await asyncio.to_thread(network_reachability.stop)
@@ -653,7 +649,6 @@ def create_app(
     app.state.upgrade_repairs = upgrade_repairs
     app.state.push_discovery = push_discovery
     app.state.downloads = downloads
-    app.state.jav_browser = jav_browser
     app.state.mount_reachability = mount_reachability
     app.state.network_reachability = network_reachability
     from .background_issues import IssueLog
@@ -791,9 +786,7 @@ def create_app(
     app.include_router(routes_auth.router)
     app.include_router(routes_pages.router)
     app.include_router(routes_configuration.router)
-    app.include_router(routes_jav_browser.create_router(routes_configuration.local_only))
     app.state.local_only = routes_configuration.local_only
     app.include_router(routes_media.router)
-    app.include_router(routes_subtitles.router)
     app.include_router(routes_api.router)
     return app

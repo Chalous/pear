@@ -303,7 +303,7 @@ export function cardArtwork(item: CoverItem & { follow_thumb_url?: string | null
 export function comicArtwork(item: CoverItem, eager: boolean): Artwork {
   return {
     kind: 'thumb',
-    html: `<img class="poster" src="${comicCoverUrl(item)}" width="640" height="360" alt="" loading="${eager ? 'eager' : 'lazy'}" decoding="async" data-drop="self">`,
+    html: `<img class="poster" src="${comicCoverUrl(item)}" width="640" height="960" alt="" loading="${eager ? 'eager' : 'lazy'}" decoding="async" data-drop="self">`,
   };
 }
 

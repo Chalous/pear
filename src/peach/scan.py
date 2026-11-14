@@ -589,6 +589,11 @@ class _ScanProgress:
             self.reported_at = now
 
 
+def scan_comics(db_path, location, root, **kwargs) -> ScanResult:
+    """Pear 扫描入口：只登记图片目录及其页清单，不登记视频或其他文件。"""
+    return scan_location(db_path, location, root, **kwargs, comic_only=True)
+
+
 def scan_location(db_path, location, root, **kwargs) -> ScanResult:
     """命令行按来源与根目录保存断点，组合任务可提供自己的持久检查点。"""
     if system_path(root):
@@ -602,7 +607,7 @@ def scan_location(db_path, location, root, **kwargs) -> ScanResult:
     from .update_tasks import state_for
     mapped = walk_root_for(location, root, declared_roots=kwargs['declared_roots'],
                            mounts=kwargs.get('mounts') or {}, windows=kwargs.get('windows'))
-    key = hashlib.sha256(f'{location}:{PureWindowsPath(root)}:{mapped}'.casefold().encode()).hexdigest()
+    key = hashlib.sha256(f'{location}:{PureWindowsPath(root)}:{mapped}:{kwargs.get("comic_only", False)}'.casefold().encode()).hexdigest()
     path = state_for(Path(db_path)).parent / 'scan-checkpoints' / f'{key}.json'
     path.parent.mkdir(parents=True, exist_ok=True)
     with FileLock(str(path) + '.lock', timeout=0):
@@ -626,6 +631,13 @@ def _pending_directories(previous, walk_root):
     if any(not Path(value).is_relative_to(walk_root) for value in pending):
         raise ScanTargetError('扫描目录与保存的断点不一致，请核对挂载设置')
     return pending
+
+
+def _pending_artwork_parents(path_module, pending, current_directory):
+    """尚未处理的封面目录对应的父目录，用于裁剪断点中的视频目录集合。"""
+    directories = [*pending, *([current_directory] if current_directory else [])]
+    return {path_module.dirname(value) for value in directories
+            if path_module.basename(value).casefold() in ARTWORK_DIRS}
 
 
 def _scan_resume_state(walk_root, resume_state):
@@ -740,7 +752,7 @@ def _scan_location(
     progress: Callable[[int, int], None] = lambda files, total_bytes: None,
     resume_state: dict | None = None,
     save_checkpoint: Callable[[dict], None] = lambda state: None,
-    read_directory=None, onerror=lambda error: None, new_only=False,
+    read_directory=None, onerror=lambda error: None, new_only=False, comic_only=False,
 ) -> ScanResult:
     """遍历 `root`（数据库中的路径格式）对应的本机目录，把文件元数据 upsert 进 `asset`。
 
@@ -773,9 +785,7 @@ def _scan_location(
     from .library_new_assets import remember
     # 文件批次提交后保存文件名游标；同目录的配对资料随断点保留。
     def save_directory(directory=None, cursor=None, here=None):
-        artwork_parents = {path_module.dirname(value) for value in [*pending, *([directory] if directory else [])]
-                           if path_module.basename(value).casefold() in ARTWORK_DIRS}
-        video_dirs.intersection_update(artwork_parents)
+        video_dirs.intersection_update(_pending_artwork_parents(path_module, pending, directory))
         save_checkpoint(dict(mapping=mapping, scan_time=now, pending=list(pending), files=files,
                              total_bytes=total, sidecars=skipped, subtitles=tracks,
                              orphan_subtitles=orphans, new_ids=sorted(discovered), relocated_ids=sorted(relocator.moved),
@@ -815,7 +825,7 @@ def _scan_location(
                                           onerror=onerror)
             comic_row, page_files, page_bytes = _comic_asset_row(
                 location, ledger_dir, comic_pages, now)
-            for entry in entries:
+            for entry in (() if comic_only else entries):
                 checkpoint('scan')
                 name = entry.name
                 if cursor is not None and name <= cursor:
@@ -874,6 +884,7 @@ def _scan_location(
         remember(db_path, inserted_ids)
         from .media_folders import path_predicate
         scope, parameters = path_predicate(location, root)
+        scope += " AND a.medium='comic'" if comic_only else ''
         new_ids = tuple(sorted(discovered))
         reattached = len(record_rehome.reattach(connection, new_ids, now=now))
         acquired = len(wants.reconcile(connection, new_ids))
@@ -884,7 +895,7 @@ def _scan_location(
             (*parameters, now)).fetchone()[0]
     finally:
         connection.close()
-    checked = junk.isolate(db_path, roots=[(location, root)], asset_ids=list(new_ids) if new_only else None)
+    checked = junk.isolate(db_path, roots=[(location, root)], asset_ids=list(new_ids) if new_only or comic_only else None)
     result = ScanResult(location, root, files, total, time.time() - started, gone,
                         tracks, orphans, skipped, new_ids, reattached, acquired,
                         checked['isolated'], checked['review'], len(conflicts), tuple(sorted(relocator.moved)))

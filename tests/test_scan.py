@@ -709,6 +709,16 @@ class ComicScanTests(_ScanCase):
         # 基类夹具的 a.mp4 与 notes.txt 照旧登记。
         self.assertEqual(result.files, 6)
 
+    def test_comic_scan_ignores_video_archives_and_non_page_files(self):
+        book = self.media / '漫画'
+        book.mkdir()
+        for name in ('1.jpg', '2.png', '说明.txt', '下载记录.zip'):
+            (book / name).write_bytes(b'x')
+        result, _ = self._scan_comic_root(comic_only=True)
+        self.assertEqual(self._paths(), {r'R:\media\漫画': 'comic'})
+        self.assertEqual(result.files, 2)
+        self.assertEqual([row[0] for row in self._pages()], ['1.jpg', '2.png'])
+
     def test_rescan_preserves_page_ids_and_reorders_when_a_page_is_inserted(self):
         book = self.media / "某书"
         book.mkdir()

@@ -176,3 +176,177 @@ def w_comic_event_undo(contract, body):
             "SELECT o_count FROM asset WHERE id=?", (asset_id,)).fetchone()["o_count"] or 0)
     contract.cache_bust()
     return {"ok": True, "undone": undone, "o_count": o_count}
+
+def q_comic_taste(contract, args):
+    """按作品汇总未撤销反馈，每本漫画在同一标签或作者下只计一次。"""
+    with contract.read_connection() as connection:
+        feedback = """
+            WITH books AS (
+                SELECT a.id, a.creator,
+                       EXISTS(SELECT 1 FROM comic_progress p WHERE p.asset_id=a.id) AS read_book,
+                       COUNT(CASE WHEN e.kind='like' THEN 1 END) AS likes,
+                       COUNT(CASE WHEN e.kind='o' THEN 1 END) AS orgasms
+                FROM asset a LEFT JOIN comic_event e ON e.asset_id=a.id AND e.undone_at IS NULL
+                WHERE a.medium='comic' AND a.disposal IS NULL GROUP BY a.id
+            )
+        """
+        connection.execute("BEGIN")
+        totals = connection.execute(feedback + """
+            SELECT COUNT(CASE WHEN read_book=1 THEN 1 END) AS read_books,
+                   COUNT(CASE WHEN likes+orgasms>0 THEN 1 END) AS feedback_books,
+                   COALESCE(SUM(likes),0) AS likes, COALESCE(SUM(orgasms),0) AS orgasms FROM books
+        """).fetchone()
+        def ranking(sql):
+            return [dict(row) for row in connection.execute(feedback + sql)]
+        tags = ranking("""
+            SELECT t.tag AS name, COUNT(DISTINCT b.id) AS books FROM books b
+            JOIN asset_tag t ON t.asset_id=b.id WHERE b.likes+b.orgasms>0
+            GROUP BY t.tag ORDER BY books DESC,name LIMIT 20
+        """)
+        authors = ranking("""
+            SELECT creator AS name, COUNT(*) AS books FROM books WHERE likes+orgasms>0
+            AND trim(COALESCE(creator,''))<>'' GROUP BY creator ORDER BY books DESC,name LIMIT 20
+        """)
+    return {**dict(totals), "tags": tags, "authors": authors}
+
+
+def w_comic_visit(contract, body):
+    """以客户端事件编号去重，页的归属在同一事务内核实。"""
+    try:
+        asset, stamp = int(body['asset']), int(body['viewed_at'])
+        pages = body['pages']
+        event, session = body['id'], body['session']
+        if (not all(isinstance(s, str) and 0 < len(s) <= 100 for s in (event, session))
+                or not 0 < stamp < 2**53 or not isinstance(pages, list) or len(pages) not in (1, 2)
+                or not all(type(p) is int for p in pages)):
+            return {'error': 'invalid'}
+    except (KeyError, ValueError, TypeError):
+        return {'error': 'invalid'}
+    with contract.write_transaction() as connection:
+        if not comics.comic_asset(connection, asset):
+            return {'error': 'not found'}
+        ordinals = [connection.execute("SELECT ordinal FROM comic_page WHERE id=? AND asset_id=?",
+                                       (p, asset)).fetchone() for p in pages]
+        if not all(ordinals):
+            return {'error': 'invalid'}
+        connection.execute("INSERT OR IGNORE INTO comic_visit VALUES(?,?,?,?,?,?)",
+                           (event, asset, session, stamp, ordinals[0][0], ordinals[-1][0]))
+    return {'ok': True}
+
+
+def q_comic_visits(contract, args):
+    """按日和时间、事件编号游标读取，重名时间戳也能稳定续页。"""
+    try:
+        start, end = int(args['start']), int(args['end'])
+        after = int(args.get('after', start))
+        after_id = str(args.get('after_id', ''))
+        limit = min(200, max(1, int(args.get('limit', 200))))
+        if not 0 <= start < end < 2**53 or end-start > 26*3600000 or not start <= after < end:
+            return {'error': 'invalid'}
+    except (KeyError, ValueError, TypeError):
+        return {'error': 'invalid'}
+    with contract.read_connection() as connection:
+        rows = connection.execute("""
+            SELECT v.id, v.asset_id, a.name, v.session, v.viewed_at, v.first_page, v.last_page,
+              (SELECT p.id FROM comic_page p WHERE p.asset_id=v.asset_id AND p.ordinal=v.first_page
+               ORDER BY p.id LIMIT 1) AS page_id
+            FROM comic_visit v JOIN asset a ON a.id=v.asset_id
+            WHERE v.viewed_at>=? AND v.viewed_at<? AND (v.viewed_at,v.id)>(?,?)
+            ORDER BY v.viewed_at,v.id LIMIT ?
+        """, (start, end, after, after_id, limit+1)).fetchall()
+        previous = connection.execute("SELECT max(viewed_at) FROM comic_visit WHERE viewed_at<?",
+                                      (start,)).fetchone()[0]
+    visible = rows[:limit]
+    cursor = {'after': visible[-1]['viewed_at'], 'after_id': visible[-1]['id']} if len(rows)>limit else None
+    return {'visits': [dict(row) for row in visible], 'previous': previous, 'next': cursor}
+
+
+def q_comic_stats(contract, args):
+    """汇总漫画、独立喜欢页与阅读页；日期按客户端传入的本地偏移计算。"""
+    try:
+        offset = int(args.get('offset', 0))
+        if not -840 <= offset <= 840:
+            return {'error': 'invalid'}
+    except (TypeError, ValueError):
+        return {'error': 'invalid'}
+    with contract.read_connection() as db:
+        db.execute('BEGIN')
+        row = db.execute("""
+            SELECT COUNT(*) AS books,
+              COALESCE(SUM((SELECT COUNT(*) FROM comic_page p WHERE p.asset_id=a.id)),0) AS pages,
+              COUNT(CASE WHEN EXISTS(SELECT 1 FROM comic_visit v WHERE v.asset_id=a.id) THEN 1 END) AS read_books,
+              COUNT(CASE WHEN EXISTS(SELECT 1 FROM comic_event e WHERE e.asset_id=a.id
+                AND e.kind='like' AND e.undone_at IS NULL) THEN 1 END) AS liked_books,
+              COUNT(CASE WHEN EXISTS(SELECT 1 FROM comic_event e WHERE e.asset_id=a.id
+                AND e.kind='like' AND e.undone_at IS NULL AND e.first_page_id IS NULL)
+                THEN 1 END) AS whole_liked_books
+            FROM asset a WHERE medium='comic' AND disposal IS NULL
+        """).fetchone()
+        pages = db.execute("""
+            SELECT
+              COUNT(CASE WHEN EXISTS(SELECT 1 FROM comic_visit v WHERE v.asset_id=p.asset_id
+                AND p.ordinal BETWEEN v.first_page AND v.last_page) THEN 1 END) AS read_pages,
+              COUNT(CASE WHEN EXISTS(
+                SELECT 1 FROM comic_event e JOIN comic_page f ON f.id=e.first_page_id
+                JOIN comic_page l ON l.id=e.last_page_id WHERE e.asset_id=p.asset_id
+                AND e.kind='like' AND e.undone_at IS NULL AND p.ordinal BETWEEN f.ordinal AND l.ordinal
+              ) THEN 1 END) AS liked_pages
+            FROM comic_page p JOIN asset a ON a.id=p.asset_id WHERE a.medium='comic' AND a.disposal IS NULL
+        """).fetchone()
+        days = db.execute("""
+            SELECT COUNT(DISTINCT date(v.viewed_at/1000,'unixepoch',?)) FROM comic_visit v
+            JOIN asset a ON a.id=v.asset_id WHERE a.medium='comic' AND a.disposal IS NULL
+        """, (f'{-offset:+d} minutes',)).fetchone()[0]
+    return {**dict(row), **dict(pages), 'reading_days': days}
+
+
+def w_comic_page_like(contract, body):
+    """按页设置喜欢，保留旧页段中未被本次操作涉及的页。"""
+    import uuid
+    try:
+        asset = int(body['asset'])
+        pages = body['pages']
+        liked = body['liked']
+        operation = body['operation']
+        if (not isinstance(pages, list) or not 1 <= len(pages) <= 2
+                or any(type(p) is not int for p in pages) or type(liked) is not bool
+                or not isinstance(operation, str) or not 1 <= len(operation) <= 60):
+            return {'error': 'invalid'}
+    except (ValueError, TypeError, KeyError):
+        return {'error': 'invalid'}
+    now = int(time.time()*1000)
+    with contract.write_transaction() as db:
+        if not comics.comic_asset(db, asset):
+            return {'error': 'not found'}
+        all_pages = list(db.execute("SELECT id,ordinal FROM comic_page WHERE asset_id=?", (asset,)))
+        ordinals = {row['id']: row['ordinal'] for row in all_pages}
+        if any(p not in ordinals for p in pages):
+            return {'error': 'invalid'}
+        events = list(db.execute("""
+            SELECT e.*, f.ordinal AS first_ordinal,l.ordinal AS last_ordinal
+            FROM comic_event e JOIN comic_page f ON f.id=e.first_page_id
+            JOIN comic_page l ON l.id=e.last_page_id
+            WHERE e.asset_id=? AND e.kind='like' AND e.undone_at IS NULL
+        """, (asset,)))
+        covered = set()
+        last_event = None
+        for event in events:
+            selected = {p for p, ordinal in ordinals.items()
+                        if event['first_ordinal'] <= ordinal <= event['last_ordinal']}
+            covered.update(selected)
+            if not liked and selected.intersection(pages):
+                db.execute("UPDATE comic_event SET undone_at=? WHERE id=?", (now, event['id']))
+                for page in selected.difference(pages):
+                    db.execute("INSERT INTO comic_event(id,asset_id,kind,first_page_id,last_page_id,reason,session_id,occurred_at) "
+                               "VALUES(?,?,'like',?,?,?,?,?)",
+                               (str(uuid.uuid4()), asset, page, page, event['reason'], event['session_id'], event['occurred_at']))
+        if liked:
+            for page in pages:
+                if page in covered:
+                    continue
+                event_id = operation + ':' + str(page)
+                db.execute("INSERT OR IGNORE INTO comic_event(id,asset_id,kind,first_page_id,last_page_id,occurred_at) "
+                           "VALUES(?,?,'like',?,?,?)", (event_id, asset, page, page, now))
+                last_event = event_id
+    contract.cache_bust()
+    return {'ok': True, 'last_event': last_event}

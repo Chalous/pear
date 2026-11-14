@@ -20,7 +20,7 @@ import tempfile
 import unittest
 from contextlib import closing
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from peach import catalog_rules
 from peach.ffmpeg import FFmpegResolver
@@ -132,8 +132,11 @@ class DemoDatasetTests(unittest.TestCase):
                              locations={"local": (str(media),)})
         seed_metadata_cache(media, config.directory('sources'))
         factory = Mock()
-        result = process_library(config, db, self.root / "generated", self.root / "covers",
-                                 provider_factory=factory)
+        # 混合媒体演示夹具显式导入视频；应用默认扫描只接收漫画。
+        from peach.scan import scan_location
+        with patch('peach.library_processing.scan_location', scan_location):
+            result = process_library(config, db, self.root / "generated", self.root / "covers",
+                                     provider_factory=factory)
         factory.assert_not_called()
         coded = [item for item in items if item.kind == "coded"]
         self.assertTrue([item for item in items if item.kind == "bare"], "演示树要有裸文件")
